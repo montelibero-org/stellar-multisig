@@ -1,6 +1,6 @@
-<h1 align="center">MTLS.Montelibero.org</h1>
+<h1 align="center">Stellar Multisig Montelibero.org</h1>
 
-Live: [mtls.montelibero.org](https://mtls.montelibero.org)
+Live: [stellar-multisig.montelibero.org](https://stellar-multisig.montelibero.org)
 
 The repository is a part of the [Montelibero Organization](https://github.com/montelibero-org). This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -35,6 +35,7 @@ To learn more about Next.js, take a look at the following resources:
 - [shadcn/ui](https://ui.shadcn.com) - Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.
 - [Radix Themes](https://www.radix-ui.com) - An open source component library optimized for fast development, easy maintenance, and accessibility.
 - [Tailwind CSS](https://tailwindcss.com) - A utility-first CSS framework packed with classes like flex, pt-4, text-center and rotate-90 that can be composed to build any design, directly in your markup.
+- [JS Stellar SDK](https://github.com/stellar/js-stellar-sdk) - A JavaScript library for communicating with a Stellar Horizon server and Soroban RPC. It is used for building Stellar apps either on Node.js or in the browser, though it can be used in other environments with some tinkering.
 
 ## Contributing
 
