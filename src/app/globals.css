@@ -99,3 +99,10 @@ body {
   position: relative;
   margin-left: 20%;
 }
+
+.select-network {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 10px;
+}
