@@ -58,9 +58,6 @@ const SearchBar = () => {
                             }}>{position}</Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56">
-                            <DropdownMenuLabel>
-                                Select Network Type
-                            </DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup
                                 value={position}
