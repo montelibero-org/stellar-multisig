@@ -3,6 +3,7 @@
 import MainLayout from "@/components/layouts";
 import {
     getAccountIssuerInformation,
+    getDomainInformation,
     getMainInformation,
     getStellarAccount,
     getStellarDomain,
@@ -44,22 +45,45 @@ const PublicNet = () => {
                     "public",
                     horizonInfo.home_domain
                 );
+
+                const tomlInformation = await getDomainInformation(
+                    horizonInfo.home_domain
+                );
+
+                const splittedInformation = tomlInformation.split("\n");
+                let document = false;
+                let documentInfo = {};
+
+                for (let i in splittedInformation) {
+                    if (splittedInformation[i] == "[DOCUMENTATION]") {
+                        document = true;
+                        continue;
+                    }
+
+                    if (!document) {
+                        continue;
+                    }
+
+                    if (splittedInformation[i] == "" && document) {
+                        document = false;
+                        continue;
+                    }
+
+                    const _pattern = splittedInformation[i].split("=");
+                    documentInfo[_pattern[0]] = _pattern[1].replace(/"/g, "");
+                }
+
                 setInformation({
                     home_domain: horizonInfo.home_domain,
-                    // total_payment: stellarExpertInfo.payments,
-                    // total_trades: stellarExpertInfo.trades,
                     created_at: horizonInfo.last_modified_time,
-                    // created_by: stellarExpertInfo.creator,
-                    // activity: stellarExpertInfo.activity,
                     thresholds: horizonInfo.thresholds,
                     flags: horizonInfo.flags,
                     signers: horizonInfo.signers,
                     entries: horizonInfo.data_attr,
-                    // trustlines: stellarExpertValue.trustlines,
-                    // total: stellarExpertValue.total,
                     balances: horizonInfo.balances,
-                    meta_data: stellarExpertDomain.meta,
+                    meta_data: documentInfo,
                     issuers: accountIssuer.records,
+                    tomlInfo: tomlInformation,
                 });
             }
             setLoading(false);
@@ -156,7 +180,7 @@ const PublicNet = () => {
                                                                 details about an
                                                                 account.
                                                                 <a
-                                                                    href="#"
+                                                                    href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/accounts#home-domain"
                                                                     className="info-tooltip-link"
                                                                     target="_blank"
                                                                 >
@@ -245,7 +269,7 @@ const PublicNet = () => {
                                                                 level
                                                                 operations.
                                                                 <a
-                                                                    href="#"
+                                                                    href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/accounts#thresholds"
                                                                     className="info-tooltip-link"
                                                                     target="_blank"
                                                                 >
@@ -399,7 +423,7 @@ const PublicNet = () => {
                                                                 exchanged with
                                                                 any other.
                                                                 <a
-                                                                    href="#"
+                                                                    href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/assets"
                                                                     className="info-tooltip-link"
                                                                     target="_blank"
                                                                 >
@@ -546,7 +570,7 @@ const PublicNet = () => {
                                                             transactions for
                                                             this account.
                                                             <a
-                                                                href="#"
+                                                                href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/accounts#signers"
                                                                 className="info-tooltip-link"
                                                                 target="_blank"
                                                             >
@@ -632,7 +656,7 @@ const PublicNet = () => {
                                                             and other assets
                                                             held by the account.
                                                             <a
-                                                                href="#"
+                                                                href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/accounts#balance"
                                                                 className="info-tooltip-link"
                                                                 target="_blank"
                                                             >
@@ -760,8 +784,8 @@ const PublicNet = () => {
                                                             {information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ]["ORG_NAME"]}
+                                                                    "ORG_NAME"
+                                                                ]}
                                                         </span>
                                                     </dd>
                                                     <dt>Org url:</dt>
@@ -771,8 +795,8 @@ const PublicNet = () => {
                                                                 information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ]["ORG_URL"]
+                                                                    "ORG_URL"
+                                                                ]
                                                             }
                                                             target="_blank"
                                                             rel="noreferrer noopener"
@@ -780,8 +804,8 @@ const PublicNet = () => {
                                                             {information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ]["ORG_URL"]}
+                                                                    "ORG_URL"
+                                                                ]}
                                                         </a>
                                                     </dd>
                                                     <dt>Org logo:</dt>
@@ -791,8 +815,8 @@ const PublicNet = () => {
                                                                 information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ]["ORG_LOGO"]
+                                                                    "ORG_LOGO"
+                                                                ]
                                                             }
                                                             target="_blank"
                                                             rel="noreferrer noopener"
@@ -800,8 +824,8 @@ const PublicNet = () => {
                                                             {information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ]["ORG_LOGO"]}
+                                                                    "ORG_LOGO"
+                                                                ]}
                                                         </a>
                                                     </dd>
                                                     <dt>Org description:</dt>
@@ -821,8 +845,6 @@ const PublicNet = () => {
                                                             {information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ][
                                                                     "ORG_DESCRIPTION"
                                                                 ]}
                                                         </span>
@@ -846,8 +868,6 @@ const PublicNet = () => {
                                                             {information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ][
                                                                     "ORG_PHYSICAL_ADDRESS"
                                                                 ]}
                                                         </span>
@@ -859,8 +879,6 @@ const PublicNet = () => {
                                                                 information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ][
                                                                     "ORG_OFFICIAL_EMAIL"
                                                                 ]
                                                             }`}
@@ -870,8 +888,6 @@ const PublicNet = () => {
                                                             {information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
-                                                                    "DOCUMENTATION"
-                                                                ][
                                                                     "ORG_OFFICIAL_EMAIL"
                                                                 ]}
                                                         </a>
@@ -886,239 +902,89 @@ const PublicNet = () => {
                                                         maxHeight: "80vh",
                                                     }}
                                                 >
-                                                    <span className="hljs-attr">
-                                                        NETWORK_PASSPHRASE
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                                "NETWORK_PASSPHRASE"
-                                                            ]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ACCOUNTS
-                                                    </span>{" "}
-                                                    =
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information?.meta_data[
-                                                                "ACCOUNTS"
-                                                            ]?.map(
-                                                                (
-                                                                    account,
-                                                                    keyinfo
-                                                                ) => {
+                                                    {information?.tomlInfo
+                                                        ?.split("\n")
+                                                        ?.map(
+                                                            (toml, keyinfo) => {
+                                                                if (
+                                                                    toml ==
+                                                                        null ||
+                                                                    toml.startsWith(
+                                                                        "#"
+                                                                    )
+                                                                ) {
+                                                                    return;
+                                                                }
+                                                                if (
+                                                                    toml.indexOf(
+                                                                        "="
+                                                                    ) > 0
+                                                                ) {
+                                                                    const patterns =
+                                                                        toml.split(
+                                                                            "="
+                                                                        );
+                                                                    const key_pattern =
+                                                                        patterns[0];
+                                                                    const value_pattern =
+                                                                        patterns[1];
                                                                     return (
                                                                         <React.Fragment
                                                                             key={
                                                                                 keyinfo
                                                                             }
                                                                         >
-                                                                            <br />
-                                                                            <span>
+                                                                            <span className="hljs-attr">
                                                                                 {
-                                                                                    account
+                                                                                    key_pattern
+                                                                                }
+                                                                            </span>{" "}
+                                                                            ={" "}
+                                                                            <span className="hljs-string">
+                                                                                {
+                                                                                    value_pattern
                                                                                 }
                                                                             </span>
+                                                                            <br />
                                                                         </React.Fragment>
                                                                     );
+                                                                } else {
+                                                                    if (
+                                                                        toml.startsWith(
+                                                                            "["
+                                                                        )
+                                                                    )
+                                                                        return (
+                                                                            <React.Fragment
+                                                                                key={
+                                                                                    keyinfo
+                                                                                }
+                                                                            >
+                                                                                <span className="hljs-section">
+                                                                                    {
+                                                                                        toml
+                                                                                    }
+                                                                                </span>
+                                                                                <br />
+                                                                            </React.Fragment>
+                                                                        );
+                                                                    else {
+                                                                        return (
+                                                                            <React.Fragment
+                                                                                key={
+                                                                                    keyinfo
+                                                                                }
+                                                                            >
+                                                                                <span className="hljs-string">
+                                                                                    {
+                                                                                        toml
+                                                                                    }
+                                                                                </span>
+                                                                                <br />
+                                                                            </React.Fragment>
+                                                                        );
+                                                                    }
                                                                 }
-                                                            )}
-                                                        <br />"
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-section">
-                                                        [DOCUMENTATION]
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_NAME
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                            ]["ORG_NAME"]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_URL
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                            ]["ORG_URL"]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_LOGO
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                            ]["ORG_LOGO"]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_DESCRIPTION
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                            ][
-                                                                "ORG_DESCRIPTION"
-                                                            ]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_PHYSICAL_ADDRESS
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                            ][
-                                                                "ORG_PHYSICAL_ADDRESS"
-                                                            ]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_OFFICIAL_EMAIL
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                            ][
-                                                                "ORG_OFFICIAL_EMAIL"
-                                                            ]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    {information?.meta_data &&
-                                                        information?.meta_data[
-                                                            "CURRENCIES"
-                                                        ]?.map(
-                                                            (
-                                                                currencies,
-                                                                keyinfo
-                                                            ) => {
-                                                                return (
-                                                                    <React.Fragment
-                                                                        key={
-                                                                            keyinfo
-                                                                        }
-                                                                    >
-                                                                        <span className="hljs-section">
-                                                                            [[CURRENCIES]]
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            code
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-string">
-                                                                            "
-                                                                            {
-                                                                                currencies?.code
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            issuer
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-string">
-                                                                            "
-                                                                            {
-                                                                                currencies?.issuer
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            is_asset_anchored
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-literal">
-                                                                            "
-                                                                            {
-                                                                                currencies?.is_asset_anchored
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            desc
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-string">
-                                                                            "
-                                                                            {
-                                                                                currencies?.desc
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            image
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-string">
-                                                                            "
-                                                                            {
-                                                                                currencies?.image
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            display_decimals
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-number">
-                                                                            "
-                                                                            {
-                                                                                currencies?.display_decimals
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                    </React.Fragment>
-                                                                );
                                                             }
                                                         )}
                                                 </pre>

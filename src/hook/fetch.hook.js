@@ -22,3 +22,10 @@ export const getStellarDomain = async (type, domain) => {
 
     return result.json();
 };
+
+export const getDomainInformation = async (domain) => {
+    const url = `https://${domain}/.well-known/stellar.toml`;
+    const result = await fetch(url);
+
+    return result.text();
+};
