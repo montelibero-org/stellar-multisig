@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuLabel,
     DropdownMenuRadioGroup,
     DropdownMenuRadioItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 const SearchBar = () => {
     const [search, setSearch] = useState("");
-    const [position, setPosition] = React.useState("Public");
+    const [net, setNet] = React.useState("public");
+
+    const router = useRouter();
 
     const changeHander = (e) => {
         const value = e.currentTarget.value;
@@ -28,12 +29,7 @@ const SearchBar = () => {
         if (search == "") {
             return;
         } else {
-            const link = document.createElement("a");
-            link.href = `https://stellar.expert/explorer/public/account/${search}`;
-            link.target = "_blank";
-            document.body.append(link);
-            link.click();
-            link.remove();
+            router.push(`/${net}/${search}`);
         }
     };
 
@@ -52,22 +48,42 @@ const SearchBar = () => {
                 <div className="dropdown">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant={'bordered'} style={{
-                              color: '#0691b7',
-                              fontSize: '16px'
-                            }}>{position}</Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56">
-                            <DropdownMenuSeparator />
-                            <DropdownMenuRadioGroup
-                                value={position}
-                                onValueChange={setPosition}
+                            <Button
+                                className="search-btn"
+                                style={{
+                                    fontSize: "18px",
+                                    background: "transparent",
+                                }}
                             >
-                                <DropdownMenuRadioItem value="Public">
+                                {net}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            style={{
+                                background: "#0691b7",
+                            }}
+                        >
+                            <DropdownMenuRadioGroup
+                                value={net}
+                                onValueChange={setNet}
+                            >
+                                <DropdownMenuRadioItem
+                                    value="public"
+                                    style={{
+                                        fontSize: "14px",
+                                        color: "white",
+                                    }}
+                                >
                                     Public
                                 </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="TestNetwork">
-                                    TestNetwork
+                                <DropdownMenuRadioItem
+                                    value="testnet"
+                                    style={{
+                                        fontSize: "14px",
+                                        color: "white",
+                                    }}
+                                >
+                                    Testnet
                                 </DropdownMenuRadioItem>
                             </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
@@ -81,6 +97,7 @@ const SearchBar = () => {
                     color: "#0691b7",
                     cursor: "pointer",
                     opacity: ".3",
+                    marginTop: '-8px',
                     cursor: "pointer",
                 }}
                 onClick={searchHandler}
