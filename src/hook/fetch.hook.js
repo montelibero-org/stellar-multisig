@@ -6,14 +6,22 @@ const horizonURI = "https://horizon.stellar.org";
 const server = new Server(horizonURI);
 
 export const getMainInformation = async (accountId) => {
-    const result = await server.loadAccount(accountId);
-    return result;
+    try {
+        const result = await server.loadAccount(accountId);
+        return result;
+    } catch (e) {
+        return [];
+    }
 };
 
 export const getAccountIssuerInformation = async (accountId) => {
-    const result = await server.assets().forIssuer(accountId).call();
+    try {
+        const result = await server.assets().forIssuer(accountId).call();
 
-    return result;
+        return result;
+    } catch (e) {
+        return [];
+    }
 };
 
 export const getDomainInformation = async (domain) => {

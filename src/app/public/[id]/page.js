@@ -5,9 +5,6 @@ import {
     getAccountIssuerInformation,
     getDomainInformation,
     getMainInformation,
-    getStellarAccount,
-    getStellarDomain,
-    getStellarValues,
 } from "@/hook";
 import React, { useEffect, useState } from "react";
 import "./public.css";
@@ -29,7 +26,7 @@ const PublicNet = () => {
 
         setAccount(accountId);
 
-        return () => { };
+        return () => {};
     }, []);
 
     useEffect(() => {
@@ -41,9 +38,13 @@ const PublicNet = () => {
                     account
                 );
 
-                const tomlInformation = await getDomainInformation(
-                    horizonInfo.home_domain
-                );
+                let tomlInformation = "";
+
+                if (horizonInfo.home_domain != undefined) {
+                    tomlInformation = await getDomainInformation(
+                        horizonInfo.home_domain
+                    );
+                }
 
                 const splittedInformation = tomlInformation.split("\n");
                 let document = false;
@@ -88,7 +89,7 @@ const PublicNet = () => {
 
     const collapseAccount = (accountId) => {
         if (accountId == "" || accountId == null || accountId == undefined) {
-            return;
+            return <br />;
         }
         const first4Str = accountId.substring(0, 4);
         const last4Str = accountId.substr(-4);
@@ -110,19 +111,25 @@ const PublicNet = () => {
                             <div className="row space">
                                 <div className="column column-50">
                                     <div className="segment blank">
-                                        <h3>
-                                            Summary
-                                        </h3>
+                                        <h3>Summary</h3>
                                         <hr className="flare"></hr>
                                         <dl>
                                             <dt>Home domain:</dt>
                                             <dd>
                                                 <a
-                                                    href={`https://${information?.home_domain}`}
+                                                    href={`${
+                                                        information?.home_domain ==
+                                                        undefined
+                                                            ? "#"
+                                                            : information?.home_domain
+                                                    }`}
                                                     rel="noreferrer noopener"
                                                     target="_blank"
                                                 >
-                                                    {information?.home_domain}
+                                                    {information?.home_domain ==
+                                                    undefined
+                                                        ? "None"
+                                                        : information?.home_domain}
                                                 </a>
                                                 <i className="trigger icon info-tooltip small icon-help">
                                                     <div
@@ -266,12 +273,23 @@ const PublicNet = () => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_clawback_enabled ==
-                                                    true
+                                                true
                                                     ? "clawback_enabled, "
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_immutable == true
                                                     ? "immutable, "
+                                                    : ""}
+                                                {information?.flags
+                                                    ?.auth_required == false &&
+                                                information?.flags
+                                                    ?.auth_revocable == false &&
+                                                information?.flags
+                                                    ?.auth_clawback_enabled ==
+                                                    false &&
+                                                information?.flags
+                                                    ?.auth_immutable == false
+                                                    ? "None"
                                                     : ""}
 
                                                 <i className="trigger icon info-tooltip small icon-help">
@@ -452,24 +470,29 @@ const PublicNet = () => {
                                                         }
                                                     )}
                                                 </ul>
-                                                <a
-                                                    href="#"
-                                                    className=""
-                                                    onClick={() => {
-                                                        setShow(!show);
-                                                    }}
-                                                >
-                                                    <span
-                                                        style={{
-                                                            borderBottom:
-                                                                "1px dotted",
+                                                {information?.issuers?.length >
+                                                0 ? (
+                                                    <a
+                                                        href="#"
+                                                        className=""
+                                                        onClick={() => {
+                                                            setShow(!show);
                                                         }}
                                                     >
-                                                        Hide assets with zero
-                                                        supply
-                                                    </span>
-                                                    <i className="icon angle double down vtop"></i>
-                                                </a>
+                                                        <span
+                                                            style={{
+                                                                borderBottom:
+                                                                    "1px dotted",
+                                                            }}
+                                                        >
+                                                            Hide assets with
+                                                            zero supply
+                                                        </span>
+                                                        <i className="icon angle double down vtop"></i>
+                                                    </a>
+                                                ) : (
+                                                    <></>
+                                                )}
                                                 {show && (
                                                     <ul>
                                                         {information?.issuers?.map(
@@ -629,10 +652,10 @@ const PublicNet = () => {
                                                     const number = totalInfo[0];
                                                     const decimal =
                                                         Number(totalInfo[1]) ==
-                                                            0
+                                                        0
                                                             ? ""
                                                             : "." +
-                                                            totalInfo[1];
+                                                              totalInfo[1];
 
                                                     return (
                                                         <a
@@ -660,10 +683,11 @@ const PublicNet = () => {
                                                                     }
                                                                     className="asset-link"
                                                                 >
-                                                                    <span className="asset-icon icon icon-stellar"></span>
-                                                                    {
-                                                                        item.asset_code
-                                                                    }
+                                                                    {/* <span className="asset-icon icon icon-stellar"></span> */}
+                                                                    {item.asset_code ==
+                                                                    undefined
+                                                                        ? "XLM"
+                                                                        : item.asset_code}
                                                                 </span>
                                                             </span>
                                                         </a>
@@ -706,132 +730,142 @@ const PublicNet = () => {
                                     <div className="tabs-body">
                                         {tabIndex == 1 ? (
                                             <div className="segment blank">
-                                                <dl className="micro-space">
-                                                    <dt>Org name:</dt>
-                                                    <dd>
-                                                        <span
-                                                            className="block-select"
-                                                            tabIndex="-1"
-                                                            style={{
-                                                                whiteSpace:
-                                                                    "normal",
-                                                                overflow:
-                                                                    "visible",
-                                                                display:
-                                                                    "inline",
-                                                            }}
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_NAME"
-                                                                ]}
-                                                        </span>
-                                                    </dd>
-                                                    <dt>Org url:</dt>
-                                                    <dd>
-                                                        <a
-                                                            href={
-                                                                information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_URL"
-                                                                ]
-                                                            }
-                                                            target="_blank"
-                                                            rel="noreferrer noopener"
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_URL"
-                                                                ]}
-                                                        </a>
-                                                    </dd>
-                                                    <dt>Org logo:</dt>
-                                                    <dd>
-                                                        <a
-                                                            href={
-                                                                information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_LOGO"
-                                                                ]
-                                                            }
-                                                            target="_blank"
-                                                            rel="noreferrer noopener"
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_LOGO"
-                                                                ]}
-                                                        </a>
-                                                    </dd>
-                                                    <dt>Org description:</dt>
-                                                    <dd>
-                                                        <span
-                                                            className="block-select"
-                                                            tabIndex="-1"
-                                                            style={{
-                                                                whiteSpace:
-                                                                    "normal",
-                                                                overflow:
-                                                                    "visible",
-                                                                display:
-                                                                    "inline",
-                                                            }}
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_DESCRIPTION"
-                                                                ]}
-                                                        </span>
-                                                    </dd>
-                                                    <dt>
-                                                        Org physical address:
-                                                    </dt>
-                                                    <dd>
-                                                        <span
-                                                            className="block-select"
-                                                            tabIndex="-1"
-                                                            style={{
-                                                                whiteSpace:
-                                                                    "normal",
-                                                                overflow:
-                                                                    "visible",
-                                                                display:
-                                                                    "inline",
-                                                            }}
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_PHYSICAL_ADDRESS"
-                                                                ]}
-                                                        </span>
-                                                    </dd>
-                                                    <dt>Org official email:</dt>
-                                                    <dd>
-                                                        <a
-                                                            href={`mailto:${information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_OFFICIAL_EMAIL"
-                                                                ]
+                                                {information?.meta_data ||
+                                                information?.meta_data ==
+                                                    undefined ? null : (
+                                                    <dl className="micro-space">
+                                                        <dt>Org name:</dt>
+                                                        <dd>
+                                                            <span
+                                                                className="block-select"
+                                                                tabIndex="-1"
+                                                                style={{
+                                                                    whiteSpace:
+                                                                        "normal",
+                                                                    overflow:
+                                                                        "visible",
+                                                                    display:
+                                                                        "inline",
+                                                                }}
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_NAME"
+                                                                    ]}
+                                                            </span>
+                                                        </dd>
+                                                        <dt>Org url:</dt>
+                                                        <dd>
+                                                            <a
+                                                                href={
+                                                                    information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_URL"
+                                                                    ]
+                                                                }
+                                                                target="_blank"
+                                                                rel="noreferrer noopener"
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_URL"
+                                                                    ]}
+                                                            </a>
+                                                        </dd>
+                                                        <dt>Org logo:</dt>
+                                                        <dd>
+                                                            <a
+                                                                href={
+                                                                    information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_LOGO"
+                                                                    ]
+                                                                }
+                                                                target="_blank"
+                                                                rel="noreferrer noopener"
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_LOGO"
+                                                                    ]}
+                                                            </a>
+                                                        </dd>
+                                                        <dt>
+                                                            Org description:
+                                                        </dt>
+                                                        <dd>
+                                                            <span
+                                                                className="block-select"
+                                                                tabIndex="-1"
+                                                                style={{
+                                                                    whiteSpace:
+                                                                        "normal",
+                                                                    overflow:
+                                                                        "visible",
+                                                                    display:
+                                                                        "inline",
+                                                                }}
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_DESCRIPTION"
+                                                                    ]}
+                                                            </span>
+                                                        </dd>
+                                                        <dt>
+                                                            Org physical
+                                                            address:
+                                                        </dt>
+                                                        <dd>
+                                                            <span
+                                                                className="block-select"
+                                                                tabIndex="-1"
+                                                                style={{
+                                                                    whiteSpace:
+                                                                        "normal",
+                                                                    overflow:
+                                                                        "visible",
+                                                                    display:
+                                                                        "inline",
+                                                                }}
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_PHYSICAL_ADDRESS"
+                                                                    ]}
+                                                            </span>
+                                                        </dd>
+                                                        <dt>
+                                                            Org official email:
+                                                        </dt>
+                                                        <dd>
+                                                            <a
+                                                                href={`mailto:${
+                                                                    information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                    ]
                                                                 }`}
-                                                            target="_blank"
-                                                            rel="noreferrer noopener"
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                    "ORG_OFFICIAL_EMAIL"
-                                                                ]}
-                                                        </a>
-                                                    </dd>
-                                                </dl>
+                                                                target="_blank"
+                                                                rel="noreferrer noopener"
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                    ]}
+                                                            </a>
+                                                        </dd>
+                                                    </dl>
+                                                )}
                                             </div>
                                         ) : (
                                             <div>
