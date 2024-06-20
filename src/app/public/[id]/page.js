@@ -41,11 +41,6 @@ const PublicNet = () => {
                     account
                 );
 
-                const stellarExpertDomain = await getStellarDomain(
-                    "public",
-                    horizonInfo.home_domain
-                );
-
                 const tomlInformation = await getDomainInformation(
                     horizonInfo.home_domain
                 );

@@ -16,13 +16,6 @@ export const getAccountIssuerInformation = async (accountId) => {
     return result;
 };
 
-export const getStellarDomain = async (type, domain) => {
-    const url = `https://api.stellar.expert/explorer/${type}/domain-meta?domain=${domain}`;
-    const result = await fetch(url);
-
-    return result.json();
-};
-
 export const getDomainInformation = async (domain) => {
     const url = `https://${domain}/.well-known/stellar.toml`;
     const result = await fetch(url);
