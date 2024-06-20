@@ -1,0 +1,26 @@
+.top-block {
+  background: #12363f;
+  border-bottom: 1px solid #535759;
+  font-weight: 400;
+  height: 4.4em;
+  padding: 1em 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #12363f;
+  border-bottom: 1px solid #535759;
+  font-weight: 400;
+  height: 4.4em;
+  padding: 1em 10em;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
