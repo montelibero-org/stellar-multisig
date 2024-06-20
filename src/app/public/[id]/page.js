@@ -29,7 +29,7 @@ const PublicNet = () => {
 
         setAccount(accountId);
 
-        return () => {};
+        return () => { };
     }, []);
 
     useEffect(() => {
@@ -117,27 +117,6 @@ const PublicNet = () => {
                                     <div className="segment blank">
                                         <h3>
                                             Summary
-                                            <a
-                                                href="#"
-                                                className="trigger icon icon-embed"
-                                            >
-                                                <div
-                                                    className="tooltip-wrapper"
-                                                    style={{
-                                                        maxWidth: "20em",
-                                                        left: "-193px",
-                                                        top: "-44px",
-                                                    }}
-                                                >
-                                                    <div className="tooltip top">
-                                                        <div className="tooltip-content">
-                                                            Get embeddable
-                                                            widget code for this
-                                                            block
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
                                         </h3>
                                         <hr className="flare"></hr>
                                         <dl>
@@ -292,7 +271,7 @@ const PublicNet = () => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_clawback_enabled ==
-                                                true
+                                                    true
                                                     ? "clawback_enabled, "
                                                     : ""}
                                                 {information?.flags
@@ -620,27 +599,6 @@ const PublicNet = () => {
                                     <div className="segment blank">
                                         <h3>
                                             Account Balances
-                                            <a
-                                                href="#"
-                                                className="trigger icon icon-embed"
-                                            >
-                                                <div
-                                                    className="tooltip-wrapper"
-                                                    style={{
-                                                        maxWidth: "20em",
-                                                        left: "0px",
-                                                        top: "0px",
-                                                    }}
-                                                >
-                                                    <div className="tooltip top">
-                                                        <div className="tooltip-content">
-                                                            Get embeddable
-                                                            widget code for this
-                                                            block
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </a>
                                             <i className="trigger icon info-tooltip small icon-help">
                                                 <div
                                                     className="tooltip-wrapper"
@@ -668,19 +626,6 @@ const PublicNet = () => {
                                             </i>
                                         </h3>
                                         <hr className="flare"></hr>
-                                        <div className="dimmed text-right mobile-left text-small condensed">
-                                            <div
-                                                className="desktop-only"
-                                                style={{ marginTop: "-2.8em" }}
-                                            ></div>
-                                            <span className="mobile-only">
-                                                Estimated account balances
-                                                value:{" "}
-                                            </span>
-                                            {/* ~ {information?.total / 10000000} */}
-                                            <span className="text-tiny">*</span>
-                                            <div className="desktop-only space"></div>
-                                        </div>
                                         <div className="all-account-balances micro-space text-header">
                                             {information?.balances?.map(
                                                 (item, key) => {
@@ -689,10 +634,10 @@ const PublicNet = () => {
                                                     const number = totalInfo[0];
                                                     const decimal =
                                                         Number(totalInfo[1]) ==
-                                                        0
+                                                            0
                                                             ? ""
                                                             : "." +
-                                                              totalInfo[1];
+                                                            totalInfo[1];
 
                                                     return (
                                                         <a
@@ -875,13 +820,12 @@ const PublicNet = () => {
                                                     <dt>Org official email:</dt>
                                                     <dd>
                                                         <a
-                                                            href={`mailto:${
-                                                                information?.meta_data &&
+                                                            href={`mailto:${information?.meta_data &&
                                                                 information
                                                                     ?.meta_data[
                                                                     "ORG_OFFICIAL_EMAIL"
                                                                 ]
-                                                            }`}
+                                                                }`}
                                                             target="_blank"
                                                             rel="noreferrer noopener"
                                                         >

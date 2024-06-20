@@ -109,7 +109,7 @@ const SearchBar = () => {
                 value={search}
                 onKeyDown={keyDownHandler}
                 onChange={changeHander}
-                placeholder="Paste an asset code, tx hash, account address, or ledger sequence here"
+                placeholder="Paste an account address here"
             />
         </div>
     );
