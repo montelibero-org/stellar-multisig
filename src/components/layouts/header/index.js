@@ -11,12 +11,15 @@ const Header = () => {
     return (
         <header>
             <div
-                className="logo"
                 onClick={() => {
                     router.push("/");
                 }}
             >
-                <h2>
+                <h2
+                    style={{
+                        display: "inline-flex",
+                    }}
+                >
                     <Image
                         src="/montelibero-small-logo.png"
                         alt="Montelibero Logo"
@@ -24,7 +27,7 @@ const Header = () => {
                         width={30}
                         height={30}
                         priority
-                    />
+                    />{" "}&nbsp;
                     MTL Stellar Multisig
                 </h2>
             </div>

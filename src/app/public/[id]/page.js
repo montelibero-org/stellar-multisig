@@ -3,10 +3,8 @@
 import MainLayout from "@/components/layouts";
 import {
     getAccountIssuerInformation,
+    getDomainInformation,
     getMainInformation,
-    getStellarAccount,
-    getStellarDomain,
-    getStellarValues,
 } from "@/hook";
 import React, { useEffect, useState } from "react";
 import "./public.css";
@@ -28,7 +26,7 @@ const PublicNet = () => {
 
         setAccount(accountId);
 
-        return () => { };
+        return () => {};
     }, []);
 
     useEffect(() => {
@@ -40,26 +38,48 @@ const PublicNet = () => {
                     account
                 );
 
-                const stellarExpertDomain = await getStellarDomain(
-                    "public",
-                    horizonInfo.home_domain
-                );
+                let tomlInformation = "";
+
+                if (horizonInfo.home_domain != undefined) {
+                    tomlInformation = await getDomainInformation(
+                        horizonInfo.home_domain
+                    );
+                }
+
+                const splittedInformation = tomlInformation.split("\n");
+                let document = false;
+                let documentInfo = {};
+
+                for (let i in splittedInformation) {
+                    if (splittedInformation[i] == "[DOCUMENTATION]") {
+                        document = true;
+                        continue;
+                    }
+
+                    if (!document) {
+                        continue;
+                    }
+
+                    if (splittedInformation[i] == "" && document) {
+                        document = false;
+                        continue;
+                    }
+
+                    const _pattern = splittedInformation[i].split("=");
+                    documentInfo[_pattern[0]] = _pattern[1].replace(/"/g, "");
+                }
+
                 setInformation({
                     home_domain: horizonInfo.home_domain,
-                    // total_payment: stellarExpertInfo.payments,
-                    // total_trades: stellarExpertInfo.trades,
                     created_at: horizonInfo.last_modified_time,
-                    // created_by: stellarExpertInfo.creator,
-                    // activity: stellarExpertInfo.activity,
                     thresholds: horizonInfo.thresholds,
                     flags: horizonInfo.flags,
                     signers: horizonInfo.signers,
                     entries: horizonInfo.data_attr,
-                    // trustlines: stellarExpertValue.trustlines,
-                    // total: stellarExpertValue.total,
                     balances: horizonInfo.balances,
-                    meta_data: stellarExpertDomain.meta,
+                    meta_data: documentInfo,
                     issuers: accountIssuer.records,
+                    tomlInfo: tomlInformation,
                 });
             }
             setLoading(false);
@@ -69,7 +89,7 @@ const PublicNet = () => {
 
     const collapseAccount = (accountId) => {
         if (accountId == "" || accountId == null || accountId == undefined) {
-            return;
+            return <br />;
         }
         const first4Str = accountId.substring(0, 4);
         const last4Str = accountId.substr(-4);
@@ -91,19 +111,25 @@ const PublicNet = () => {
                             <div className="row space">
                                 <div className="column column-50">
                                     <div className="segment blank">
-                                        <h3>
-                                            Summary
-                                        </h3>
+                                        <h3>Summary</h3>
                                         <hr className="flare"></hr>
                                         <dl>
                                             <dt>Home domain:</dt>
                                             <dd>
                                                 <a
-                                                    href={`https://${information?.home_domain}`}
+                                                    href={`${
+                                                        information?.home_domain ==
+                                                        undefined
+                                                            ? "#"
+                                                            : information?.home_domain
+                                                    }`}
                                                     rel="noreferrer noopener"
                                                     target="_blank"
                                                 >
-                                                    {information?.home_domain}
+                                                    {information?.home_domain ==
+                                                    undefined
+                                                        ? "None"
+                                                        : information?.home_domain}
                                                 </a>
                                                 <i className="trigger icon info-tooltip small icon-help">
                                                     <div
@@ -135,7 +161,7 @@ const PublicNet = () => {
                                                                 details about an
                                                                 account.
                                                                 <a
-                                                                    href="#"
+                                                                    href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/accounts#home-domain"
                                                                     className="info-tooltip-link"
                                                                     target="_blank"
                                                                 >
@@ -224,7 +250,7 @@ const PublicNet = () => {
                                                                 level
                                                                 operations.
                                                                 <a
-                                                                    href="#"
+                                                                    href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/accounts#thresholds"
                                                                     className="info-tooltip-link"
                                                                     target="_blank"
                                                                 >
@@ -247,12 +273,23 @@ const PublicNet = () => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_clawback_enabled ==
-                                                    true
+                                                true
                                                     ? "clawback_enabled, "
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_immutable == true
                                                     ? "immutable, "
+                                                    : ""}
+                                                {information?.flags
+                                                    ?.auth_required == false &&
+                                                information?.flags
+                                                    ?.auth_revocable == false &&
+                                                information?.flags
+                                                    ?.auth_clawback_enabled ==
+                                                    false &&
+                                                information?.flags
+                                                    ?.auth_immutable == false
+                                                    ? "None"
                                                     : ""}
 
                                                 <i className="trigger icon info-tooltip small icon-help">
@@ -378,7 +415,7 @@ const PublicNet = () => {
                                                                 exchanged with
                                                                 any other.
                                                                 <a
-                                                                    href="#"
+                                                                    href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/assets"
                                                                     className="info-tooltip-link"
                                                                     target="_blank"
                                                                 >
@@ -433,24 +470,29 @@ const PublicNet = () => {
                                                         }
                                                     )}
                                                 </ul>
-                                                <a
-                                                    href="#"
-                                                    className=""
-                                                    onClick={() => {
-                                                        setShow(!show);
-                                                    }}
-                                                >
-                                                    <span
-                                                        style={{
-                                                            borderBottom:
-                                                                "1px dotted",
+                                                {information?.issuers?.length >
+                                                0 ? (
+                                                    <a
+                                                        href="#"
+                                                        className=""
+                                                        onClick={() => {
+                                                            setShow(!show);
                                                         }}
                                                     >
-                                                        Hide assets with zero
-                                                        supply
-                                                    </span>
-                                                    <i className="icon angle double down vtop"></i>
-                                                </a>
+                                                        <span
+                                                            style={{
+                                                                borderBottom:
+                                                                    "1px dotted",
+                                                            }}
+                                                        >
+                                                            Hide assets with
+                                                            zero supply
+                                                        </span>
+                                                        <i className="icon angle double down vtop"></i>
+                                                    </a>
+                                                ) : (
+                                                    <></>
+                                                )}
                                                 {show && (
                                                     <ul>
                                                         {information?.issuers?.map(
@@ -525,7 +567,7 @@ const PublicNet = () => {
                                                             transactions for
                                                             this account.
                                                             <a
-                                                                href="#"
+                                                                href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/accounts#signers"
                                                                 className="info-tooltip-link"
                                                                 target="_blank"
                                                             >
@@ -590,7 +632,7 @@ const PublicNet = () => {
                                                             and other assets
                                                             held by the account.
                                                             <a
-                                                                href="#"
+                                                                href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/accounts#balance"
                                                                 className="info-tooltip-link"
                                                                 target="_blank"
                                                             >
@@ -610,10 +652,10 @@ const PublicNet = () => {
                                                     const number = totalInfo[0];
                                                     const decimal =
                                                         Number(totalInfo[1]) ==
-                                                            0
+                                                        0
                                                             ? ""
                                                             : "." +
-                                                            totalInfo[1];
+                                                              totalInfo[1];
 
                                                     return (
                                                         <a
@@ -641,10 +683,11 @@ const PublicNet = () => {
                                                                     }
                                                                     className="asset-link"
                                                                 >
-                                                                    <span className="asset-icon icon icon-stellar"></span>
-                                                                    {
-                                                                        item.asset_code
-                                                                    }
+                                                                    {/* <span className="asset-icon icon icon-stellar"></span> */}
+                                                                    {item.asset_code ==
+                                                                    undefined
+                                                                        ? "XLM"
+                                                                        : item.asset_code}
                                                                 </span>
                                                             </span>
                                                         </a>
@@ -687,140 +730,142 @@ const PublicNet = () => {
                                     <div className="tabs-body">
                                         {tabIndex == 1 ? (
                                             <div className="segment blank">
-                                                <dl className="micro-space">
-                                                    <dt>Org name:</dt>
-                                                    <dd>
-                                                        <span
-                                                            className="block-select"
-                                                            tabIndex="-1"
-                                                            style={{
-                                                                whiteSpace:
-                                                                    "normal",
-                                                                overflow:
-                                                                    "visible",
-                                                                display:
-                                                                    "inline",
-                                                            }}
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ]["ORG_NAME"]}
-                                                        </span>
-                                                    </dd>
-                                                    <dt>Org url:</dt>
-                                                    <dd>
-                                                        <a
-                                                            href={
-                                                                information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ]["ORG_URL"]
-                                                            }
-                                                            target="_blank"
-                                                            rel="noreferrer noopener"
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ]["ORG_URL"]}
-                                                        </a>
-                                                    </dd>
-                                                    <dt>Org logo:</dt>
-                                                    <dd>
-                                                        <a
-                                                            href={
-                                                                information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ]["ORG_LOGO"]
-                                                            }
-                                                            target="_blank"
-                                                            rel="noreferrer noopener"
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ]["ORG_LOGO"]}
-                                                        </a>
-                                                    </dd>
-                                                    <dt>Org description:</dt>
-                                                    <dd>
-                                                        <span
-                                                            className="block-select"
-                                                            tabIndex="-1"
-                                                            style={{
-                                                                whiteSpace:
-                                                                    "normal",
-                                                                overflow:
-                                                                    "visible",
-                                                                display:
-                                                                    "inline",
-                                                            }}
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ][
-                                                                "ORG_DESCRIPTION"
-                                                                ]}
-                                                        </span>
-                                                    </dd>
-                                                    <dt>
-                                                        Org physical address:
-                                                    </dt>
-                                                    <dd>
-                                                        <span
-                                                            className="block-select"
-                                                            tabIndex="-1"
-                                                            style={{
-                                                                whiteSpace:
-                                                                    "normal",
-                                                                overflow:
-                                                                    "visible",
-                                                                display:
-                                                                    "inline",
-                                                            }}
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ][
-                                                                "ORG_PHYSICAL_ADDRESS"
-                                                                ]}
-                                                        </span>
-                                                    </dd>
-                                                    <dt>Org official email:</dt>
-                                                    <dd>
-                                                        <a
-                                                            href={`mailto:${information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ][
-                                                                "ORG_OFFICIAL_EMAIL"
-                                                                ]
+                                                {information?.meta_data ||
+                                                information?.meta_data ==
+                                                    undefined ? null : (
+                                                    <dl className="micro-space">
+                                                        <dt>Org name:</dt>
+                                                        <dd>
+                                                            <span
+                                                                className="block-select"
+                                                                tabIndex="-1"
+                                                                style={{
+                                                                    whiteSpace:
+                                                                        "normal",
+                                                                    overflow:
+                                                                        "visible",
+                                                                    display:
+                                                                        "inline",
+                                                                }}
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_NAME"
+                                                                    ]}
+                                                            </span>
+                                                        </dd>
+                                                        <dt>Org url:</dt>
+                                                        <dd>
+                                                            <a
+                                                                href={
+                                                                    information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_URL"
+                                                                    ]
+                                                                }
+                                                                target="_blank"
+                                                                rel="noreferrer noopener"
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_URL"
+                                                                    ]}
+                                                            </a>
+                                                        </dd>
+                                                        <dt>Org logo:</dt>
+                                                        <dd>
+                                                            <a
+                                                                href={
+                                                                    information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_LOGO"
+                                                                    ]
+                                                                }
+                                                                target="_blank"
+                                                                rel="noreferrer noopener"
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_LOGO"
+                                                                    ]}
+                                                            </a>
+                                                        </dd>
+                                                        <dt>
+                                                            Org description:
+                                                        </dt>
+                                                        <dd>
+                                                            <span
+                                                                className="block-select"
+                                                                tabIndex="-1"
+                                                                style={{
+                                                                    whiteSpace:
+                                                                        "normal",
+                                                                    overflow:
+                                                                        "visible",
+                                                                    display:
+                                                                        "inline",
+                                                                }}
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_DESCRIPTION"
+                                                                    ]}
+                                                            </span>
+                                                        </dd>
+                                                        <dt>
+                                                            Org physical
+                                                            address:
+                                                        </dt>
+                                                        <dd>
+                                                            <span
+                                                                className="block-select"
+                                                                tabIndex="-1"
+                                                                style={{
+                                                                    whiteSpace:
+                                                                        "normal",
+                                                                    overflow:
+                                                                        "visible",
+                                                                    display:
+                                                                        "inline",
+                                                                }}
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_PHYSICAL_ADDRESS"
+                                                                    ]}
+                                                            </span>
+                                                        </dd>
+                                                        <dt>
+                                                            Org official email:
+                                                        </dt>
+                                                        <dd>
+                                                            <a
+                                                                href={`mailto:${
+                                                                    information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                    ]
                                                                 }`}
-                                                            target="_blank"
-                                                            rel="noreferrer noopener"
-                                                        >
-                                                            {information?.meta_data &&
-                                                                information
-                                                                    ?.meta_data[
-                                                                "DOCUMENTATION"
-                                                                ][
-                                                                "ORG_OFFICIAL_EMAIL"
-                                                                ]}
-                                                        </a>
-                                                    </dd>
-                                                </dl>
+                                                                target="_blank"
+                                                                rel="noreferrer noopener"
+                                                            >
+                                                                {information?.meta_data &&
+                                                                    information
+                                                                        ?.meta_data[
+                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                    ]}
+                                                            </a>
+                                                        </dd>
+                                                    </dl>
+                                                )}
                                             </div>
                                         ) : (
                                             <div>
@@ -830,239 +875,89 @@ const PublicNet = () => {
                                                         maxHeight: "80vh",
                                                     }}
                                                 >
-                                                    <span className="hljs-attr">
-                                                        NETWORK_PASSPHRASE
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                            "NETWORK_PASSPHRASE"
-                                                            ]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ACCOUNTS
-                                                    </span>{" "}
-                                                    =
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information?.meta_data[
-                                                                "ACCOUNTS"
-                                                            ]?.map(
-                                                                (
-                                                                    account,
-                                                                    keyinfo
-                                                                ) => {
+                                                    {information?.tomlInfo
+                                                        ?.split("\n")
+                                                        ?.map(
+                                                            (toml, keyinfo) => {
+                                                                if (
+                                                                    toml ==
+                                                                        null ||
+                                                                    toml.startsWith(
+                                                                        "#"
+                                                                    )
+                                                                ) {
+                                                                    return;
+                                                                }
+                                                                if (
+                                                                    toml.indexOf(
+                                                                        "="
+                                                                    ) > 0
+                                                                ) {
+                                                                    const patterns =
+                                                                        toml.split(
+                                                                            "="
+                                                                        );
+                                                                    const key_pattern =
+                                                                        patterns[0];
+                                                                    const value_pattern =
+                                                                        patterns[1];
                                                                     return (
                                                                         <React.Fragment
                                                                             key={
                                                                                 keyinfo
                                                                             }
                                                                         >
-                                                                            <br />
-                                                                            <span>
+                                                                            <span className="hljs-attr">
                                                                                 {
-                                                                                    account
+                                                                                    key_pattern
+                                                                                }
+                                                                            </span>{" "}
+                                                                            ={" "}
+                                                                            <span className="hljs-string">
+                                                                                {
+                                                                                    value_pattern
                                                                                 }
                                                                             </span>
+                                                                            <br />
                                                                         </React.Fragment>
                                                                     );
+                                                                } else {
+                                                                    if (
+                                                                        toml.startsWith(
+                                                                            "["
+                                                                        )
+                                                                    )
+                                                                        return (
+                                                                            <React.Fragment
+                                                                                key={
+                                                                                    keyinfo
+                                                                                }
+                                                                            >
+                                                                                <span className="hljs-section">
+                                                                                    {
+                                                                                        toml
+                                                                                    }
+                                                                                </span>
+                                                                                <br />
+                                                                            </React.Fragment>
+                                                                        );
+                                                                    else {
+                                                                        return (
+                                                                            <React.Fragment
+                                                                                key={
+                                                                                    keyinfo
+                                                                                }
+                                                                            >
+                                                                                <span className="hljs-string">
+                                                                                    {
+                                                                                        toml
+                                                                                    }
+                                                                                </span>
+                                                                                <br />
+                                                                            </React.Fragment>
+                                                                        );
+                                                                    }
                                                                 }
-                                                            )}
-                                                        <br />"
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-section">
-                                                        [DOCUMENTATION]
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_NAME
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                            "DOCUMENTATION"
-                                                            ]["ORG_NAME"]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_URL
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                            "DOCUMENTATION"
-                                                            ]["ORG_URL"]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_LOGO
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                            "DOCUMENTATION"
-                                                            ]["ORG_LOGO"]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_DESCRIPTION
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                            "DOCUMENTATION"
-                                                            ][
-                                                            "ORG_DESCRIPTION"
-                                                            ]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_PHYSICAL_ADDRESS
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                            "DOCUMENTATION"
-                                                            ][
-                                                            "ORG_PHYSICAL_ADDRESS"
-                                                            ]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    <span className="hljs-attr">
-                                                        ORG_OFFICIAL_EMAIL
-                                                    </span>{" "}
-                                                    ={" "}
-                                                    <span className="hljs-string">
-                                                        "
-                                                        {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
-                                                            "DOCUMENTATION"
-                                                            ][
-                                                            "ORG_OFFICIAL_EMAIL"
-                                                            ]}
-                                                        "
-                                                    </span>
-                                                    <br />
-                                                    {information?.meta_data &&
-                                                        information?.meta_data[
-                                                            "CURRENCIES"
-                                                        ]?.map(
-                                                            (
-                                                                currencies,
-                                                                keyinfo
-                                                            ) => {
-                                                                return (
-                                                                    <React.Fragment
-                                                                        key={
-                                                                            keyinfo
-                                                                        }
-                                                                    >
-                                                                        <span className="hljs-section">
-                                                                            [[CURRENCIES]]
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            code
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-string">
-                                                                            "
-                                                                            {
-                                                                                currencies?.code
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            issuer
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-string">
-                                                                            "
-                                                                            {
-                                                                                currencies?.issuer
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            is_asset_anchored
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-literal">
-                                                                            "
-                                                                            {
-                                                                                currencies?.is_asset_anchored
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            desc
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-string">
-                                                                            "
-                                                                            {
-                                                                                currencies?.desc
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            image
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-string">
-                                                                            "
-                                                                            {
-                                                                                currencies?.image
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                        <span className="hljs-attr">
-                                                                            display_decimals
-                                                                        </span>{" "}
-                                                                        ={" "}
-                                                                        <span className="hljs-number">
-                                                                            "
-                                                                            {
-                                                                                currencies?.display_decimals
-                                                                            }
-                                                                            "
-                                                                        </span>
-                                                                        <br />
-                                                                    </React.Fragment>
-                                                                );
                                                             }
                                                         )}
                                                 </pre>
