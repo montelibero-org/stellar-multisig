@@ -17,19 +17,18 @@ const Header = () => {
                 }}
             >
                 <h2>
-                    MTL
                     <Image
-                        src="/logo.png"
-                        alt="Logo"
+                        src="/montelibero-small-logo.png"
+                        alt="Montelibero Logo"
                         className="dark:invert"
                         width={30}
                         height={30}
                         priority
                     />
-                    Stellar Multisig
+                    MTL Stellar Multisig
                 </h2>
             </div>
-            <span>Search Account</span>
+            <span>Network: Public</span>
         </header>
     );
 };
