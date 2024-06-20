@@ -23,7 +23,6 @@ const PublicNet = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-
         const pathname = window.location.pathname;
         const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
 
@@ -40,38 +39,25 @@ const PublicNet = () => {
                 const accountIssuer = await getAccountIssuerInformation(
                     account
                 );
-                const stellarExpertInfoResponse = await getStellarAccount(
-                    "public",
-                    account
-                );
-                const stellarExpertValueResponse = await getStellarValues(
-                    "public",
-                    account
-                );
 
                 const stellarExpertDomain = await getStellarDomain(
                     "public",
                     horizonInfo.home_domain
                 );
-                const stellarExpertInfo =
-                    await stellarExpertInfoResponse.json();
-
-                const stellarExpertValue =
-                    await stellarExpertValueResponse.json();
-
                 setInformation({
                     home_domain: horizonInfo.home_domain,
-                    total_payment: stellarExpertInfo.payments,
-                    total_trades: stellarExpertInfo.trades,
+                    // total_payment: stellarExpertInfo.payments,
+                    // total_trades: stellarExpertInfo.trades,
                     created_at: horizonInfo.last_modified_time,
-                    created_by: stellarExpertInfo.creator,
-                    activity: stellarExpertInfo.activity,
+                    // created_by: stellarExpertInfo.creator,
+                    // activity: stellarExpertInfo.activity,
                     thresholds: horizonInfo.thresholds,
                     flags: horizonInfo.flags,
                     signers: horizonInfo.signers,
                     entries: horizonInfo.data_attr,
-                    trustlines: stellarExpertValue.trustlines,
-                    total: stellarExpertValue.total,
+                    // trustlines: stellarExpertValue.trustlines,
+                    // total: stellarExpertValue.total,
+                    balances: horizonInfo.balances,
                     meta_data: stellarExpertDomain.meta,
                     issuers: accountIssuer.records,
                 });
@@ -181,180 +167,6 @@ const PublicNet = () => {
                                                     </div>
                                                 </i>
                                             </dd>
-                                            {/* <dt>Total payments:</dt>
-                                            <dd>
-                                                {information?.total_payment}
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxwidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-44px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Overall number
-                                                                of payments.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Total trades:</dt>
-                                            <dd>
-                                                {information?.total_trades}
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-44px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Overall number
-                                                                of trades.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Created:</dt>
-                                            <dd>
-                                                <span
-                                                    className=""
-                                                    tabIndex="-1"
-                                                    title="Sep 26 2023 04:22:56 GMT+0900"
-                                                >
-                                                    {information?.created_at}
-                                                </span>
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-44px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Account creation
-                                                                timestamp.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Created by:</dt>
-                                            <dd>
-                                                <a
-                                                    title={
-                                                        information?.created_by
-                                                    }
-                                                    aria-label={
-                                                        information?.created_by
-                                                    }
-                                                    className="account-address"
-                                                    href={`/public/${information?.created_by}`}
-                                                >
-                                                    <span className="">
-                                                        {collapseAccount(
-                                                            information?.created_by
-                                                        )}
-                                                    </span>
-                                                </a>
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-86px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                The account that
-                                                                was used to
-                                                                create and
-                                                                provide initial
-                                                                funding for this
-                                                                account.
-                                                                <a
-                                                                    href="https://www.stellar.org/developers/guides/concepts/list-of-operations.html#create-account"
-                                                                    className="info-tooltip-link"
-                                                                    target="_blank"
-                                                                >
-                                                                    Read more…
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Last year activity:</dt>
-                                            <dd>
-                                                {information?.activity?.yearly}
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-82px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Activity index
-                                                                is based on the
-                                                                total number of
-                                                                payments and
-                                                                trades made by
-                                                                the account
-                                                                during a certain
-                                                                period of time
-                                                                (last month or
-                                                                last year).
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Last month activity:</dt>
-                                            <dd>
-                                                {information?.activity?.monthly}
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-82px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Activity index
-                                                                is based on the
-                                                                total number of
-                                                                payments and
-                                                                trades made by
-                                                                the account
-                                                                during a certain
-                                                                period of time
-                                                                (last month or
-                                                                last year).
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
                                             <dt>Account lock status:</dt>
                                             <dd>
                                                 unlocked
@@ -778,56 +590,6 @@ const PublicNet = () => {
                                                 }
                                             )}
                                         </ul>
-                                        {/* <h4 style={{ marginBottom: "0px" }}>
-                                            Data Entries
-                                            <i className="trigger icon info-tooltip small icon-help">
-                                                <div
-                                                    className="tooltip-wrapper"
-                                                    style={{
-                                                        maxWidth: `20em`,
-                                                        left: "-193px",
-                                                        top: "-86px",
-                                                    }}
-                                                >
-                                                    <div className="tooltip top">
-                                                        <div className="tooltip-content">
-                                                            Data entries are key
-                                                            value pairs attached
-                                                            to an account. They
-                                                            allow account
-                                                            controllers to
-                                                            attach arbitrary
-                                                            data to their
-                                                            account.
-                                                            <a
-                                                                href="#"
-                                                                className="info-tooltip-link"
-                                                                target="_blank"
-                                                            >
-                                                                Read more…
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </i>
-                                        </h4>
-                                        <ul className="text-small condensed">
-                                            {information?.entries != null &&
-                                                Object.keys(
-                                                    information?.entries
-                                                ).map((item, key) => {
-                                                    return (
-                                                        <li key={key}>
-                                                            {item +
-                                                                ":  " +
-                                                                information
-                                                                    ?.entries[
-                                                                    item
-                                                                ]}
-                                                        </li>
-                                                    );
-                                                })}
-                                        </ul> */}
                                     </div>
                                 </div>
                                 <div className="column column-50">
@@ -891,15 +653,23 @@ const PublicNet = () => {
                                                 Estimated account balances
                                                 value:{" "}
                                             </span>
-                                            ~ {information?.total / 10000000}
-                                            <span className="text-tiny">
-                                                USD
-                                            </span>
+                                            {/* ~ {information?.total / 10000000} */}
+                                            <span className="text-tiny">*</span>
                                             <div className="desktop-only space"></div>
                                         </div>
                                         <div className="all-account-balances micro-space text-header">
-                                            {information?.trustlines?.map(
+                                            {information?.balances?.map(
                                                 (item, key) => {
+                                                    const totalInfo =
+                                                        item.balance.split(".");
+                                                    const number = totalInfo[0];
+                                                    const decimal =
+                                                        Number(totalInfo[1]) ==
+                                                        0
+                                                            ? ""
+                                                            : "." +
+                                                              totalInfo[1];
+
                                                     return (
                                                         <a
                                                             href="#"
@@ -907,55 +677,29 @@ const PublicNet = () => {
                                                             className="account-balance"
                                                         >
                                                             <div className="condensed">
-                                                                {Math.floor(
-                                                                    item.balance /
-                                                                        10000000
-                                                                )}
+                                                                {number}
                                                                 <span className="text-small">
-                                                                    {item.balance %
-                                                                        10000000 >
-                                                                    0
-                                                                        ? "." +
-                                                                          (item.balance %
-                                                                              10000000)
-                                                                        : ""}
+                                                                    {decimal}
                                                                 </span>
                                                             </div>
                                                             <div className="text-tiny condensed">
                                                                 <div>
-                                                                    ~
-                                                                    {item.value >
-                                                                    0
-                                                                        ? Number(
-                                                                              item.value /
-                                                                                  10000000
-                                                                          ).toFixed(
-                                                                              2
-                                                                          )
-                                                                        : "-"}{" "}
-                                                                    USD
+                                                                    {collapseAccount(
+                                                                        item.asset_issuer
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                             <span className="text-small">
                                                                 <span
                                                                     aria-label={
-                                                                        item.asset
+                                                                        item.asset_issuer
                                                                     }
                                                                     className="asset-link"
                                                                 >
                                                                     <span className="asset-icon icon icon-stellar"></span>
-                                                                    {item.asset.substring(
-                                                                        0,
-                                                                        item.asset.indexOf(
-                                                                            "-"
-                                                                        ) > 0
-                                                                            ? item.asset.indexOf(
-                                                                                  "-"
-                                                                              )
-                                                                            : item
-                                                                                  .asset
-                                                                                  .length
-                                                                    )}
+                                                                    {
+                                                                        item.asset_code
+                                                                    }
                                                                 </span>
                                                             </span>
                                                         </a>
@@ -1163,11 +907,30 @@ const PublicNet = () => {
                                                     <span className="hljs-string">
                                                         "
                                                         {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
+                                                            information?.meta_data[
                                                                 "ACCOUNTS"
-                                                            ]}
-                                                        "
+                                                            ]?.map(
+                                                                (
+                                                                    account,
+                                                                    keyinfo
+                                                                ) => {
+                                                                    return (
+                                                                        <React.Fragment
+                                                                            key={
+                                                                                keyinfo
+                                                                            }
+                                                                        >
+                                                                            <br />
+                                                                            <span>
+                                                                                {
+                                                                                    account
+                                                                                }
+                                                                            </span>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        <br />"
                                                     </span>
                                                     <br />
                                                     <span className="hljs-section">

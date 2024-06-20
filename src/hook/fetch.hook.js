@@ -2,7 +2,6 @@
 
 import { Server } from "stellar-sdk";
 
-const stellarExpertApi = "http://localhost:3002/api/stellar/";
 const horizonURI = "https://horizon.stellar.org";
 const server = new Server(horizonURI);
 
@@ -22,36 +21,4 @@ export const getStellarDomain = async (type, domain) => {
     const result = await fetch(url);
 
     return result.json();
-};
-
-export const getStellarAccount = async (type, accountId) => {
-    const params = "account";
-    const result = await fetch(stellarExpertApi + params, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            type,
-            accountId,
-        }),
-    });
-
-    return result;
-};
-
-export const getStellarValues = async (type, accountId) => {
-    const params = "account-value";
-    const result = await fetch(stellarExpertApi + params, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            type,
-            accountId,
-        }),
-    });
-
-    return result;
 };
