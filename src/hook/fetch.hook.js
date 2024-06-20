@@ -2,7 +2,7 @@
 
 import { Server } from "stellar-sdk";
 
-const stellarExpertApi = "http://localhost:3002/api/stellar/";
+const stellarExpertApi = "https://stellar-multisig-server-jbwvw8k9o-lorexabcs-projects.vercel.app/api/stellar/";
 const horizonURI = "https://horizon.stellar.org";
 const server = new Server(horizonURI);
 
