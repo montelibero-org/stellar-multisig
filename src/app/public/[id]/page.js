@@ -23,7 +23,6 @@ const PublicNet = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-
         const pathname = window.location.pathname;
         const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
 
@@ -40,38 +39,25 @@ const PublicNet = () => {
                 const accountIssuer = await getAccountIssuerInformation(
                     account
                 );
-                const stellarExpertInfoResponse = await getStellarAccount(
-                    "public",
-                    account
-                );
-                const stellarExpertValueResponse = await getStellarValues(
-                    "public",
-                    account
-                );
 
                 const stellarExpertDomain = await getStellarDomain(
                     "public",
                     horizonInfo.home_domain
                 );
-                const stellarExpertInfo =
-                    await stellarExpertInfoResponse.json();
-
-                const stellarExpertValue =
-                    await stellarExpertValueResponse.json();
-
                 setInformation({
                     home_domain: horizonInfo.home_domain,
-                    total_payment: stellarExpertInfo.payments,
-                    total_trades: stellarExpertInfo.trades,
+                    // total_payment: stellarExpertInfo.payments,
+                    // total_trades: stellarExpertInfo.trades,
                     created_at: horizonInfo.last_modified_time,
-                    created_by: stellarExpertInfo.creator,
-                    activity: stellarExpertInfo.activity,
+                    // created_by: stellarExpertInfo.creator,
+                    // activity: stellarExpertInfo.activity,
                     thresholds: horizonInfo.thresholds,
                     flags: horizonInfo.flags,
                     signers: horizonInfo.signers,
                     entries: horizonInfo.data_attr,
-                    trustlines: stellarExpertValue.trustlines,
-                    total: stellarExpertValue.total,
+                    // trustlines: stellarExpertValue.trustlines,
+                    // total: stellarExpertValue.total,
+                    balances: horizonInfo.balances,
                     meta_data: stellarExpertDomain.meta,
                     issuers: accountIssuer.records,
                 });
@@ -891,15 +877,23 @@ const PublicNet = () => {
                                                 Estimated account balances
                                                 value:{" "}
                                             </span>
-                                            ~ {information?.total / 10000000}
-                                            <span className="text-tiny">
-                                                USD
-                                            </span>
+                                            {/* ~ {information?.total / 10000000} */}
+                                            <span className="text-tiny">*</span>
                                             <div className="desktop-only space"></div>
                                         </div>
                                         <div className="all-account-balances micro-space text-header">
-                                            {information?.trustlines?.map(
+                                            {information?.balances?.map(
                                                 (item, key) => {
+                                                    const totalInfo =
+                                                        item.balance.split(".");
+                                                    const number = totalInfo[0];
+                                                    const decimal =
+                                                        Number(totalInfo[1]) ==
+                                                        0
+                                                            ? ""
+                                                            : "." +
+                                                              totalInfo[1];
+
                                                     return (
                                                         <a
                                                             href="#"
@@ -907,55 +901,29 @@ const PublicNet = () => {
                                                             className="account-balance"
                                                         >
                                                             <div className="condensed">
-                                                                {Math.floor(
-                                                                    item.balance /
-                                                                        10000000
-                                                                )}
+                                                                {number}
                                                                 <span className="text-small">
-                                                                    {item.balance %
-                                                                        10000000 >
-                                                                    0
-                                                                        ? "." +
-                                                                          (item.balance %
-                                                                              10000000)
-                                                                        : ""}
+                                                                    {decimal}
                                                                 </span>
                                                             </div>
                                                             <div className="text-tiny condensed">
                                                                 <div>
-                                                                    ~
-                                                                    {item.value >
-                                                                    0
-                                                                        ? Number(
-                                                                              item.value /
-                                                                                  10000000
-                                                                          ).toFixed(
-                                                                              2
-                                                                          )
-                                                                        : "-"}{" "}
-                                                                    USD
+                                                                    {collapseAccount(
+                                                                        item.asset_issuer
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                             <span className="text-small">
                                                                 <span
                                                                     aria-label={
-                                                                        item.asset
+                                                                        item.asset_issuer
                                                                     }
                                                                     className="asset-link"
                                                                 >
                                                                     <span className="asset-icon icon icon-stellar"></span>
-                                                                    {item.asset.substring(
-                                                                        0,
-                                                                        item.asset.indexOf(
-                                                                            "-"
-                                                                        ) > 0
-                                                                            ? item.asset.indexOf(
-                                                                                  "-"
-                                                                              )
-                                                                            : item
-                                                                                  .asset
-                                                                                  .length
-                                                                    )}
+                                                                    {
+                                                                        item.asset_code
+                                                                    }
                                                                 </span>
                                                             </span>
                                                         </a>
