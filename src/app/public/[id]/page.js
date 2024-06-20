@@ -167,180 +167,6 @@ const PublicNet = () => {
                                                     </div>
                                                 </i>
                                             </dd>
-                                            {/* <dt>Total payments:</dt>
-                                            <dd>
-                                                {information?.total_payment}
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxwidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-44px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Overall number
-                                                                of payments.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Total trades:</dt>
-                                            <dd>
-                                                {information?.total_trades}
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-44px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Overall number
-                                                                of trades.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Created:</dt>
-                                            <dd>
-                                                <span
-                                                    className=""
-                                                    tabIndex="-1"
-                                                    title="Sep 26 2023 04:22:56 GMT+0900"
-                                                >
-                                                    {information?.created_at}
-                                                </span>
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-44px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Account creation
-                                                                timestamp.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Created by:</dt>
-                                            <dd>
-                                                <a
-                                                    title={
-                                                        information?.created_by
-                                                    }
-                                                    aria-label={
-                                                        information?.created_by
-                                                    }
-                                                    className="account-address"
-                                                    href={`/public/${information?.created_by}`}
-                                                >
-                                                    <span className="">
-                                                        {collapseAccount(
-                                                            information?.created_by
-                                                        )}
-                                                    </span>
-                                                </a>
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-86px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                The account that
-                                                                was used to
-                                                                create and
-                                                                provide initial
-                                                                funding for this
-                                                                account.
-                                                                <a
-                                                                    href="https://www.stellar.org/developers/guides/concepts/list-of-operations.html#create-account"
-                                                                    className="info-tooltip-link"
-                                                                    target="_blank"
-                                                                >
-                                                                    Read more…
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Last year activity:</dt>
-                                            <dd>
-                                                {information?.activity?.yearly}
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-82px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Activity index
-                                                                is based on the
-                                                                total number of
-                                                                payments and
-                                                                trades made by
-                                                                the account
-                                                                during a certain
-                                                                period of time
-                                                                (last month or
-                                                                last year).
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
-                                            {/* <dt>Last month activity:</dt>
-                                            <dd>
-                                                {information?.activity?.monthly}
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-82px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                Activity index
-                                                                is based on the
-                                                                total number of
-                                                                payments and
-                                                                trades made by
-                                                                the account
-                                                                during a certain
-                                                                period of time
-                                                                (last month or
-                                                                last year).
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </dd> */}
                                             <dt>Account lock status:</dt>
                                             <dd>
                                                 unlocked
@@ -764,56 +590,6 @@ const PublicNet = () => {
                                                 }
                                             )}
                                         </ul>
-                                        {/* <h4 style={{ marginBottom: "0px" }}>
-                                            Data Entries
-                                            <i className="trigger icon info-tooltip small icon-help">
-                                                <div
-                                                    className="tooltip-wrapper"
-                                                    style={{
-                                                        maxWidth: `20em`,
-                                                        left: "-193px",
-                                                        top: "-86px",
-                                                    }}
-                                                >
-                                                    <div className="tooltip top">
-                                                        <div className="tooltip-content">
-                                                            Data entries are key
-                                                            value pairs attached
-                                                            to an account. They
-                                                            allow account
-                                                            controllers to
-                                                            attach arbitrary
-                                                            data to their
-                                                            account.
-                                                            <a
-                                                                href="#"
-                                                                className="info-tooltip-link"
-                                                                target="_blank"
-                                                            >
-                                                                Read more…
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </i>
-                                        </h4>
-                                        <ul className="text-small condensed">
-                                            {information?.entries != null &&
-                                                Object.keys(
-                                                    information?.entries
-                                                ).map((item, key) => {
-                                                    return (
-                                                        <li key={key}>
-                                                            {item +
-                                                                ":  " +
-                                                                information
-                                                                    ?.entries[
-                                                                    item
-                                                                ]}
-                                                        </li>
-                                                    );
-                                                })}
-                                        </ul> */}
                                     </div>
                                 </div>
                                 <div className="column column-50">
@@ -1131,11 +907,30 @@ const PublicNet = () => {
                                                     <span className="hljs-string">
                                                         "
                                                         {information?.meta_data &&
-                                                            information
-                                                                ?.meta_data[
+                                                            information?.meta_data[
                                                                 "ACCOUNTS"
-                                                            ]}
-                                                        "
+                                                            ]?.map(
+                                                                (
+                                                                    account,
+                                                                    keyinfo
+                                                                ) => {
+                                                                    return (
+                                                                        <React.Fragment
+                                                                            key={
+                                                                                keyinfo
+                                                                            }
+                                                                        >
+                                                                            <br />
+                                                                            <span>
+                                                                                {
+                                                                                    account
+                                                                                }
+                                                                            </span>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        <br />"
                                                     </span>
                                                     <br />
                                                     <span className="hljs-section">
