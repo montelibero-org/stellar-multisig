@@ -1,4 +1,4 @@
-<h1 align="center">Stellar Multisig Montelibero.org</h1>
+<h1 align="center">MTL Stellar Multisig</h1>
 
 Live: [stellar-multisig.montelibero.org](https://stellar-multisig.montelibero.org)
 
