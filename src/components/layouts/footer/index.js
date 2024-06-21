@@ -30,7 +30,7 @@ const Footer = () => {
                 </div>
                 <div className="dimmed condensed" style={{ fontSize: "0.8em" }}>
                     Donations:{" "}
-                    <span className="" tabindex="-1">
+                    <span className="" tabIndex="-1">
                         SOON
                     </span>
                 </div>

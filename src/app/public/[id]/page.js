@@ -66,9 +66,10 @@ const PublicNet = () => {
                     }
 
                     const _pattern = splittedInformation[i].split("=");
-                    documentInfo[_pattern[0]] = _pattern[1].replace(/"/g, "");
+                    documentInfo[_pattern[0].trim()] = _pattern[1]
+                        .replace(/"/g, "")
+                        .trim();
                 }
-
                 setInformation({
                     home_domain: horizonInfo.home_domain,
                     created_at: horizonInfo.last_modified_time,
@@ -392,113 +393,58 @@ const PublicNet = () => {
                                                 </i>
                                             </dd>
                                         </dl>
-                                        <div className="account-issued-assets">
-                                            <h4 style={{ marginBottom: "0px" }}>
-                                                Assets Issued by this Account
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-86px",
-                                                        }}
-                                                    >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                An account can
-                                                                issue custom
-                                                                Stellar assets.
-                                                                Any asset on the
-                                                                network can be
-                                                                traded and
-                                                                exchanged with
-                                                                any other.
-                                                                <a
-                                                                    href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/assets"
-                                                                    className="info-tooltip-link"
-                                                                    target="_blank"
-                                                                >
-                                                                    Read more…
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </i>
-                                            </h4>
-                                            <div className="text-small">
-                                                <ul>
-                                                    {information?.issuers?.map(
-                                                        (issuer, key) => {
-                                                            if (
-                                                                issuer.amount ==
-                                                                0
-                                                            )
-                                                                return;
-                                                            return (
-                                                                <li key={key}>
-                                                                    <a
-                                                                        aria-label={
-                                                                            issuer.paging_token
-                                                                        }
-                                                                        className="asset-link"
-                                                                        href="#"
-                                                                    >
-                                                                        <span
-                                                                            className="asset-icon"
-                                                                            style={{
-                                                                                backgroundImage:
-                                                                                    'url("https://ipfs.io/ipfs/bafkreidkhoqgjf42z3jxjd7wqgxy47vulncpnr5wdlib5pbb3inklcipzy")',
-                                                                            }}
-                                                                        ></span>
-                                                                        {
-                                                                            issuer.asset_code
-                                                                        }
-                                                                    </a>
-                                                                    &nbsp;
-                                                                    <span className="">
-                                                                        (
-                                                                        {
-                                                                            issuer
-                                                                                .accounts
-                                                                                .authorized
-                                                                        }{" "}
-                                                                        trustlines)
-                                                                    </span>
-                                                                </li>
-                                                            );
-                                                        }
-                                                    )}
-                                                </ul>
-                                                {information?.issuers?.length >
-                                                0 ? (
-                                                    <a
-                                                        href="#"
-                                                        className=""
-                                                        onClick={() => {
-                                                            setShow(!show);
-                                                        }}
-                                                    >
-                                                        <span
+                                        {information?.issuers?.length > 0 ? (
+                                            <div className="account-issued-assets">
+                                                <h4
+                                                    style={{
+                                                        marginBottom: "0px",
+                                                    }}
+                                                >
+                                                    Assets Issued by this
+                                                    Account
+                                                    <i className="trigger icon info-tooltip small icon-help">
+                                                        <div
+                                                            className="tooltip-wrapper"
                                                             style={{
-                                                                borderBottom:
-                                                                    "1px dotted",
+                                                                maxWidth:
+                                                                    "20em",
+                                                                left: "-193px",
+                                                                top: "-86px",
                                                             }}
                                                         >
-                                                            Hide assets with
-                                                            zero supply
-                                                        </span>
-                                                        <i className="icon angle double down vtop"></i>
-                                                    </a>
-                                                ) : (
-                                                    <></>
-                                                )}
-                                                {show && (
+                                                            <div className="tooltip top">
+                                                                <div className="tooltip-content">
+                                                                    An account
+                                                                    can issue
+                                                                    custom
+                                                                    Stellar
+                                                                    assets. Any
+                                                                    asset on the
+                                                                    network can
+                                                                    be traded
+                                                                    and
+                                                                    exchanged
+                                                                    with any
+                                                                    other.
+                                                                    <a
+                                                                        href="https://developers.stellar.org/docs/learn/fundamentals/stellar-data-structures/assets"
+                                                                        className="info-tooltip-link"
+                                                                        target="_blank"
+                                                                    >
+                                                                        Read
+                                                                        more…
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </i>
+                                                </h4>
+                                                <div className="text-small">
                                                     <ul>
                                                         {information?.issuers?.map(
                                                             (issuer, key) => {
                                                                 if (
-                                                                    issuer.amount !=
+                                                                    issuer.amount ==
                                                                     0
                                                                 )
                                                                     return;
@@ -519,7 +465,7 @@ const PublicNet = () => {
                                                                                 className="asset-icon"
                                                                                 style={{
                                                                                     backgroundImage:
-                                                                                        'url("https://ipfs.io/ipfs/bafkreig7wvit3ottowoopyizrvhqx6it6lksx4yqyyevahirli27fb4lb4")',
+                                                                                        'url("https://ipfs.io/ipfs/bafkreidkhoqgjf42z3jxjd7wqgxy47vulncpnr5wdlib5pbb3inklcipzy")',
                                                                                 }}
                                                                             ></span>
                                                                             {
@@ -541,10 +487,87 @@ const PublicNet = () => {
                                                             }
                                                         )}
                                                     </ul>
-                                                )}
-                                                <ul></ul>
+                                                    {information?.issuers
+                                                        ?.length > 0 ? (
+                                                        <a
+                                                            href="#"
+                                                            className=""
+                                                            onClick={() => {
+                                                                setShow(!show);
+                                                            }}
+                                                        >
+                                                            <span
+                                                                style={{
+                                                                    borderBottom:
+                                                                        "1px dotted",
+                                                                }}
+                                                            >
+                                                                Hide assets with
+                                                                zero supply
+                                                            </span>
+                                                            <i className="icon angle double down vtop"></i>
+                                                        </a>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                    {show && (
+                                                        <ul>
+                                                            {information?.issuers?.map(
+                                                                (
+                                                                    issuer,
+                                                                    key
+                                                                ) => {
+                                                                    if (
+                                                                        issuer.amount !=
+                                                                        0
+                                                                    )
+                                                                        return;
+                                                                    return (
+                                                                        <li
+                                                                            key={
+                                                                                key
+                                                                            }
+                                                                        >
+                                                                            <a
+                                                                                aria-label={
+                                                                                    issuer.paging_token
+                                                                                }
+                                                                                className="asset-link"
+                                                                                href="#"
+                                                                            >
+                                                                                <span
+                                                                                    className="asset-icon"
+                                                                                    style={{
+                                                                                        backgroundImage:
+                                                                                            'url("https://ipfs.io/ipfs/bafkreig7wvit3ottowoopyizrvhqx6it6lksx4yqyyevahirli27fb4lb4")',
+                                                                                    }}
+                                                                                ></span>
+                                                                                {
+                                                                                    issuer.asset_code
+                                                                                }
+                                                                            </a>
+                                                                            &nbsp;
+                                                                            <span className="">
+                                                                                (
+                                                                                {
+                                                                                    issuer
+                                                                                        .accounts
+                                                                                        .authorized
+                                                                                }{" "}
+                                                                                trustlines)
+                                                                            </span>
+                                                                        </li>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        </ul>
+                                                    )}
+                                                    <ul></ul>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            <></>
+                                        )}
                                         <h4 style={{ marginBottom: "0px" }}>
                                             Account Signers
                                             <i className="trigger icon info-tooltip small icon-help">
@@ -611,6 +634,78 @@ const PublicNet = () => {
                                                 }
                                             )}
                                         </ul>
+                                        {information?.entries &&
+                                        Object.keys(information?.entries)
+                                            .length ? (
+                                            <>
+                                                <h4
+                                                    style={{
+                                                        marginBottom: "0px",
+                                                    }}
+                                                >
+                                                    Data Entries
+                                                    <i className="trigger icon info-tooltip small icon-help">
+                                                        <div
+                                                            className="tooltip-wrapper"
+                                                            style={{
+                                                                maxWidth:
+                                                                    "20em",
+                                                                left: "0px",
+                                                                top: "0px",
+                                                            }}
+                                                        >
+                                                            <div className="tooltip top">
+                                                                <div className="tooltip-content">
+                                                                    Data entries
+                                                                    are key
+                                                                    value pairs
+                                                                    attached to
+                                                                    an account.
+                                                                    They allow
+                                                                    account
+                                                                    controllers
+                                                                    to attach
+                                                                    arbitrary
+                                                                    data to
+                                                                    their
+                                                                    account.
+                                                                    <a
+                                                                        href="https://www.stellar.org/developers/guides/concepts/ledger.html#data-entry"
+                                                                        className="info-tooltip-link"
+                                                                        target="_blank"
+                                                                    >
+                                                                        Read
+                                                                        more…
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </i>
+                                                </h4>
+                                                <ul class="text-small condensed">
+                                                    {information?.entries &&
+                                                        Object.keys(
+                                                            information?.entries
+                                                        ).map((entry, key) => {
+                                                            return (
+                                                                <li
+                                                                    className="word-break"
+                                                                    key={key}
+                                                                >
+                                                                    {entry +
+                                                                        ": " +
+                                                                        information
+                                                                            ?.entries[
+                                                                            entry
+                                                                        ]}
+                                                                </li>
+                                                            );
+                                                        })}
+                                                </ul>
+                                            </>
+                                        ) : (
+                                            <></>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="column column-50">
@@ -730,9 +825,10 @@ const PublicNet = () => {
                                     <div className="tabs-body">
                                         {tabIndex == 1 ? (
                                             <div className="segment blank">
-                                                {information?.meta_data ||
-                                                information?.meta_data ==
-                                                    undefined ? null : (
+                                                {information?.meta_data &&
+                                                information?.meta_data[
+                                                    "ORG_NAME"
+                                                ] == undefined ? null : (
                                                     <dl className="micro-space">
                                                         <dt>Org name:</dt>
                                                         <dd>
