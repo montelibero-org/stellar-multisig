@@ -14,8 +14,7 @@ const Footer = () => {
                         rel="noreferrer noopener"
                         className="nowrap"
                     >
-                        <i className="icon icon-github"></i> Request a New
-                        Feature&nbsp;
+                        <i className="icon icon-github"></i> Request a new feature&nbsp;
                     </a>
                     <a
                         href="https://github.com/montelibero-org/stellar-multisig/issues"
@@ -33,7 +32,7 @@ const Footer = () => {
                     Donations:{" "}
                     <span className="" tabIndex="-1">
                         <a href="/public/GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN">
-                        GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN
+                            GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN
                         </a>
                     </span>
                 </div>
