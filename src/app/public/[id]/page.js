@@ -677,7 +677,7 @@ const PublicNet = () => {
                                                         </div>
                                                     </i>
                                                 </h4>
-                                                <ul class="text-small condensed">
+                                                <ul className="text-small condensed">
                                                     {information?.entries &&
                                                         Object.keys(
                                                             information?.entries
