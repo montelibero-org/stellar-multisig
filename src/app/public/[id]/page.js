@@ -463,10 +463,10 @@ const PublicNet = () => {
                                                                         >
                                                                             <span
                                                                                 className="asset-icon"
-                                                                                style={{
-                                                                                    backgroundImage:
-                                                                                        'url("https://ipfs.io/ipfs/bafkreidkhoqgjf42z3jxjd7wqgxy47vulncpnr5wdlib5pbb3inklcipzy")',
-                                                                                }}
+                                                                                // style={{
+                                                                                //     backgroundImage:
+                                                                                //         'url("https://ipfs.io/ipfs/bafkreidkhoqgjf42z3jxjd7wqgxy47vulncpnr5wdlib5pbb3inklcipzy")',
+                                                                                // }}
                                                                             ></span>
                                                                             {
                                                                                 issuer.asset_code
@@ -537,10 +537,10 @@ const PublicNet = () => {
                                                                             >
                                                                                 <span
                                                                                     className="asset-icon"
-                                                                                    style={{
-                                                                                        backgroundImage:
-                                                                                            'url("https://ipfs.io/ipfs/bafkreig7wvit3ottowoopyizrvhqx6it6lksx4yqyyevahirli27fb4lb4")',
-                                                                                    }}
+                                                                                    // style={{
+                                                                                    //     backgroundImage:
+                                                                                    //         'url("https://ipfs.io/ipfs/bafkreig7wvit3ottowoopyizrvhqx6it6lksx4yqyyevahirli27fb4lb4")',
+                                                                                    // }}
                                                                                 ></span>
                                                                                 {
                                                                                     issuer.asset_code
@@ -614,12 +614,6 @@ const PublicNet = () => {
                                                                 className="account-address word-break"
                                                                 href={`/public/${item.key}`}
                                                             >
-                                                                <img
-                                                                    className="identicon"
-                                                                    src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 448" fill="hsl(18,58%,52%)"><rect x="128" y="0" width="64" height="64"/><rect x="256" y="0" width="64" height="64"/><rect x="192" y="0" width="64" height="64"/><rect x="192" y="0" width="64" height="64"/><rect x="0" y="64" width="64" height="64"/><rect x="384" y="64" width="64" height="64"/><rect x="64" y="64" width="64" height="64"/><rect x="320" y="64" width="64" height="64"/><rect x="128" y="64" width="64" height="64"/><rect x="256" y="64" width="64" height="64"/><rect x="192" y="64" width="64" height="64"/><rect x="192" y="64" width="64" height="64"/><rect x="128" y="128" width="64" height="64"/><rect x="256" y="128" width="64" height="64"/><rect x="192" y="128" width="64" height="64"/><rect x="192" y="128" width="64" height="64"/><rect x="64" y="192" width="64" height="64"/><rect x="320" y="192" width="64" height="64"/><rect x="128" y="192" width="64" height="64"/><rect x="256" y="192" width="64" height="64"/><rect x="64" y="256" width="64" height="64"/><rect x="320" y="256" width="64" height="64"/><rect x="192" y="320" width="64" height="64"/><rect x="192" y="320" width="64" height="64"/><rect x="0" y="384" width="64" height="64"/><rect x="384" y="384" width="64" height="64"/><rect x="64" y="384" width="64" height="64"/><rect x="320" y="384" width="64" height="64"/><rect x="128" y="384" width="64" height="64"/><rect x="256" y="384" width="64" height="64"/></svg>'
-                                                                    width="448"
-                                                                    height="448"
-                                                                />
                                                                 <span className="">
                                                                     {collapseAccount(
                                                                         item.key
