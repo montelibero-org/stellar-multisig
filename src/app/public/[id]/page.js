@@ -10,7 +10,6 @@ import React, { useEffect, useState } from "react";
 import "./public.css";
 
 const PublicNet = ({ props }) => {
-    
     const [account, setAccount] = useState("");
 
     const [information, setInformation] = useState({});
@@ -737,7 +736,16 @@ const PublicNet = ({ props }) => {
                                                 {information?.meta_data &&
                                                 information?.meta_data[
                                                     "ORG_NAME"
-                                                ] == undefined ? null : (
+                                                ] == undefined ? (
+                                                    <div
+                                                        style={{
+                                                            fontSize: "13px",
+                                                            textAlign: "center",
+                                                        }}
+                                                    >
+                                                        Empty Data
+                                                    </div>
+                                                ) : (
                                                     <dl className="micro-space">
                                                         <dt>Org name:</dt>
                                                         <dd>
@@ -880,91 +888,107 @@ const PublicNet = ({ props }) => {
                                                         maxHeight: "80vh",
                                                     }}
                                                 >
-                                                    {information?.tomlInfo
-                                                        ?.split("\n")
-                                                        ?.map(
-                                                            (toml, keyinfo) => {
-                                                                if (
-                                                                    toml ==
-                                                                        null ||
-                                                                    toml.startsWith(
-                                                                        "#"
-                                                                    )
-                                                                ) {
-                                                                    return;
-                                                                }
-                                                                if (
-                                                                    toml.indexOf(
-                                                                        "="
-                                                                    ) > 0
-                                                                ) {
-                                                                    const patterns =
-                                                                        toml.split(
-                                                                            "="
-                                                                        );
-                                                                    const key_pattern =
-                                                                        patterns[0];
-                                                                    const value_pattern =
-                                                                        patterns[1];
-                                                                    return (
-                                                                        <React.Fragment
-                                                                            key={
-                                                                                keyinfo
-                                                                            }
-                                                                        >
-                                                                            <span className="hljs-attr">
-                                                                                {
-                                                                                    key_pattern
-                                                                                }
-                                                                            </span>{" "}
-                                                                            ={" "}
-                                                                            <span className="hljs-string">
-                                                                                {
-                                                                                    value_pattern
-                                                                                }
-                                                                            </span>
-                                                                            <br />
-                                                                        </React.Fragment>
-                                                                    );
-                                                                } else {
+                                                    {information?.tomlInfo ==
+                                                    "" ? (
+                                                        <div
+                                                            style={{
+                                                                width: "100%",
+                                                                textAlign:
+                                                                    "center",
+                                                            }}
+                                                        >
+                                                            Empty Data
+                                                        </div>
+                                                    ) : (
+                                                        information?.tomlInfo
+                                                            ?.split("\n")
+                                                            ?.map(
+                                                                (
+                                                                    toml,
+                                                                    keyinfo
+                                                                ) => {
                                                                     if (
+                                                                        toml ==
+                                                                            null ||
                                                                         toml.startsWith(
-                                                                            "["
+                                                                            "#"
                                                                         )
-                                                                    )
+                                                                    ) {
+                                                                        return;
+                                                                    }
+                                                                    if (
+                                                                        toml.indexOf(
+                                                                            "="
+                                                                        ) > 0
+                                                                    ) {
+                                                                        const patterns =
+                                                                            toml.split(
+                                                                                "="
+                                                                            );
+                                                                        const key_pattern =
+                                                                            patterns[0];
+                                                                        const value_pattern =
+                                                                            patterns[1];
                                                                         return (
                                                                             <React.Fragment
                                                                                 key={
                                                                                     keyinfo
                                                                                 }
                                                                             >
-                                                                                <span className="hljs-section">
+                                                                                <span className="hljs-attr">
                                                                                     {
-                                                                                        toml
+                                                                                        key_pattern
                                                                                     }
-                                                                                </span>
-                                                                                <br />
-                                                                            </React.Fragment>
-                                                                        );
-                                                                    else {
-                                                                        return (
-                                                                            <React.Fragment
-                                                                                key={
-                                                                                    keyinfo
-                                                                                }
-                                                                            >
+                                                                                </span>{" "}
+                                                                                ={" "}
                                                                                 <span className="hljs-string">
                                                                                     {
-                                                                                        toml
+                                                                                        value_pattern
                                                                                     }
                                                                                 </span>
                                                                                 <br />
                                                                             </React.Fragment>
                                                                         );
+                                                                    } else {
+                                                                        if (
+                                                                            toml.startsWith(
+                                                                                "["
+                                                                            )
+                                                                        )
+                                                                            return (
+                                                                                <React.Fragment
+                                                                                    key={
+                                                                                        keyinfo
+                                                                                    }
+                                                                                >
+                                                                                    <span className="hljs-section">
+                                                                                        {
+                                                                                            toml
+                                                                                        }
+                                                                                    </span>
+                                                                                    <br />
+                                                                                </React.Fragment>
+                                                                            );
+                                                                        else {
+                                                                            return (
+                                                                                <React.Fragment
+                                                                                    key={
+                                                                                        keyinfo
+                                                                                    }
+                                                                                >
+                                                                                    <span className="hljs-string">
+                                                                                        {
+                                                                                            toml
+                                                                                        }
+                                                                                    </span>
+                                                                                    <br />
+                                                                                </React.Fragment>
+                                                                            );
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                        )}
+                                                            )
+                                                    )}
                                                 </pre>
                                             </div>
                                         )}

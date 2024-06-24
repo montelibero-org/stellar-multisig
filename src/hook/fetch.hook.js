@@ -3,11 +3,11 @@
 import { Server } from "stellar-sdk";
 
 const horizonURI = "https://horizon.stellar.org";
+const apiStellarURI = "https://api.stellar.expert/explorer/directory?limit=20";
 const server = new Server(horizonURI);
 
 export const getMainInformation = async (accountId) => {
     try {
-
         const mainInformation = localStorage.getItem("main-" + accountId);
         if (mainInformation) {
             return JSON.parse(mainInformation);
@@ -49,19 +49,30 @@ export const getAccountIssuerInformation = async (accountId) => {
 };
 
 export const getDomainInformation = async (domain) => {
-    const domainInformation = localStorage.getItem("domain-" + domain);
-    if (domainInformation) {
-        return domainInformation;
+    try {
+        const domainInformation = localStorage.getItem("domain-" + domain);
+        if (domainInformation) {
+            return domainInformation;
+        }
+        const url = `https://${domain}/.well-known/stellar.toml`;
+        const result = await fetch(url);
+        const text = await result.text();
+
+        localStorage.setItem("domain-" + domain, text);
+
+        setTimeout(() => {
+            localStorage.removeItem("domain-" + domain);
+        }, 100000);
+
+        return text;
+    } catch (e) {
+        return "";
     }
-    const url = `https://${domain}/.well-known/stellar.toml`;
-    const result = await fetch(url);
-    const text = await result.text();
+};
 
-    localStorage.setItem("domain-" + domain, text);
+export const getDirectoryInformation = async (accountId) => {
+    const result = await fetch(apiStellarURI);
+    const json = await result.json();
 
-    setTimeout(() => {
-        localStorage.removeItem("domain-" + domain);
-    }, 100000);
-
-    return text;
+    return json;
 };
