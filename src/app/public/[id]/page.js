@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import "./public.css";
 
 const PublicNet = ({ props }) => {
-    console.log(props)
+    
     const [account, setAccount] = useState("");
 
     const [information, setInformation] = useState({});
