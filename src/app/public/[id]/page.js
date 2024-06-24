@@ -9,7 +9,8 @@ import {
 import React, { useEffect, useState } from "react";
 import "./public.css";
 
-const PublicNet = () => {
+const PublicNet = ({ props }) => {
+    console.log(props)
     const [account, setAccount] = useState("");
 
     const [information, setInformation] = useState({});
@@ -26,7 +27,7 @@ const PublicNet = () => {
 
         setAccount(accountId);
 
-        return () => { };
+        return () => {};
     }, []);
 
     useEffect(() => {
@@ -118,16 +119,17 @@ const PublicNet = () => {
                                             <dt>Home domain:</dt>
                                             <dd>
                                                 <a
-                                                    href={`${information?.home_domain ==
+                                                    href={`${
+                                                        information?.home_domain ==
                                                         undefined
-                                                        ? "#"
-                                                        : information?.home_domain
-                                                        }`}
+                                                            ? "#"
+                                                            : information?.home_domain
+                                                    }`}
                                                     rel="noreferrer noopener"
                                                     target="_blank"
                                                 >
                                                     {information?.home_domain ==
-                                                        undefined
+                                                    undefined
                                                         ? "none"
                                                         : information?.home_domain}
                                                 </a>
@@ -273,7 +275,7 @@ const PublicNet = () => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_clawback_enabled ==
-                                                    true
+                                                true
                                                     ? "clawback_enabled, "
                                                     : ""}
                                                 {information?.flags
@@ -282,13 +284,13 @@ const PublicNet = () => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_required == false &&
-                                                    information?.flags
-                                                        ?.auth_revocable == false &&
-                                                    information?.flags
-                                                        ?.auth_clawback_enabled ==
+                                                information?.flags
+                                                    ?.auth_revocable == false &&
+                                                information?.flags
+                                                    ?.auth_clawback_enabled ==
                                                     false &&
-                                                    information?.flags
-                                                        ?.auth_immutable == false
+                                                information?.flags
+                                                    ?.auth_immutable == false
                                                     ? "none"
                                                     : ""}
 
@@ -392,7 +394,7 @@ const PublicNet = () => {
                                                 </i>
                                             </dd>
                                         </dl>
-                                        
+
                                         {information?.issuers?.length > 0 ? (
                                             <div className="account-issued-assets">
                                                 <h4
@@ -443,11 +445,6 @@ const PublicNet = () => {
                                                     <ul>
                                                         {information?.issuers?.map(
                                                             (issuer, key) => {
-                                                                if (
-                                                                    issuer.amount ==
-                                                                    0
-                                                                )
-                                                                    return;
                                                                 return (
                                                                     <li
                                                                         key={
@@ -461,13 +458,6 @@ const PublicNet = () => {
                                                                             className="asset-link"
                                                                             href="#"
                                                                         >
-                                                                            <span
-                                                                                className="asset-icon"
-                                                                                // style={{
-                                                                                //     backgroundImage:
-                                                                                //         'url("https://ipfs.io/ipfs/bafkreidkhoqgjf42z3jxjd7wqgxy47vulncpnr5wdlib5pbb3inklcipzy")',
-                                                                                // }}
-                                                                            ></span>
                                                                             {
                                                                                 issuer.asset_code
                                                                             }
@@ -487,82 +477,6 @@ const PublicNet = () => {
                                                             }
                                                         )}
                                                     </ul>
-                                                    {information?.issuers
-                                                        ?.length > 0 ? (
-                                                        <a
-                                                            href="#"
-                                                            className=""
-                                                            onClick={() => {
-                                                                setShow(!show);
-                                                            }}
-                                                        >
-                                                            <span
-                                                                style={{
-                                                                    borderBottom:
-                                                                        "1px dotted",
-                                                                }}
-                                                            >
-                                                                Hide assets with
-                                                                zero supply
-                                                            </span>
-                                                            <i className="icon angle double down vtop"></i>
-                                                        </a>
-                                                    ) : (
-                                                        <></>
-                                                    )}
-                                                    {show && (
-                                                        <ul>
-                                                            {information?.issuers?.map(
-                                                                (
-                                                                    issuer,
-                                                                    key
-                                                                ) => {
-                                                                    if (
-                                                                        issuer.amount !=
-                                                                        0
-                                                                    )
-                                                                        return;
-                                                                    return (
-                                                                        <li
-                                                                            key={
-                                                                                key
-                                                                            }
-                                                                        >
-                                                                            <a
-                                                                                aria-label={
-                                                                                    issuer.paging_token
-                                                                                }
-                                                                                className="asset-link"
-                                                                                href="#"
-                                                                            >
-                                                                                <span
-                                                                                    className="asset-icon"
-                                                                                    // style={{
-                                                                                    //     backgroundImage:
-                                                                                    //         'url("https://ipfs.io/ipfs/bafkreig7wvit3ottowoopyizrvhqx6it6lksx4yqyyevahirli27fb4lb4")',
-                                                                                    // }}
-                                                                                ></span>
-                                                                                {
-                                                                                    issuer.asset_code
-                                                                                }
-                                                                            </a>
-                                                                            &nbsp;
-                                                                            <span className="">
-                                                                                (
-                                                                                {
-                                                                                    issuer
-                                                                                        .accounts
-                                                                                        .authorized
-                                                                                }{" "}
-                                                                                trustlines)
-                                                                            </span>
-                                                                        </li>
-                                                                    );
-                                                                }
-                                                            )}
-                                                        </ul>
-                                                    )}
-                                                    <ul></ul>
                                                 </div>
                                             </div>
                                         ) : (
@@ -742,10 +656,10 @@ const PublicNet = () => {
                                                     const number = totalInfo[0];
                                                     const decimal =
                                                         Number(totalInfo[1]) ==
-                                                            0
+                                                        0
                                                             ? ""
                                                             : "." +
-                                                            totalInfo[1];
+                                                              totalInfo[1];
 
                                                     return (
                                                         <a
@@ -775,7 +689,7 @@ const PublicNet = () => {
                                                                 >
                                                                     {/* <span className="asset-icon icon icon-stellar"></span> */}
                                                                     {item.asset_code ==
-                                                                        undefined
+                                                                    undefined
                                                                         ? "XLM"
                                                                         : item.asset_code}
                                                                 </span>
@@ -842,7 +756,7 @@ const PublicNet = () => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_NAME"
+                                                                        "ORG_NAME"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -853,7 +767,7 @@ const PublicNet = () => {
                                                                     information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_URL"
+                                                                        "ORG_URL"
                                                                     ]
                                                                 }
                                                                 target="_blank"
@@ -862,7 +776,7 @@ const PublicNet = () => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_URL"
+                                                                        "ORG_URL"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -873,7 +787,7 @@ const PublicNet = () => {
                                                                     information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_LOGO"
+                                                                        "ORG_LOGO"
                                                                     ]
                                                                 }
                                                                 target="_blank"
@@ -882,7 +796,7 @@ const PublicNet = () => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_LOGO"
+                                                                        "ORG_LOGO"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -905,7 +819,7 @@ const PublicNet = () => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_DESCRIPTION"
+                                                                        "ORG_DESCRIPTION"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -929,7 +843,7 @@ const PublicNet = () => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_PHYSICAL_ADDRESS"
+                                                                        "ORG_PHYSICAL_ADDRESS"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -938,19 +852,20 @@ const PublicNet = () => {
                                                         </dt>
                                                         <dd>
                                                             <a
-                                                                href={`mailto:${information?.meta_data &&
+                                                                href={`mailto:${
+                                                                    information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_OFFICIAL_EMAIL"
+                                                                        "ORG_OFFICIAL_EMAIL"
                                                                     ]
-                                                                    }`}
+                                                                }`}
                                                                 target="_blank"
                                                                 rel="noreferrer noopener"
                                                             >
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                    "ORG_OFFICIAL_EMAIL"
+                                                                        "ORG_OFFICIAL_EMAIL"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -971,7 +886,7 @@ const PublicNet = () => {
                                                             (toml, keyinfo) => {
                                                                 if (
                                                                     toml ==
-                                                                    null ||
+                                                                        null ||
                                                                     toml.startsWith(
                                                                         "#"
                                                                     )
