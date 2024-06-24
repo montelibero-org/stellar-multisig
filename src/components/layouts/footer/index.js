@@ -22,8 +22,7 @@ const Footer = ({ setTheme }) => {
                         rel="noreferrer noopener"
                         className="nowrap"
                     >
-                        <i className="icon icon-github"></i> Request a New
-                        Feature&nbsp;
+                        <i className="icon icon-github"></i> Request a new feature&nbsp;
                     </a>
                     <a
                         href="https://github.com/montelibero-org/stellar-multisig/issues"
