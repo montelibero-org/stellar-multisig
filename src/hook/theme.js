@@ -9,10 +9,6 @@ const useTheme = () => {
         setTheme(value);
     };
 
-    useEffect(() => {
-      console.log(theme)
-    }, [theme])
-
     return {
         theme: theme,
         setTheme: changeTheme,
