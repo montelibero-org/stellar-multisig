@@ -108,7 +108,7 @@ const PublicNet = ({ props }) => {
                         <h2 className="word-break relative condensed">
                             <div className="" style={{display: 'flex'}}>
                                 <div className="w-1/2">
-                                    <span className="dimmed">Account&nbsp;&nbsp;</span>
+                                    <span className="dimmed">Account&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 </div>
                                 <div className="w-1/2">
                                     <span className="account-address plain row w-100">
