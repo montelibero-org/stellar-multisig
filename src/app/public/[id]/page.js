@@ -8,6 +8,7 @@ import {
 } from "@/hook";
 import React, { useEffect, useState } from "react";
 import "./public.css";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const PublicNet = ({ props }) => {
     const [account, setAccount] = useState("");
