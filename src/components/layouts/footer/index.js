@@ -3,10 +3,23 @@
 import React, { useEffect, useState } from "react";
 
 const Footer = ({ setTheme }) => {
-    const [value, setValue] = useState("night");
+    const [value, setValue] = useState("");
 
     useEffect(() => {
-        setTheme(value);
+        const _theme = localStorage.getItem("theme");
+        if (!_theme) {
+            setTheme(_theme);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (value != "") {
+            localStorage.setItem("theme", value);
+            setTheme(value);
+        } else {
+            const _theme = localStorage.getItem("theme");
+            setValue(_theme);
+        }
     }, [value]);
 
     return (
@@ -22,7 +35,8 @@ const Footer = ({ setTheme }) => {
                         rel="noreferrer noopener"
                         className="nowrap"
                     >
-                        <i className="icon icon-github"></i> Request a new feature&nbsp;
+                        <i className="icon icon-github"></i> Request a new
+                        feature&nbsp;
                     </a>
                     <a
                         href="https://github.com/montelibero-org/stellar-multisig/issues"
@@ -35,14 +49,17 @@ const Footer = ({ setTheme }) => {
                     <a
                         href="#"
                         onClick={() => {
-                            setValue(value == "night" ? "day" : "night");
+                            setValue(
+                                value == "day" || value == "" ? "night" : "day"
+                            );
                         }}
                     >
                         <i
-                            className={`icon icon-${value == "night" ? "day" : "night"
-                                }`}
+                            className={`icon icon-${
+                                value == "day" || value == "" ? "night" : "day"
+                            }`}
                         ></i>{" "}
-                        {value == "night" ? "Light" : "Dark"} theme
+                        {value == "day" || value == "" ? "Dark" : "Light"} theme
                     </a>
                 </div>
                 <div className="dimmed condensed" style={{ fontSize: "0.8em" }}>

@@ -12,10 +12,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { usePublic } from "@/context/net";
 
 const SearchBar = () => {
     const [search, setSearch] = useState("");
-    const [net, setNet] = React.useState("public");
+
+    const { net, setNet } = usePublic();
 
     const router = useRouter();
 
@@ -97,7 +99,7 @@ const SearchBar = () => {
                     color: "#0691b7",
                     cursor: "pointer",
                     opacity: ".3",
-                    marginTop: '-8px',
+                    marginTop: "-8px",
                     cursor: "pointer",
                 }}
                 onClick={searchHandler}
