@@ -14,43 +14,63 @@ const Assets = () => {
 
     useEffect(() => {
         const handler = async () => {
-            if (filter == "") return;
-            const mainInformation = await getMainInformation(filter);
-            const home_domain = mainInformation.home_domain;
-
-            if (!home_domain) return;
-
-            const domainInformation = await getDomainInformation(home_domain);
-
-            const splittedInformation = domainInformation.split("\n");
-            let currencies = false;
-            let currencyInfo = {};
-            let currencyInfoArray = [];
-
-            for (let i in splittedInformation) {
-                if (splittedInformation[i] == "[[CURRENCIES]]") {
-                    currencies = true;
-                    continue;
-                }
-
-                if (!currencies) {
-                    continue;
-                }
-
-                if (splittedInformation[i] == "" && currencies) {
-                    currencies = false;
-                    currencyInfoArray.push(currencyInfo);
-                    currencyInfo = {};
-                    continue;
-                }
-
-                const _pattern = splittedInformation[i].split("=");
-                currencyInfo[_pattern[0].trim()] = _pattern[1]
-                    .replace(/"/g, "")
-                    .trim();
+            if (filter == "") {
+                setCurrenciesArray([]);
+                return;
             }
 
-            setCurrenciesArray(currencyInfoArray);
+            const assetInfos = localStorage.getItem("asset-" + filter);
+
+            if (!assetInfos) {
+                const mainInformation = await getMainInformation(filter);
+                const home_domain = mainInformation.home_domain;
+
+                if (!home_domain) {
+                    setCurrenciesArray([]);
+                    return;
+                }
+
+                const domainInformation = await getDomainInformation(
+                    home_domain
+                );
+
+                const splittedInformation = domainInformation.split("\n");
+                let currencies = false;
+                let currencyInfo = {};
+                let currencyInfoArray = [];
+
+                for (let i in splittedInformation) {
+                    if (splittedInformation[i] == "[[CURRENCIES]]") {
+                        currencies = true;
+                        continue;
+                    }
+
+                    if (!currencies) {
+                        continue;
+                    }
+
+                    if (splittedInformation[i] == "" && currencies) {
+                        currencies = false;
+                        currencyInfoArray.push(currencyInfo);
+                        currencyInfo = {};
+                        continue;
+                    }
+
+                    const _pattern = splittedInformation[i].split("=");
+                    currencyInfo[_pattern[0].trim()] = _pattern[1]
+                        .replace(/"/g, "")
+                        .trim();
+                }
+
+                setCurrenciesArray(currencyInfoArray);
+
+                localStorage.setItem(
+                    "asset-" + filter,
+                    JSON.stringify(currencyInfoArray)
+                );
+            } else {
+                setCurrenciesArray(JSON.parse(assetInfos));
+            }
         };
 
         handler();

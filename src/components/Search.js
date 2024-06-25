@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { usePublic } from "@/context/net";
 
 const SearchBar = ({setParNet}) => {
     const [search, setSearch] = useState("");
@@ -100,7 +101,7 @@ const SearchBar = ({setParNet}) => {
                     color: "#0691b7",
                     cursor: "pointer",
                     opacity: ".3",
-                    marginTop: '-8px',
+                    marginTop: "-8px",
                     cursor: "pointer",
                 }}
                 onClick={searchHandler}

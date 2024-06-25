@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 const useTheme = () => {
-    const [theme, setTheme] = useState("night");
+    const [theme, setTheme] = useState('night');
 
     const changeTheme = (value) => {
         setTheme(value);

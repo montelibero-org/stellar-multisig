@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import "./header.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -11,9 +11,13 @@ const Header = () => {
     return (
         <div className="top-block">
             <div className="container nav relative">
-                <a href="/" className="logo" style={{
-                    paddingTop: '6px'
-                }}>
+                <a
+                    href="/"
+                    className="logo"
+                    style={{
+                        paddingTop: "7px",
+                    }}
+                >
                     <Image
                         src="/montelibero-small-logo.png"
                         alt="Montelibero Logo"
