@@ -17,10 +17,6 @@ import { usePublic } from "@/context/net";
 const SearchBar = ({setParNet}) => {
     const [search, setSearch] = useState("");
     const [net, setNet] = React.useState("public");
-    useEffect(() => {
-        setParNet(net);
-        sessionStorage.setItem('netpar', net);
-    }, [net]);
     const router = useRouter();
 
     const changeHander = (e) => {

@@ -27,7 +27,7 @@ const PublicNet = ({ props }) => {
 
         setAccount(accountId);
 
-        return () => {};
+        return () => { };
     }, []);
 
     useEffect(() => {
@@ -106,7 +106,7 @@ const PublicNet = ({ props }) => {
                         "Loading..."
                     ) : (
                         <h2 className="word-break relative condensed">
-                            <div className="" style={{display: 'flex'}}>
+                            <div className="" style={{ display: 'flex' }}>
                                 <div className="w-1/2">
                                     <span className="dimmed">Account&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 </div>
@@ -142,17 +142,16 @@ const PublicNet = ({ props }) => {
                                             <dt>Home domain:</dt>
                                             <dd>
                                                 <a
-                                                    href={`${
-                                                        information?.home_domain ==
-                                                        undefined
+                                                    href={`${information?.home_domain ==
+                                                            undefined
                                                             ? "#"
                                                             : information?.home_domain
-                                                    }`}
+                                                        }`}
                                                     rel="noreferrer noopener"
                                                     target="_blank"
                                                 >
                                                     {information?.home_domain ==
-                                                    undefined
+                                                        undefined
                                                         ? "none"
                                                         : information?.home_domain}
                                                 </a>
@@ -298,7 +297,7 @@ const PublicNet = ({ props }) => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_clawback_enabled ==
-                                                true
+                                                    true
                                                     ? "clawback_enabled, "
                                                     : ""}
                                                 {information?.flags
@@ -307,13 +306,13 @@ const PublicNet = ({ props }) => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_required == false &&
-                                                information?.flags
-                                                    ?.auth_revocable == false &&
-                                                information?.flags
-                                                    ?.auth_clawback_enabled ==
+                                                    information?.flags
+                                                        ?.auth_revocable == false &&
+                                                    information?.flags
+                                                        ?.auth_clawback_enabled ==
                                                     false &&
-                                                information?.flags
-                                                    ?.auth_immutable == false
+                                                    information?.flags
+                                                        ?.auth_immutable == false
                                                     ? "none"
                                                     : ""}
 
@@ -567,8 +566,8 @@ const PublicNet = ({ props }) => {
                                             )}
                                         </ul>
                                         {information?.entries &&
-                                        Object.keys(information?.entries)
-                                            .length ? (
+                                            Object.keys(information?.entries)
+                                                .length ? (
                                             <>
                                                 <h4
                                                     style={{
@@ -628,7 +627,7 @@ const PublicNet = ({ props }) => {
                                                                         ": " +
                                                                         information
                                                                             ?.entries[
-                                                                            entry
+                                                                        entry
                                                                         ]}
                                                                 </li>
                                                             );
@@ -679,10 +678,10 @@ const PublicNet = ({ props }) => {
                                                     const number = totalInfo[0];
                                                     const decimal =
                                                         Number(totalInfo[1]) ==
-                                                        0
+                                                            0
                                                             ? ""
                                                             : "." +
-                                                              totalInfo[1];
+                                                            totalInfo[1];
 
                                                     return (
                                                         <a
@@ -712,7 +711,7 @@ const PublicNet = ({ props }) => {
                                                                 >
                                                                     {/* <span className="asset-icon icon icon-stellar"></span> */}
                                                                     {item.asset_code ==
-                                                                    undefined
+                                                                        undefined
                                                                         ? "XLM"
                                                                         : item.asset_code}
                                                                 </span>
@@ -758,9 +757,9 @@ const PublicNet = ({ props }) => {
                                         {tabIndex == 1 ? (
                                             <div className="segment blank">
                                                 {information?.meta_data &&
-                                                information?.meta_data[
+                                                    information?.meta_data[
                                                     "ORG_NAME"
-                                                ] == undefined ? (
+                                                    ] == undefined ? (
                                                     <div
                                                         style={{
                                                             fontSize: "13px",
@@ -788,7 +787,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_NAME"
+                                                                    "ORG_NAME"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -799,7 +798,7 @@ const PublicNet = ({ props }) => {
                                                                     information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_URL"
+                                                                    "ORG_URL"
                                                                     ]
                                                                 }
                                                                 target="_blank"
@@ -808,7 +807,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_URL"
+                                                                    "ORG_URL"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -819,7 +818,7 @@ const PublicNet = ({ props }) => {
                                                                     information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_LOGO"
+                                                                    "ORG_LOGO"
                                                                     ]
                                                                 }
                                                                 target="_blank"
@@ -828,7 +827,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_LOGO"
+                                                                    "ORG_LOGO"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -851,7 +850,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_DESCRIPTION"
+                                                                    "ORG_DESCRIPTION"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -875,7 +874,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_PHYSICAL_ADDRESS"
+                                                                    "ORG_PHYSICAL_ADDRESS"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -884,20 +883,19 @@ const PublicNet = ({ props }) => {
                                                         </dt>
                                                         <dd>
                                                             <a
-                                                                href={`mailto:${
-                                                                    information?.meta_data &&
+                                                                href={`mailto:${information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                    "ORG_OFFICIAL_EMAIL"
                                                                     ]
-                                                                }`}
+                                                                    }`}
                                                                 target="_blank"
                                                                 rel="noreferrer noopener"
                                                             >
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                    "ORG_OFFICIAL_EMAIL"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -913,7 +911,7 @@ const PublicNet = ({ props }) => {
                                                     }}
                                                 >
                                                     {information?.tomlInfo ==
-                                                    "" ? (
+                                                        "" ? (
                                                         <div
                                                             style={{
                                                                 width: "100%",
@@ -933,7 +931,7 @@ const PublicNet = ({ props }) => {
                                                                 ) => {
                                                                     if (
                                                                         toml ==
-                                                                            null ||
+                                                                        null ||
                                                                         toml.startsWith(
                                                                             "#"
                                                                         )
