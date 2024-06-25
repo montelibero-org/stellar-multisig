@@ -8,6 +8,7 @@ import {
 } from "@/hook";
 import React, { useEffect, useState } from "react";
 import "./public.css";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 const PublicNet = ({ props }) => {
     const [account, setAccount] = useState("");
@@ -105,10 +106,25 @@ const PublicNet = ({ props }) => {
                         "Loading..."
                     ) : (
                         <h2 className="word-break relative condensed">
-                            <span className="dimmed">Account&nbsp;&nbsp;</span>
-                            <span className="account-address plain">
-                                <span className="account-key">{account}</span>
-                            </span>
+                            <div className="" style={{display: 'flex'}}>
+                                <div className="w-1/2">
+                                    <span className="dimmed">Account&nbsp;&nbsp;</span>
+                                </div>
+                                <div className="w-1/2">
+                                    <span className="account-address plain row w-100">
+                                        <span className="account-key">{account}</span>
+                                        &nbsp;
+                                        <span><a
+                                            href={`https://stellar.expert/explorer/public/account/${account}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            title="View on Stellar.Expert"
+                                        >
+                                            <FaExternalLinkAlt />
+                                        </a></span>
+                                    </span>
+                                </div>
+                            </div>
                             <div className="row space">
                                 <div className="column column-50">
                                     <div className="segment blank">
