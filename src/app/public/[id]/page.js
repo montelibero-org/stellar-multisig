@@ -117,10 +117,10 @@ const PublicNet = ({ props }) => {
                                         <span><a
                                             href={`https://stellar.expert/explorer/public/account/${account}`}
                                             target="_blank"
+                                            className="icon icon-stellar"
                                             rel="noopener noreferrer"
                                             title="View on Stellar.Expert"
                                         >
-                                            <FaExternalLinkAlt />
                                         </a></span>
                                     </span>
                                 </div>

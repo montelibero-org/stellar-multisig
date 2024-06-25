@@ -19,7 +19,6 @@
         "next": "14.2.4",
         "react": "^18",
         "react-dom": "^18",
-        "react-icons": "^5.2.1",
         "react-singleton-hook": "^4.0.1",
         "stellar-sdk": "^10.4.1",
         "swr": "^2.2.5",
