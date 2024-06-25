@@ -1,19 +1,26 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import "./header.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { usePublic } from "@/context/net";
 
 const Header = () => {
     const router = useRouter();
 
+    const { net } = usePublic();
+
     return (
         <div className="top-block">
             <div className="container nav relative">
-                <a href="/" className="logo" style={{
-                    paddingTop: '6px'
-                }}>
+                <a
+                    href="/"
+                    className="logo"
+                    style={{
+                        paddingTop: "7px",
+                    }}
+                >
                     <Image
                         src="/montelibero-small-logo.png"
                         alt="Montelibero Logo"
@@ -34,7 +41,9 @@ const Header = () => {
                             float: "right",
                         }}
                     >
-                        <div className="network-switch">Network : Public</div>
+                        <div className="network-switch">
+                            Network : {net == "public" ? "Public" : "Testnet"}
+                        </div>
                     </div>
                 </div>
             </div>

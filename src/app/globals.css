@@ -2956,6 +2956,7 @@ code {
 
 .word-break {
     word-break: break-all;
+    font-size: 1.26rem;
 }
 
 .text-overflow {
