@@ -1,6 +1,7 @@
 "use client";
 
 import MainLayout from "@/components/layouts";
+import Image from "next/image";
 import {
     getAccountIssuerInformation,
     getDomainInformation,
@@ -116,10 +117,18 @@ const PublicNet = ({ props }) => {
                                         <span><a
                                             href={`https://stellar.expert/explorer/public/account/${account}`}
                                             target="_blank"
-                                            className="icon icon-stellar"
+                                            // className="icon icon-stellar"
                                             rel="noopener noreferrer"
                                             title="View on Stellar.Expert"
                                         >
+                                            <Image
+                                                src="/stellar-expert-logo.png"
+                                                alt="Stellar Expert Logo"
+                                                className="dark:invert"
+                                                width={30}
+                                                height={30}
+                                                priority
+                                            />
                                         </a></span>
                                     </span>
                                 </div>
