@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import "./header.css";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSelector } from 'react-redux';
+
 const Header = () => {
     const router = useRouter();
     const net = useSelector((state) => state.net);
+
     return (
         <div className="top-block">
             <div className="container nav relative">
-                <a
+                <Link
                     href="/"
                     className="logo"
                     style={{
@@ -27,10 +30,10 @@ const Header = () => {
                         priority
                     />{" "}
                     &nbsp; MTL Stellar Multisig
-                </a>
+                </Link>
                 <div className="nav-menu-dropdown false">
                     <div className="main-menu top-menu-block">
-                        <a href="/public/assets">Assets</a>
+                        <Link href="/public/assets">Assets</Link>
                     </div>
                     <div
                         className="top-menu-block right"

@@ -8,6 +8,7 @@ import {
     getMainInformation,
 } from "@/hook";
 import React, { useEffect, useState } from "react";
+import Link from "next/link"; // Import Link for client-side navigation
 import "./public.css";
 
 const PublicNet = ({ props }) => {
@@ -114,22 +115,24 @@ const PublicNet = ({ props }) => {
                                     <span className="account-address plain row w-100">
                                         <span className="account-key">{account}</span>
                                         &nbsp;
-                                        <span><a
-                                            href={`https://stellar.expert/explorer/public/account/${account}`}
-                                            target="_blank"
-                                            // className="icon icon-stellar"
-                                            rel="noopener noreferrer"
-                                            title="View on Stellar.Expert"
-                                        >
-                                            <Image
-                                                src="/stellar-expert-logo.png"
-                                                alt="Stellar Expert Logo"
-                                                className="dark:invert"
-                                                width={30}
-                                                height={30}
-                                                priority
-                                            />
-                                        </a></span>
+                                        <span>
+
+                                            <a
+                                                href={`https://stellar.expert/explorer/public/account/${account}`}
+                                                target="_blank"
+                                                // className="icon icon-stellar"
+                                                rel="noopener noreferrer"
+                                                title="View on Stellar.Expert"
+                                            >
+                                                <Image
+                                                    src="/stellar-expert-logo.png"
+                                                    alt="Stellar Expert Logo"
+                                                    className="dark:invert"
+                                                    width={30}
+                                                    height={30}
+                                                    priority
+                                                />
+                                            </a></span>
                                     </span>
                                 </div>
                             </div>
@@ -139,63 +142,66 @@ const PublicNet = ({ props }) => {
                                         <h3>Summary</h3>
                                         <hr className="flare"></hr>
                                         <dl>
-                                            <dt>Home domain:</dt>
-                                            <dd>
-                                                <a
-                                                    href={`${information?.home_domain ==
+                                            {information?.home_domain ==
+                                                undefined ? "" : <>
+                                                <dt>Home domain:</dt>
+                                                <dd>
+                                                    <a
+                                                        href={`${information?.home_domain ==
                                                             undefined
                                                             ? "#"
                                                             : information?.home_domain
-                                                        }`}
-                                                    rel="noreferrer noopener"
-                                                    target="_blank"
-                                                >
-                                                    {information?.home_domain ==
-                                                        undefined
-                                                        ? "none"
-                                                        : information?.home_domain}
-                                                </a>
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-142px",
-                                                        }}
+                                                            }`}
+                                                        rel="noreferrer noopener"
+                                                        target="_blank"
                                                     >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                A domain name
-                                                                that can
-                                                                optionally be
-                                                                added to the
-                                                                account. Clients
-                                                                can look up a
-                                                                stellar.toml
-                                                                from this
-                                                                domain. The
-                                                                federation
-                                                                procol can use
-                                                                the home domain
-                                                                to look up more
-                                                                details about a
-                                                                transaction’s
-                                                                memo or address
-                                                                details about an
-                                                                account.
-                                                                <a
-                                                                    href="https://developers.stellar.org/docs/learn/glossary#home-domain"
-                                                                    className="info-tooltip-link"
-                                                                    target="_blank"
-                                                                >
-                                                                    Read more…
-                                                                </a>
+                                                        {information?.home_domain ==
+                                                            undefined
+                                                            ? "none"
+                                                            : information?.home_domain}
+                                                    </a>
+                                                    <i className="trigger icon info-tooltip small icon-help">
+                                                        <div
+                                                            className="tooltip-wrapper"
+                                                            style={{
+                                                                maxWidth: "20em",
+                                                                left: "-193px",
+                                                                top: "-142px",
+                                                            }}
+                                                        >
+                                                            <div className="tooltip top">
+                                                                <div className="tooltip-content">
+                                                                    A domain name
+                                                                    that can
+                                                                    optionally be
+                                                                    added to the
+                                                                    account. Clients
+                                                                    can look up a
+                                                                    stellar.toml
+                                                                    from this
+                                                                    domain. The
+                                                                    federation
+                                                                    procol can use
+                                                                    the home domain
+                                                                    to look up more
+                                                                    details about a
+                                                                    transaction’s
+                                                                    memo or address
+                                                                    details about an
+                                                                    account.
+                                                                    <a
+                                                                        href="https://developers.stellar.org/docs/learn/glossary#home-domain"
+                                                                        className="info-tooltip-link"
+                                                                        target="_blank"
+                                                                    >
+                                                                        Read more…
+                                                                    </a>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </i>
-                                            </dd>
+                                                    </i>
+                                                </dd>
+                                            </>}
                                             <dt>Account lock status:</dt>
                                             <dd>
                                                 unlocked
@@ -473,17 +479,14 @@ const PublicNet = ({ props }) => {
                                                                             key
                                                                         }
                                                                     >
-                                                                        <a
-                                                                            aria-label={
-                                                                                issuer.paging_token
-                                                                            }
-                                                                            className="asset-link"
-                                                                            href="#"
-                                                                        >
-                                                                            {
-                                                                                issuer.asset_code
-                                                                            }
-                                                                        </a>
+                                                                        <Link href="#" legacyBehavior>
+                                                                            <a
+                                                                                aria-label={issuer.paging_token}
+                                                                                className="asset-link"
+                                                                            >
+                                                                                {issuer.asset_code}
+                                                                            </a>
+                                                                        </Link>
                                                                         &nbsp;
                                                                         <span className="">
                                                                             (
@@ -543,20 +546,17 @@ const PublicNet = ({ props }) => {
                                                 (item, index) => {
                                                     return (
                                                         <li key={index}>
-                                                            <a
-                                                                title={item.key}
-                                                                aria-label={
-                                                                    item.key
-                                                                }
-                                                                className="account-address word-break"
-                                                                href={`/public/${item.key}`}
-                                                            >
-                                                                <span className="">
-                                                                    {collapseAccount(
-                                                                        item.key
-                                                                    )}
-                                                                </span>
-                                                            </a>{" "}
+                                                            <Link href={`/public/${item.key}`} legacyBehavior>
+                                                                <a
+                                                                    title={item.key}
+                                                                    aria-label={item.key}
+                                                                    className="account-address word-break"
+                                                                >
+                                                                    <span className="">
+                                                                        {collapseAccount(item.key)}
+                                                                    </span>
+                                                                </a>
+                                                            </Link>
                                                             (w:
                                                             <b>{item.weight}</b>
                                                             )
@@ -730,25 +730,23 @@ const PublicNet = ({ props }) => {
                                         <div>
                                             <a
                                                 href="#"
-                                                className="tabs-item condensed selected"
-                                                onClick={() => {
+                                                className={`tabs-item condensed ${tabIndex === 1 ? 'selected' : ''}`}
+                                                onClick={(e) => {
+                                                    e.preventDefault(); // Prevent the default anchor tag behavior
                                                     setTabIndex(1);
                                                 }}
                                             >
-                                                <span className="tabs-item-text">
-                                                    Organization
-                                                </span>
+                                                <span className="tabs-item-text">Organization</span>
                                             </a>
                                             <a
                                                 href="#"
-                                                onClick={() => {
+                                                className={`tabs-item condensed ${tabIndex === 2 ? 'selected' : ''}`}
+                                                onClick={(e) => {
+                                                    e.preventDefault(); // Prevent the default anchor tag behavior
                                                     setTabIndex(2);
                                                 }}
-                                                className="tabs-item condensed"
                                             >
-                                                <span className="tabs-item-text">
-                                                    TOML code
-                                                </span>
+                                                <span className="tabs-item-text">TOML code</span>
                                             </a>
                                         </div>
                                     </div>
