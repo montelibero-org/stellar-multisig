@@ -4,10 +4,10 @@ import React from "react";
 import "./header.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { useSelector } from 'react-redux';
 const Header = () => {
     const router = useRouter();
-
+    const net = useSelector((state) => state.net);
     return (
         <div className="top-block">
             <div className="container nav relative">
@@ -34,7 +34,7 @@ const Header = () => {
                             float: "right",
                         }}
                     >
-                        <div className="network-switch">Network : Public</div>
+                        <div className="network-switch">Network : {net}</div>
                     </div>
                 </div>
             </div>
