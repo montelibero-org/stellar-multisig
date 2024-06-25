@@ -39,11 +39,10 @@ const Footer = ({ setTheme }) => {
                         }}
                     >
                         <i
-                            className={`icon icon-${
-                                value == "night" ? "day" : "night"
-                            }`}
+                            className={`icon icon-${value == "night" ? "day" : "night"
+                                }`}
                         ></i>{" "}
-                        {value == "night" ? "Day" : "Night"} theme
+                        {value == "night" ? "Light" : "Dark"} theme
                     </a>
                 </div>
                 <div className="dimmed condensed" style={{ fontSize: "0.8em" }}>

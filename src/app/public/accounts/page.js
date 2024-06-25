@@ -8,7 +8,7 @@ import {
 } from "@/hook";
 import React, { useEffect, useState } from "react";
 
-const Account = () => {
+const Accounts = () => {
     const [filter, setFilter] = useState("");
     const [accountArray, setAccountArray] = useState([]);
 
@@ -72,15 +72,12 @@ const Account = () => {
                     ></a>
                 </div>
                 <div className="segment blank directory">
-                    <p className="dimmed text-small">
-                        The list of Trusted MTL Accounts.
-                    </p>
                     <div className="text-center double-space">
                         <form>
                             <input
                                 type="text"
                                 className="primary"
-                                placeholder="Search accounts by domain, company name, or public key"
+                                placeholder="Search accounts by name, domain, or public key"
                                 value={filter}
                                 onKeyDown={(e) => {
                                     if (e.keyCode == 13) {
@@ -134,26 +131,10 @@ const Account = () => {
                             </button>
                         </div>
                     </div>
-                    {/* <div className="double-space dimmed">
-                        <p>
-                            You can request new address listing{" "}
-                            <a href="/directory/add">here</a>. The data from{" "}
-                            <a
-                                href="/openapi.html#tag/Directory-API"
-                                target="_blank"
-                            >
-                                Open Directory API
-                            </a>{" "}
-                            is publicly available for developers and users, free
-                            of charge. Please note: listing in the directory is
-                            not an endorsement, the maintainers do not verify
-                            legal entities operating the listed accounts.
-                        </p>
-                    </div> */}
                 </div>
             </div>
         </MainLayout>
     );
 };
 
-export default Account;
+export default Accounts;

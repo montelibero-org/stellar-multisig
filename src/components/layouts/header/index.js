@@ -27,7 +27,6 @@ const Header = () => {
                 <div className="nav-menu-dropdown false">
                     <div className="main-menu top-menu-block">
                         <a href="/public/assets">Assets</a>
-                        <a href="/public/account">Accounts</a>
                     </div>
                     <div
                         className="top-menu-block right"

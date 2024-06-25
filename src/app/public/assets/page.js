@@ -72,15 +72,12 @@ const Assets = () => {
                     ></a>
                 </div>
                 <div className="segment blank directory">
-                    <p className="dimmed text-small">
-                        The list of Trusted MTL Assets.
-                    </p>
                     <div className="text-center double-space">
                         <form>
                             <input
                                 type="text"
                                 className="primary"
-                                placeholder="Search accounts by domain, company name, or public key"
+                                placeholder="Search assets by code, name, domain, or public key"
                                 value={filter}
                                 onKeyDown={(e) => {
                                     if (e.keyCode == 13) {
@@ -102,110 +99,6 @@ const Assets = () => {
                                 <div className="column column-25">
                                     <a className="tag-block" href="#exchange">
                                         #exchange
-                                        <span className="description">
-                                            Centralized exchange account
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#anchor">
-                                        #anchor
-                                        <span className="description">
-                                            Operational account of an anchor
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#issuer">
-                                        #issuer
-                                        <span className="description">
-                                            Well known asset issuer account
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#wallet">
-                                        #wallet
-                                        <span className="description">
-                                            Shared account that belongs to a
-                                            wallet
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#custodian">
-                                        #custodian
-                                        <span className="description">
-                                            Reserved, custodian account, or cold
-                                            wallet
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#malicious">
-                                        #malicious
-                                        <span className="description">
-                                            Account involved in
-                                            theft/scam/spam/phishing
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#unsafe">
-                                        #unsafe
-                                        <span className="description">
-                                            Obsolete or potentially dangerous
-                                            account
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#personal">
-                                        #personal
-                                        <span className="description">
-                                            Personal signing key or account
-                                            address
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#sdf">
-                                        #sdf
-                                        <span className="description">
-                                            Account under the custody of SDF
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a
-                                        className="tag-block"
-                                        href="#memo-required"
-                                    >
-                                        #memo-required
-                                        <span className="description">
-                                            Destination requires transaction
-                                            memo
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#airdrop">
-                                        #airdrop
-                                        <span className="description">
-                                            Airdrop distribution account
-                                        </span>
-                                    </a>
-                                </div>
-                                <div className="column column-25">
-                                    <a
-                                        className="tag-block"
-                                        href="#obsolete-inflation-pool"
-                                    >
-                                        #obsolete-inflation-pool
-                                        <span className="description">
-                                            Inflation pool distribution account
-                                            (obsolete)
-                                        </span>
                                     </a>
                                 </div>
                             </div>
@@ -259,22 +152,6 @@ const Assets = () => {
                             </button>
                         </div>
                     </div>
-                    {/* <div className="double-space dimmed">
-                        <p>
-                            You can request new address listing{" "}
-                            <a href="/directory/add">here</a>. The data from{" "}
-                            <a
-                                href="/openapi.html#tag/Directory-API"
-                                target="_blank"
-                            >
-                                Open Directory API
-                            </a>{" "}
-                            is publicly available for developers and users, free
-                            of charge. Please note: listing in the directory is
-                            not an endorsement, the maintainers do not verify
-                            legal entities operating the listed accounts.
-                        </p>
-                    </div> */}
                 </div>
             </div>
         </MainLayout>
