@@ -1,6 +1,7 @@
 "use client";
 
 import MainLayout from "@/components/layouts";
+import Image from "next/image";
 import {
     getAccountIssuerInformation,
     getDomainInformation,
@@ -105,10 +106,33 @@ const PublicNet = ({ props }) => {
                         "Loading..."
                     ) : (
                         <h2 className="word-break relative condensed">
-                            <span className="dimmed">Account&nbsp;&nbsp;</span>
-                            <span className="account-address plain">
-                                <span className="account-key">{account}</span>
-                            </span>
+                            <div className="" style={{display: 'flex'}}>
+                                <div className="w-1/2">
+                                    <span className="dimmed">Account&nbsp;&nbsp;</span>
+                                </div>
+                                <div className="w-1/2">
+                                    <span className="account-address plain row w-100">
+                                        <span className="account-key">{account}</span>
+                                        &nbsp;
+                                        <span><a
+                                            href={`https://stellar.expert/explorer/public/account/${account}`}
+                                            target="_blank"
+                                            // className="icon icon-stellar"
+                                            rel="noopener noreferrer"
+                                            title="View on Stellar.Expert"
+                                        >
+                                            <Image
+                                                src="/stellar-expert-logo.png"
+                                                alt="Stellar Expert Logo"
+                                                className="dark:invert"
+                                                width={30}
+                                                height={30}
+                                                priority
+                                            />
+                                        </a></span>
+                                    </span>
+                                </div>
+                            </div>
                             <div className="row space">
                                 <div className="column column-50">
                                     <div className="segment blank">
