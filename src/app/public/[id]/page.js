@@ -7,6 +7,8 @@ import {
     getDomainInformation,
     getMainInformation,
 } from "@/hook";
+    import StellarBase from 'stellar-base'
+    import StellarSdk from 'stellar-sdk';
 import React, { useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
 import "./public.css";
@@ -16,8 +18,9 @@ const PublicNet = ({ props }) => {
     const [account, setAccount] = useState("");
     const [net, setNet] = usePublic();
     const [information, setInformation] = useState({});
-
+    const [exists, setExists] = useState(true);
     const [tabIndex, setTabIndex] = useState(1);
+    const [errorvalid, setErrorvalid] = useState('')
 
     const [show, setShow] = useState(false);
 
@@ -28,9 +31,45 @@ const PublicNet = ({ props }) => {
         const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
 
         setAccount(accountId);
-
-        return () => { };
     }, []);
+
+    useEffect(() => {
+        const pathname = window.location.pathname;
+        const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
+        const checkAccount = async () => {
+          const serverUrl =
+            net === 'testnet'
+              ? 'https://horizon-testnet.stellar.org'
+              : 'https://horizon.stellar.org';
+          const server = new StellarSdk.Server(serverUrl);
+
+          try {
+            await server.loadAccount(accountId);
+            setExists(true);
+            console.log('valid')
+            // Navigate to the account page if the account exists
+          } catch (e) {
+            if (e instanceof StellarSdk.NotFoundError) {
+              setExists(false);
+              setErrorvalid('Error: Account does not exist on the network. Make sure that you copied account address correctly and there was at least one payment to this address.')
+            } else {
+              console.error(e);
+            }
+          }
+        };
+
+        if (StellarSdk.StrKey.isValidEd25519PublicKey(accountId)) {
+          console.log('true')
+            checkAccount();
+
+        } else {
+            setTimeout(() => {
+                setExists(false);
+            }, 2000);
+            setErrorvalid(`"Cannot read properties of null (reading 'invalidAsset')" at ${pathname}`)
+        }
+      }, [net, account]);
+
 
     console.log(account)
 
@@ -108,7 +147,8 @@ const PublicNet = ({ props }) => {
                 <div className="account-view">
                     {loading ? (
                         "Loading..."
-                    ) : (
+                    ) :
+                        exists ? (
                         <h2 className="word-break relative condensed">
                             <div className="" style={{ display: 'flex' }}>
                                 <div className="w-1/2">
@@ -1026,7 +1066,16 @@ const PublicNet = ({ props }) => {
                                 </div>
                             )}
                         </h2>
-                    )}
+                        ) :(
+                            <div className="cotainer">
+                                <div className={`"search ${exists === false ? 'error': ''} container narrow"`} style={{padding:'20px'}} >
+                                <h2 className="text-overflow">Search results for "{account}"</h2>
+                                {exists === true && <p>Account "{account}" exists on {net}!</p>}
+                                {exists === false && <span>{errorvalid}</span>}
+                                </div>
+                            </div>
+                        )
+                    }
                 </div>
             </div>
         </MainLayout>

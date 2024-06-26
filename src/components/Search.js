@@ -1,11 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { usePublic } from "@/context/net";
+import {
+    getDirectoryInformation,
+    getDomainInformation,
+    getMainInformation,
+} from "@/hook";
 
 const SearchBar = () => {
+    const [assets, getAsset] = useState([]);
     const [search, setSearch] = useState("");
     const [net, setNet] = usePublic();
     const router = useRouter();
@@ -26,6 +32,17 @@ const SearchBar = () => {
             searchHandler();
         }
     };
+
+    useEffect(() => {
+        const handle = async () => {
+            const domainInformation = await getDirectoryInformation();
+
+                // const splittedInformation = domainInformation.split("\n");
+                console.log(domainInformation);
+        }
+        handle();
+    })
+
 
     return (
         <div className="search-wrapper">
