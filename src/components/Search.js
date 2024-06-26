@@ -12,15 +12,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+import { usePublic } from "@/context/net";
 
 const SearchBar = ({setParNet}) => {
     const [search, setSearch] = useState("");
-    const [net, setNet] = React.useState("public");
+    const [net, setNet] = usePublic();
     const router = useRouter();
-
-    useEffect(() => {
-        setParNet(net);
-    }, [net])
 
     const changeHander = (e) => {
         const value = e.currentTarget.value;

@@ -2050,6 +2050,15 @@ body {
     content: "\e87b";
 }
 
+.icon-arrow-up:before {
+    content: "\2191"; /* Unicode for upward arrow */
+}
+
+
+.icon-arrow-down:before {
+    content: "\2193"; /* Unicode for downward arrow */
+}
+
 .icon-arrow-down-circle:before {
     content: "\e87c";
 }
