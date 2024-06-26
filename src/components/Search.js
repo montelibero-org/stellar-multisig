@@ -43,7 +43,7 @@ const SearchBar = ({setParNet}) => {
 
     return (
         <div className="search-wrapper">
-            <div className="select-network">
+            {/* <div className="select-network">
                 <span className="title">Network&nbsp;</span>
                 <div className="dropdown">
                     <DropdownMenu>
@@ -89,7 +89,7 @@ const SearchBar = ({setParNet}) => {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-            </div>
+            </div> */}
             <div
                 style={{
                     position: "absolute",

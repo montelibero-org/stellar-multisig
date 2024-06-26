@@ -36,14 +36,16 @@ const Header = () => {
         localStorage.setItem("net", network); // Store the network in localStorage
         setIsOpen(false);
 
-        // Get the current path from router
         const currentPath = window.location.pathname;
 
-        // Construct the new path with updated network segment
-        const newPath = `/${network}${currentPath.substring(currentPath.indexOf('/', 1))}`;
+        // Check if the current path contains 'public' or 'testnet'
+        if (currentPath.includes('/public/') || currentPath.includes('/testnet/')) {
+            // Construct the new path with updated network segment
+            const newPath = `/${network}${currentPath.substring(currentPath.indexOf('/', 1))}`;
 
-        // Navigate to the new path
-        router.push(newPath);
+            // Navigate to the new path
+            router.push(newPath);
+        }
     };
 
     return (
