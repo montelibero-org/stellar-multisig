@@ -725,297 +725,304 @@ const PublicNet = ({ props }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="toml-props">
-                                <div className="tabs space inline-right">
-                                    <div className="tabs-header">
-                                        <div>
-                                            <a
-                                                href="#"
-                                                className={`tabs-item condensed ${tabIndex === 1 ? 'selected' : ''}`}
-                                                onClick={(e) => {
-                                                    e.preventDefault(); // Prevent the default anchor tag behavior
-                                                    setTabIndex(1);
-                                                }}
-                                            >
-                                                <span className="tabs-item-text">Organization</span>
-                                            </a>
-                                            <a
-                                                href="#"
-                                                className={`tabs-item condensed ${tabIndex === 2 ? 'selected' : ''}`}
-                                                onClick={(e) => {
-                                                    e.preventDefault(); // Prevent the default anchor tag behavior
-                                                    setTabIndex(2);
-                                                }}
-                                            >
-                                                <span className="tabs-item-text">TOML code</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <hr className="flare"></hr>
-                                    <div className="tabs-body">
-                                        {tabIndex == 1 ? (
-                                            <div className="segment blank">
-                                                {information?.meta_data &&
-                                                    information?.meta_data[
-                                                    "ORG_NAME"
-                                                    ] == undefined ? (
-                                                    <div
-                                                        style={{
-                                                            fontSize: "13px",
-                                                            textAlign: "center",
-                                                        }}
-                                                    >
-                                                        Empty Data
-                                                    </div>
-                                                ) : (
-                                                    <dl className="micro-space">
-                                                        <dt>Org name:</dt>
-                                                        <dd>
-                                                            <span
-                                                                className="block-select"
-                                                                tabIndex="-1"
-                                                                style={{
-                                                                    whiteSpace:
-                                                                        "normal",
-                                                                    overflow:
-                                                                        "visible",
-                                                                    display:
-                                                                        "inline",
-                                                                }}
-                                                            >
-                                                                {information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_NAME"
-                                                                    ]}
-                                                            </span>
-                                                        </dd>
-                                                        <dt>Org url:</dt>
-                                                        <dd>
-                                                            <a
-                                                                href={
-                                                                    information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_URL"
-                                                                    ]
-                                                                }
-                                                                target="_blank"
-                                                                rel="noreferrer noopener"
-                                                            >
-                                                                {information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_URL"
-                                                                    ]}
-                                                            </a>
-                                                        </dd>
-                                                        <dt>Org logo:</dt>
-                                                        <dd>
-                                                            <a
-                                                                href={
-                                                                    information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_LOGO"
-                                                                    ]
-                                                                }
-                                                                target="_blank"
-                                                                rel="noreferrer noopener"
-                                                            >
-                                                                {information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_LOGO"
-                                                                    ]}
-                                                            </a>
-                                                        </dd>
-                                                        <dt>
-                                                            Org description:
-                                                        </dt>
-                                                        <dd>
-                                                            <span
-                                                                className="block-select"
-                                                                tabIndex="-1"
-                                                                style={{
-                                                                    whiteSpace:
-                                                                        "normal",
-                                                                    overflow:
-                                                                        "visible",
-                                                                    display:
-                                                                        "inline",
-                                                                }}
-                                                            >
-                                                                {information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_DESCRIPTION"
-                                                                    ]}
-                                                            </span>
-                                                        </dd>
-                                                        <dt>
-                                                            Org physical
-                                                            address:
-                                                        </dt>
-                                                        <dd>
-                                                            <span
-                                                                className="block-select"
-                                                                tabIndex="-1"
-                                                                style={{
-                                                                    whiteSpace:
-                                                                        "normal",
-                                                                    overflow:
-                                                                        "visible",
-                                                                    display:
-                                                                        "inline",
-                                                                }}
-                                                            >
-                                                                {information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_PHYSICAL_ADDRESS"
-                                                                    ]}
-                                                            </span>
-                                                        </dd>
-                                                        <dt>
-                                                            Org official email:
-                                                        </dt>
-                                                        <dd>
-                                                            <a
-                                                                href={`mailto:${information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_OFFICIAL_EMAIL"
-                                                                    ]
-                                                                    }`}
-                                                                target="_blank"
-                                                                rel="noreferrer noopener"
-                                                            >
-                                                                {information?.meta_data &&
-                                                                    information
-                                                                        ?.meta_data[
-                                                                    "ORG_OFFICIAL_EMAIL"
-                                                                    ]}
-                                                            </a>
-                                                        </dd>
-                                                    </dl>
-                                                )}
-                                            </div>
-                                        ) : (
+                            {information?.meta_data &&
+                                information?.meta_data[
+                                "ORG_NAME"
+                                ] == undefined ? (
+                                ""
+                            ) : (
+                                <div className="toml-props">
+                                    <div className="tabs space inline-right">
+                                        <div className="tabs-header">
                                             <div>
-                                                <pre
-                                                    className="hljs"
-                                                    style={{
-                                                        maxHeight: "80vh",
+                                                <a
+                                                    href="#"
+                                                    className={`tabs-item condensed ${tabIndex === 1 ? 'selected' : ''}`}
+                                                    onClick={(e) => {
+                                                        e.preventDefault(); // Prevent the default anchor tag behavior
+                                                        setTabIndex(1);
                                                     }}
                                                 >
-                                                    {information?.tomlInfo ==
-                                                        "" ? (
+                                                    <span className="tabs-item-text">Organization</span>
+                                                </a>
+                                                <a
+                                                    href="#"
+                                                    className={`tabs-item condensed ${tabIndex === 2 ? 'selected' : ''}`}
+                                                    onClick={(e) => {
+                                                        e.preventDefault(); // Prevent the default anchor tag behavior
+                                                        setTabIndex(2);
+                                                    }}
+                                                >
+                                                    <span className="tabs-item-text">TOML code</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <hr className="flare"></hr>
+                                        <div className="tabs-body">
+                                            {tabIndex == 1 ? (
+                                                <div className="segment blank">
+                                                    {information?.meta_data &&
+                                                        information?.meta_data[
+                                                        "ORG_NAME"
+                                                        ] == undefined ? (
                                                         <div
                                                             style={{
-                                                                width: "100%",
-                                                                textAlign:
-                                                                    "center",
+                                                                fontSize: "13px",
+                                                                textAlign: "center",
                                                             }}
                                                         >
                                                             Empty Data
                                                         </div>
                                                     ) : (
-                                                        information?.tomlInfo
-                                                            ?.split("\n")
-                                                            ?.map(
-                                                                (
-                                                                    toml,
-                                                                    keyinfo
-                                                                ) => {
-                                                                    if (
-                                                                        toml ==
-                                                                        null ||
-                                                                        toml.startsWith(
-                                                                            "#"
-                                                                        )
-                                                                    ) {
-                                                                        return;
+                                                        <dl className="micro-space">
+                                                            <dt>Org name:</dt>
+                                                            <dd>
+                                                                <span
+                                                                    className="block-select"
+                                                                    tabIndex="-1"
+                                                                    style={{
+                                                                        whiteSpace:
+                                                                            "normal",
+                                                                        overflow:
+                                                                            "visible",
+                                                                        display:
+                                                                            "inline",
+                                                                    }}
+                                                                >
+                                                                    {information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_NAME"
+                                                                        ]}
+                                                                </span>
+                                                            </dd>
+                                                            <dt>Org url:</dt>
+                                                            <dd>
+                                                                <a
+                                                                    href={
+                                                                        information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_URL"
+                                                                        ]
                                                                     }
-                                                                    if (
-                                                                        toml.indexOf(
-                                                                            "="
-                                                                        ) > 0
-                                                                    ) {
-                                                                        const patterns =
-                                                                            toml.split(
-                                                                                "="
-                                                                            );
-                                                                        const key_pattern =
-                                                                            patterns[0];
-                                                                        const value_pattern =
-                                                                            patterns[1];
-                                                                        return (
-                                                                            <React.Fragment
-                                                                                key={
-                                                                                    keyinfo
-                                                                                }
-                                                                            >
-                                                                                <span className="hljs-attr">
-                                                                                    {
-                                                                                        key_pattern
-                                                                                    }
-                                                                                </span>{" "}
-                                                                                ={" "}
-                                                                                <span className="hljs-string">
-                                                                                    {
-                                                                                        value_pattern
-                                                                                    }
-                                                                                </span>
-                                                                                <br />
-                                                                            </React.Fragment>
-                                                                        );
-                                                                    } else {
+                                                                    target="_blank"
+                                                                    rel="noreferrer noopener"
+                                                                >
+                                                                    {information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_URL"
+                                                                        ]}
+                                                                </a>
+                                                            </dd>
+                                                            <dt>Org logo:</dt>
+                                                            <dd>
+                                                                <a
+                                                                    href={
+                                                                        information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_LOGO"
+                                                                        ]
+                                                                    }
+                                                                    target="_blank"
+                                                                    rel="noreferrer noopener"
+                                                                >
+                                                                    {information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_LOGO"
+                                                                        ]}
+                                                                </a>
+                                                            </dd>
+                                                            <dt>
+                                                                Org description:
+                                                            </dt>
+                                                            <dd>
+                                                                <span
+                                                                    className="block-select"
+                                                                    tabIndex="-1"
+                                                                    style={{
+                                                                        whiteSpace:
+                                                                            "normal",
+                                                                        overflow:
+                                                                            "visible",
+                                                                        display:
+                                                                            "inline",
+                                                                    }}
+                                                                >
+                                                                    {information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_DESCRIPTION"
+                                                                        ]}
+                                                                </span>
+                                                            </dd>
+                                                            <dt>
+                                                                Org physical
+                                                                address:
+                                                            </dt>
+                                                            <dd>
+                                                                <span
+                                                                    className="block-select"
+                                                                    tabIndex="-1"
+                                                                    style={{
+                                                                        whiteSpace:
+                                                                            "normal",
+                                                                        overflow:
+                                                                            "visible",
+                                                                        display:
+                                                                            "inline",
+                                                                    }}
+                                                                >
+                                                                    {information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_PHYSICAL_ADDRESS"
+                                                                        ]}
+                                                                </span>
+                                                            </dd>
+                                                            <dt>
+                                                                Org official email:
+                                                            </dt>
+                                                            <dd>
+                                                                <a
+                                                                    href={`mailto:${information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                        ]
+                                                                        }`}
+                                                                    target="_blank"
+                                                                    rel="noreferrer noopener"
+                                                                >
+                                                                    {information?.meta_data &&
+                                                                        information
+                                                                            ?.meta_data[
+                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                        ]}
+                                                                </a>
+                                                            </dd>
+                                                        </dl>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <pre
+                                                        className="hljs"
+                                                        style={{
+                                                            maxHeight: "80vh",
+                                                        }}
+                                                    >
+                                                        {information?.tomlInfo ==
+                                                            "" ? (
+                                                            <div
+                                                                style={{
+                                                                    width: "100%",
+                                                                    textAlign:
+                                                                        "center",
+                                                                }}
+                                                            >
+                                                                Empty Data
+                                                            </div>
+                                                        ) : (
+                                                            information?.tomlInfo
+                                                                ?.split("\n")
+                                                                ?.map(
+                                                                    (
+                                                                        toml,
+                                                                        keyinfo
+                                                                    ) => {
                                                                         if (
+                                                                            toml ==
+                                                                            null ||
                                                                             toml.startsWith(
-                                                                                "["
+                                                                                "#"
                                                                             )
-                                                                        )
+                                                                        ) {
+                                                                            return;
+                                                                        }
+                                                                        if (
+                                                                            toml.indexOf(
+                                                                                "="
+                                                                            ) > 0
+                                                                        ) {
+                                                                            const patterns =
+                                                                                toml.split(
+                                                                                    "="
+                                                                                );
+                                                                            const key_pattern =
+                                                                                patterns[0];
+                                                                            const value_pattern =
+                                                                                patterns[1];
                                                                             return (
                                                                                 <React.Fragment
                                                                                     key={
                                                                                         keyinfo
                                                                                     }
                                                                                 >
-                                                                                    <span className="hljs-section">
+                                                                                    <span className="hljs-attr">
                                                                                         {
-                                                                                            toml
+                                                                                            key_pattern
                                                                                         }
-                                                                                    </span>
-                                                                                    <br />
-                                                                                </React.Fragment>
-                                                                            );
-                                                                        else {
-                                                                            return (
-                                                                                <React.Fragment
-                                                                                    key={
-                                                                                        keyinfo
-                                                                                    }
-                                                                                >
+                                                                                    </span>{" "}
+                                                                                    ={" "}
                                                                                     <span className="hljs-string">
                                                                                         {
-                                                                                            toml
+                                                                                            value_pattern
                                                                                         }
                                                                                     </span>
                                                                                     <br />
                                                                                 </React.Fragment>
                                                                             );
+                                                                        } else {
+                                                                            if (
+                                                                                toml.startsWith(
+                                                                                    "["
+                                                                                )
+                                                                            )
+                                                                                return (
+                                                                                    <React.Fragment
+                                                                                        key={
+                                                                                            keyinfo
+                                                                                        }
+                                                                                    >
+                                                                                        <span className="hljs-section">
+                                                                                            {
+                                                                                                toml
+                                                                                            }
+                                                                                        </span>
+                                                                                        <br />
+                                                                                    </React.Fragment>
+                                                                                );
+                                                                            else {
+                                                                                return (
+                                                                                    <React.Fragment
+                                                                                        key={
+                                                                                            keyinfo
+                                                                                        }
+                                                                                    >
+                                                                                        <span className="hljs-string">
+                                                                                            {
+                                                                                                toml
+                                                                                            }
+                                                                                        </span>
+                                                                                        <br />
+                                                                                    </React.Fragment>
+                                                                                );
+                                                                            }
                                                                         }
                                                                     }
-                                                                }
-                                                            )
-                                                    )}
-                                                </pre>
-                                            </div>
-                                        )}
+                                                                )
+                                                        )}
+                                                    </pre>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </h2>
                     )}
                 </div>
