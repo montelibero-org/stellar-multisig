@@ -8,11 +8,12 @@ import {
 } from "@/hook";
 import React, { useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
+import { usePublic } from "@/context/net";
 
 const Assets = () => {
     const [filter, setFilter] = useState("");
     const [currenciesArray, setCurrenciesArray] = useState([]);
-
+    const [net, setNet] = usePublic();
     useEffect(() => {
         const handler = async () => {
             if (filter === "") {
@@ -75,6 +76,11 @@ const Assets = () => {
         handler();
     }, [filter]);
 
+    function handleSearch(e) {
+        e.preventDefault();
+
+    }
+
     return (
         <MainLayout>
             <div className="container narrow">
@@ -92,7 +98,7 @@ const Assets = () => {
                 </div>
                 <div className="segment blank directory">
                     <div className="text-center double-space">
-                        <form>
+                        <form onSubmit={handleSearch}>
                             <input
                                 type="text"
                                 className="primary"
@@ -150,7 +156,7 @@ const Assets = () => {
                                         title={currency.issuer}
                                         aria-label={currency.issuer}
                                         className="account-address"
-                                        href={`/public/${currency.issuer}`}
+                                        href={`/${net}/${currency.issuer}`}
                                         style={{ marginRight: "1em" }}
                                     >
                                         <span className="account-key">
