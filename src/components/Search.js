@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
-
+import StellarBase from 'stellar-base'
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -29,7 +29,11 @@ const SearchBar = ({setParNet}) => {
         if (search == "") {
             return;
         } else {
-            router.push(`/${net}/${search}`);
+            if (StellarBase.StrKey.isValidEd25519SecretSeed(search) || StellarBase.StrKey.isValidEd25519PublicKey(search)) {
+                router.push(`/${net}/${search}`);
+            } else {
+                alert("Invalid Stellar key. Please enter a valid public or secret key.");
+            }
         }
     };
 
