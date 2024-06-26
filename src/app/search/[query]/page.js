@@ -9,6 +9,8 @@ const SearchResults = () => {
   const router = useRouter();
   const [ net, setNet ] = usePublic();
   const [ account, setAccount] = useState();
+  const [errorvalid, setErrorvalid] = useState('')
+
   useEffect(() => {
     const pathname = window.location.pathname;
     const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
@@ -20,6 +22,8 @@ const SearchResults = () => {
   const [exists, setExists] = useState(null);
     console.log(net)
   useEffect(() => {
+    const pathname = window.location.pathname;
+    const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
     const checkAccount = async () => {
       const serverUrl =
         net === 'testnet'
@@ -28,20 +32,22 @@ const SearchResults = () => {
       const server = new StellarSdk.Server(serverUrl);
 
       try {
-        await server.loadAccount(account);
+        await server.loadAccount(accountId);
         setExists(true);
         // Navigate to the account page if the account exists
-        router.push(`/${net}/${account}`);
+        router.push(`/${net}/${accountId}`);
       } catch (e) {
         if (e instanceof StellarSdk.NotFoundError) {
           setExists(false);
+          setErrorvalid('Error: Account does not exist on the network. Make sure that you copied account address correctly and there was at least one payment to this address.')
+
         } else {
           console.error(e);
         }
       }
     };
 
-    if (StellarSdk.StrKey.isValidEd25519PublicKey(account)) {
+    if (StellarSdk.StrKey.isValidEd25519PublicKey(accountId)) {
       console.log('true')
         checkAccount();
 
@@ -49,6 +55,8 @@ const SearchResults = () => {
         setTimeout(() => {
             setExists(false);
         }, 2000);
+        setErrorvalid(`"Cannot read properties of null (reading 'invalidAsset')" at ${pathname}`)
+
     }
   }, [net, account]);
 
@@ -60,12 +68,10 @@ const SearchResults = () => {
   return (
     <MainLayout>
         <div className="cotainer">
-            <div className="search container narrow">
+        <div className="search error container narrow" style={{padding:'20px'}} >
             <h2 className="text-overflow">Search results for "{account}"</h2>
             {exists === null && <p>Loading...</p>}
-            {exists === true && <p>Loading...</p>}
-            {exists === true && <p>Account "{account}" exists on {net}!</p>}
-            {exists === false && <p className="mt-5 text-center">Not found "{account}" on {net}</p>}
+            {exists === false &&<span>{errorvalid}</span>}
             </div>
 
         </div>
