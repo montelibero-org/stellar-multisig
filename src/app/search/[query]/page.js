@@ -68,7 +68,8 @@ const SearchResults = () => {
   return (
     <MainLayout>
         <div className="cotainer">
-        <div className="search error container narrow" style={{padding:'20px'}} >
+        <div className={`"search ${exists === false ? 'error': ''} container narrow"`} style={{padding:'20px'}} >
+
             <h2 className="text-overflow">Search results for "{account}"</h2>
             {exists === null && <p>Loading...</p>}
             {exists === false &&<span>{errorvalid}</span>}

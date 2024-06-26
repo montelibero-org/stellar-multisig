@@ -24,6 +24,7 @@ const PublicNet = ({ props }) => {
     const [show, setShow] = useState(false);
 
     const [loading, setLoading] = useState(false);
+    console.log(net);
 
     useEffect(() => {
         const pathname = window.location.pathname;
@@ -37,7 +38,7 @@ const PublicNet = ({ props }) => {
         const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
         const checkAccount = async () => {
             const serverUrl =
-                net === 'testnet'
+                net == 'testnet'
                     ? 'https://horizon-testnet.stellar.org'
                     : 'https://horizon.stellar.org';
             const server = new StellarSdk.Server(serverUrl);
@@ -45,7 +46,7 @@ const PublicNet = ({ props }) => {
             try {
                 await server.loadAccount(accountId);
                 setExists(true);
-                console.log('valid')
+                console.log('envalid')
                 // Navigate to the account page if the account exists
             } catch (e) {
                 if (e instanceof StellarSdk.NotFoundError) {

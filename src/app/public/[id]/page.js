@@ -25,7 +25,7 @@ const PublicNet = ({ props }) => {
     const [show, setShow] = useState(false);
 
     const [loading, setLoading] = useState(false);
-
+    console.log(net);
     useEffect(() => {
         const pathname = window.location.pathname;
         const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);

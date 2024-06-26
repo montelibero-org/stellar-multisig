@@ -17,10 +17,25 @@ const PublicProvider = ({ children }) => {
 
     useEffect(() => {
         // Check if running on the client side before accessing localStorage
+
         const storedNet = localStorage.getItem("net");
         if (storedNet) {
-            setNetState(storedNet); // Initialize net state from localStorage if it exists
+            const segments = window.location.pathname.split('/');
+            if (segments.includes('public')) {
+                setNetState('public');
+            } else if (segments.includes('testnet')) {
+                setNetState('testnet');
+            } else {
+                setNetState(storedNet); // Initialize net state from localStorage if it exists
+            }
+
         } else {
+            const segments = window.location.pathname.split('/');
+            if (segments.includes('public')) {
+                setNetState('public');
+            } else if (segments.includes('testnet')) {
+                setNetState('testnet');
+            }
             setNetState('public')
         }
     }, []);
