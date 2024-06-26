@@ -8,11 +8,12 @@ import {
 } from "@/hook";
 import React, { useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
+import { usePublic } from "@/context/net";
 
 const Accounts = () => {
     const [filter, setFilter] = useState("");
     const [accountArray, setAccountArray] = useState([]);
-
+    const [net, setNet] = usePublic();
     useEffect(() => {
         const handler = async () => {
             if (filter === "") return;
@@ -111,7 +112,7 @@ const Accounts = () => {
                                         title={account.issuer}
                                         aria-label={account.issuer}
                                         className="account-address"
-                                        href={`/public/${account.issuer}`}
+                                        href={`/${net}/${account.issuer}`}
                                         style={{ marginRight: "1em" }}
                                     >
                                         <span className="account-key">

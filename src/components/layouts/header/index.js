@@ -1,15 +1,50 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./header.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSelector } from 'react-redux';
+import { usePublic } from "@/context/net";
 
 const Header = () => {
     const router = useRouter();
-    const net = useSelector((state) => state.net);
+    const [net, setNet] = usePublic();
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        // Function to handle click outside dropdown
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false); // Close dropdown if clicked outside
+            }
+        }
+
+        // Bind the event listener
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            // Unbind the event listener on cleanup
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const toggleDropdown = () => setIsOpen(!isOpen);
+
+    const handleSelect = (network) => {
+        setNet(network);
+        localStorage.setItem("net", network); // Store the network in localStorage
+        setIsOpen(false);
+
+        // Get the current path from router
+        const currentPath = window.location.pathname;
+
+        // Construct the new path with updated network segment
+        const newPath = `/${network}${currentPath.substring(currentPath.indexOf('/', 1))}`;
+
+        // Navigate to the new path
+        router.push(newPath);
+    };
 
     return (
         <div className="top-block">
@@ -33,7 +68,7 @@ const Header = () => {
                 </Link>
                 <div className="nav-menu-dropdown false">
                     <div className="main-menu top-menu-block">
-                        <Link href="/public/assets">Assets</Link>
+                        <Link href={"/"+net+"/assets"}>Assets</Link>
                     </div>
                     <div
                         className="top-menu-block right"
@@ -41,7 +76,18 @@ const Header = () => {
                             float: "right",
                         }}
                     >
-                        <div className="network-switch">Network : {net}</div>
+                        <div className="dropdown" ref={dropdownRef}>
+                            <div className="dropdown-header" onClick={toggleDropdown}>
+                                Network <span className="dropdown-selected">{net}</span>
+                                <span className={isOpen ? "dd-toggle" : "dd-toggle visible"} ></span>
+                            </div>
+                            {isOpen && (
+                                <div className="dropdown-menu">
+                                    <div className={`dropdown-item ${net === 'public' ? 'selected' : ''}`} onClick={() => handleSelect('public')}>public</div>
+                                    <div className={`dropdown-item ${net === 'testnet' ? 'selected' : ''}`} onClick={() => handleSelect('testnet')}>testnet</div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

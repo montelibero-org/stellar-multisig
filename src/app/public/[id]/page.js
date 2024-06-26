@@ -10,10 +10,11 @@ import {
 import React, { useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
 import "./public.css";
+import { usePublic } from "@/context/net";
 
 const PublicNet = ({ props }) => {
     const [account, setAccount] = useState("");
-
+    const [net, setNet] = usePublic();
     const [information, setInformation] = useState({});
 
     const [tabIndex, setTabIndex] = useState(1);
@@ -118,7 +119,7 @@ const PublicNet = ({ props }) => {
                                         <span>
 
                                             <a
-                                                href={`https://stellar.expert/explorer/public/account/${account}`}
+                                                href={`https://stellar.expert/explorer/${net}/account/${account}`}
                                                 target="_blank"
                                                 // className="icon icon-stellar"
                                                 rel="noopener noreferrer"
@@ -546,7 +547,7 @@ const PublicNet = ({ props }) => {
                                                 (item, index) => {
                                                     return (
                                                         <li key={index}>
-                                                            <Link href={`/public/${item.key}`} legacyBehavior>
+                                                            <Link href={`/${net}/${item.key}`} legacyBehavior>
                                                                 <a
                                                                     title={item.key}
                                                                     aria-label={item.key}

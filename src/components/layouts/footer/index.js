@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
+import { usePublic } from "@/context/net";
 
 const Footer = ({ setTheme }) => {
     const [value, setValue] = useState("");
-
+    const [net, setNet] = usePublic();
     useEffect(() => {
         const _theme = localStorage.getItem("theme");
         if (_theme) {
@@ -59,7 +60,7 @@ const Footer = ({ setTheme }) => {
                 <div className="dimmed condensed" style={{ fontSize: "0.8em" }}>
                     Donations:{" "}
                     <span className="" tabIndex="-1">
-                        <Link href="/public/GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN">
+                        <Link href={`/${net}/GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN`}>
                             GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN
                         </Link>
                     </span>
