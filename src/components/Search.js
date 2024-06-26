@@ -1,99 +1,34 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Search } from "lucide-react";
-import StellarBase from 'stellar-base'
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { usePublic } from "@/context/net";
 
-const SearchBar = ({setParNet}) => {
+const SearchBar = () => {
     const [search, setSearch] = useState("");
     const [net, setNet] = usePublic();
     const router = useRouter();
 
-    const changeHander = (e) => {
-        const value = e.currentTarget.value;
-
-        setSearch(value);
+    const changeHandler = (e) => {
+        setSearch(e.currentTarget.value);
     };
 
     const searchHandler = () => {
-        if (search == "") {
+        if (search === "") {
             return;
-        } else {
-            if (StellarBase.StrKey.isValidEd25519SecretSeed(search) || StellarBase.StrKey.isValidEd25519PublicKey(search)) {
-                router.push(`/${net}/${search}`);
-            } else {
-                alert("Invalid Stellar key. Please enter a valid public or secret key.");
-            }
         }
+        router.push(`/search/${search}`);
     };
 
     const keyDownHandler = (e) => {
-        const keyCode = e.keyCode;
-
-        if (keyCode == "13") {
+        if (e.keyCode === 13) {
             searchHandler();
         }
     };
 
     return (
         <div className="search-wrapper">
-            {/* <div className="select-network">
-                <span className="title">Network&nbsp;</span>
-                <div className="dropdown">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                className="search-btn"
-                                style={{
-                                    fontSize: "18px",
-                                    background: "transparent",
-                                }}
-                            >
-                                {net}
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            style={{
-                                background: "#0691b7",
-                            }}
-                        >
-                            <DropdownMenuRadioGroup
-                                value={net}
-                                onValueChange={setNet}
-                            >
-                                <DropdownMenuRadioItem
-                                    value="public"
-                                    style={{
-                                        fontSize: "14px",
-                                        color: "white",
-                                    }}
-                                >
-                                    Public
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem
-                                    value="testnet"
-                                    style={{
-                                        fontSize: "14px",
-                                        color: "white",
-                                    }}
-                                >
-                                    Testnet
-                                </DropdownMenuRadioItem>
-                            </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div> */}
             <div
                 style={{
                     position: "absolute",
@@ -102,7 +37,6 @@ const SearchBar = ({setParNet}) => {
                     cursor: "pointer",
                     opacity: ".3",
                     marginTop: "-8px",
-                    cursor: "pointer",
                 }}
                 onClick={searchHandler}
             >
@@ -112,7 +46,7 @@ const SearchBar = ({setParNet}) => {
                 className="search"
                 value={search}
                 onKeyDown={keyDownHandler}
-                onChange={changeHander}
+                onChange={changeHandler}
                 placeholder="Paste an account address here"
             />
         </div>

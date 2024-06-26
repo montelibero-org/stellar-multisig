@@ -20,6 +20,8 @@ const PublicProvider = ({ children }) => {
         const storedNet = localStorage.getItem("net");
         if (storedNet) {
             setNetState(storedNet); // Initialize net state from localStorage if it exists
+        } else {
+            setNetState('public')
         }
     }, []);
 

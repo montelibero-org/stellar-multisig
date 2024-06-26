@@ -32,6 +32,8 @@ const PublicNet = ({ props }) => {
         return () => { };
     }, []);
 
+    console.log(account)
+
     useEffect(() => {
         const handler = async () => {
             setLoading(true);
