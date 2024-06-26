@@ -7,6 +7,7 @@ import {
     getMainInformation,
 } from "@/hook";
 import React, { useEffect, useState } from "react";
+import Link from "next/link"; // Import Link for client-side navigation
 
 const Assets = () => {
     const [filter, setFilter] = useState("");
@@ -14,7 +15,7 @@ const Assets = () => {
 
     useEffect(() => {
         const handler = async () => {
-            if (filter == "") {
+            if (filter === "") {
                 setCurrenciesArray([]);
                 return;
             }
@@ -30,9 +31,7 @@ const Assets = () => {
                     return;
                 }
 
-                const domainInformation = await getDomainInformation(
-                    home_domain
-                );
+                const domainInformation = await getDomainInformation(home_domain);
 
                 const splittedInformation = domainInformation.split("\n");
                 let currencies = false;
@@ -40,7 +39,7 @@ const Assets = () => {
                 let currencyInfoArray = [];
 
                 for (let i in splittedInformation) {
-                    if (splittedInformation[i] == "[[CURRENCIES]]") {
+                    if (splittedInformation[i] === "[[CURRENCIES]]") {
                         currencies = true;
                         continue;
                     }
@@ -49,7 +48,7 @@ const Assets = () => {
                         continue;
                     }
 
-                    if (splittedInformation[i] == "" && currencies) {
+                    if (splittedInformation[i] === "" && currencies) {
                         currencies = false;
                         currencyInfoArray.push(currencyInfo);
                         currencyInfo = {};
@@ -100,7 +99,7 @@ const Assets = () => {
                                 placeholder="Search assets by code, name, domain, or public key"
                                 value={filter}
                                 onKeyDown={(e) => {
-                                    if (e.keyCode == 13) {
+                                    if (e.keyCode === 13) {
                                         e.preventDefault();
                                     }
                                 }}
@@ -147,7 +146,7 @@ const Assets = () => {
                                             #{currency.anchor_asset_type}
                                         </a>
                                     </div>
-                                    <a
+                                    <Link
                                         title={currency.issuer}
                                         aria-label={currency.issuer}
                                         className="account-address"
@@ -157,21 +156,11 @@ const Assets = () => {
                                         <span className="account-key">
                                             {currency.issuer}
                                         </span>
-                                    </a>
+                                    </Link>
                                 </li>
                             );
                         })}
                     </ul>
-                    <div className="grid-actions text-center space relative">
-                        <div className="button-group">
-                            <button className="button disabled" disabled="">
-                                Prev Page
-                            </button>
-                            <button className="button disabled" disabled="">
-                                Next Page
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </MainLayout>

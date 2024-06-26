@@ -8,6 +8,7 @@ import {
     getMainInformation,
 } from "@/hook";
 import React, { useEffect, useState } from "react";
+import Link from "next/link"; // Import Link for client-side navigation
 import "./public.css";
 
 const PublicNet = ({ props }) => {
@@ -27,7 +28,7 @@ const PublicNet = ({ props }) => {
 
         setAccount(accountId);
 
-        return () => {};
+        return () => { };
     }, []);
 
     useEffect(() => {
@@ -106,7 +107,7 @@ const PublicNet = ({ props }) => {
                         "Loading..."
                     ) : (
                         <h2 className="word-break relative condensed">
-                            <div className="" style={{display: 'flex'}}>
+                            <div className="" style={{ display: 'flex' }}>
                                 <div className="w-1/2">
                                     <span className="dimmed">Account&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 </div>
@@ -114,22 +115,24 @@ const PublicNet = ({ props }) => {
                                     <span className="account-address plain row w-100">
                                         <span className="account-key">{account}</span>
                                         &nbsp;
-                                        <span><a
-                                            href={`https://stellar.expert/explorer/public/account/${account}`}
-                                            target="_blank"
-                                            // className="icon icon-stellar"
-                                            rel="noopener noreferrer"
-                                            title="View on Stellar.Expert"
-                                        >
-                                            <Image
-                                                src="/stellar-expert-logo.png"
-                                                alt="Stellar Expert Logo"
-                                                className="dark:invert"
-                                                width={30}
-                                                height={30}
-                                                priority
-                                            />
-                                        </a></span>
+                                        <span>
+
+                                            <a
+                                                href={`https://stellar.expert/explorer/public/account/${account}`}
+                                                target="_blank"
+                                                // className="icon icon-stellar"
+                                                rel="noopener noreferrer"
+                                                title="View on Stellar.Expert"
+                                            >
+                                                <Image
+                                                    src="/stellar-expert-logo.png"
+                                                    alt="Stellar Expert Logo"
+                                                    className="dark:invert"
+                                                    width={30}
+                                                    height={30}
+                                                    priority
+                                                />
+                                            </a></span>
                                     </span>
                                 </div>
                             </div>
@@ -139,64 +142,66 @@ const PublicNet = ({ props }) => {
                                         <h3>Summary</h3>
                                         <hr className="flare"></hr>
                                         <dl>
-                                            <dt>Home domain:</dt>
-                                            <dd>
-                                                <a
-                                                    href={`${
-                                                        information?.home_domain ==
-                                                        undefined
+                                            {information?.home_domain ==
+                                                undefined ? "" : <>
+                                                <dt>Home domain:</dt>
+                                                <dd>
+                                                    <a
+                                                        href={`${information?.home_domain ==
+                                                            undefined
                                                             ? "#"
                                                             : information?.home_domain
-                                                    }`}
-                                                    rel="noreferrer noopener"
-                                                    target="_blank"
-                                                >
-                                                    {information?.home_domain ==
-                                                    undefined
-                                                        ? "none"
-                                                        : information?.home_domain}
-                                                </a>
-                                                <i className="trigger icon info-tooltip small icon-help">
-                                                    <div
-                                                        className="tooltip-wrapper"
-                                                        style={{
-                                                            maxWidth: "20em",
-                                                            left: "-193px",
-                                                            top: "-142px",
-                                                        }}
+                                                            }`}
+                                                        rel="noreferrer noopener"
+                                                        target="_blank"
                                                     >
-                                                        <div className="tooltip top">
-                                                            <div className="tooltip-content">
-                                                                A domain name
-                                                                that can
-                                                                optionally be
-                                                                added to the
-                                                                account. Clients
-                                                                can look up a
-                                                                stellar.toml
-                                                                from this
-                                                                domain. The
-                                                                federation
-                                                                procol can use
-                                                                the home domain
-                                                                to look up more
-                                                                details about a
-                                                                transaction’s
-                                                                memo or address
-                                                                details about an
-                                                                account.
-                                                                <a
-                                                                    href="https://developers.stellar.org/docs/learn/glossary#home-domain"
-                                                                    className="info-tooltip-link"
-                                                                    target="_blank"
-                                                                >
-                                                                    Read more…
-                                                                </a>
+                                                        {information?.home_domain ==
+                                                            undefined
+                                                            ? "none"
+                                                            : information?.home_domain}
+                                                    </a>
+                                                    <i className="trigger icon info-tooltip small icon-help">
+                                                        <div
+                                                            className="tooltip-wrapper"
+                                                            style={{
+                                                                maxWidth: "20em",
+                                                                left: "-193px",
+                                                                top: "-142px",
+                                                            }}
+                                                        >
+                                                            <div className="tooltip top">
+                                                                <div className="tooltip-content">
+                                                                    A domain name
+                                                                    that can
+                                                                    optionally be
+                                                                    added to the
+                                                                    account. Clients
+                                                                    can look up a
+                                                                    stellar.toml
+                                                                    from this
+                                                                    domain. The
+                                                                    federation
+                                                                    procol can use
+                                                                    the home domain
+                                                                    to look up more
+                                                                    details about a
+                                                                    transaction’s
+                                                                    memo or address
+                                                                    details about an
+                                                                    account.
+                                                                    <a
+                                                                        href="https://developers.stellar.org/docs/learn/glossary#home-domain"
+                                                                        className="info-tooltip-link"
+                                                                        target="_blank"
+                                                                    >
+                                                                        Read more…
+                                                                    </a>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </i>
-                                            </dd>
+                                                    </i>
+                                                </dd>
+                                            </>}
                                             <dt>Account lock status:</dt>
                                             <dd>
                                                 unlocked
@@ -298,7 +303,7 @@ const PublicNet = ({ props }) => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_clawback_enabled ==
-                                                true
+                                                    true
                                                     ? "clawback_enabled, "
                                                     : ""}
                                                 {information?.flags
@@ -307,13 +312,13 @@ const PublicNet = ({ props }) => {
                                                     : ""}
                                                 {information?.flags
                                                     ?.auth_required == false &&
-                                                information?.flags
-                                                    ?.auth_revocable == false &&
-                                                information?.flags
-                                                    ?.auth_clawback_enabled ==
+                                                    information?.flags
+                                                        ?.auth_revocable == false &&
+                                                    information?.flags
+                                                        ?.auth_clawback_enabled ==
                                                     false &&
-                                                information?.flags
-                                                    ?.auth_immutable == false
+                                                    information?.flags
+                                                        ?.auth_immutable == false
                                                     ? "none"
                                                     : ""}
 
@@ -474,17 +479,14 @@ const PublicNet = ({ props }) => {
                                                                             key
                                                                         }
                                                                     >
-                                                                        <a
-                                                                            aria-label={
-                                                                                issuer.paging_token
-                                                                            }
-                                                                            className="asset-link"
-                                                                            href="#"
-                                                                        >
-                                                                            {
-                                                                                issuer.asset_code
-                                                                            }
-                                                                        </a>
+                                                                        <Link href="#" legacyBehavior>
+                                                                            <a
+                                                                                aria-label={issuer.paging_token}
+                                                                                className="asset-link"
+                                                                            >
+                                                                                {issuer.asset_code}
+                                                                            </a>
+                                                                        </Link>
                                                                         &nbsp;
                                                                         <span className="">
                                                                             (
@@ -544,20 +546,17 @@ const PublicNet = ({ props }) => {
                                                 (item, index) => {
                                                     return (
                                                         <li key={index}>
-                                                            <a
-                                                                title={item.key}
-                                                                aria-label={
-                                                                    item.key
-                                                                }
-                                                                className="account-address word-break"
-                                                                href={`/public/${item.key}`}
-                                                            >
-                                                                <span className="">
-                                                                    {collapseAccount(
-                                                                        item.key
-                                                                    )}
-                                                                </span>
-                                                            </a>{" "}
+                                                            <Link href={`/public/${item.key}`} legacyBehavior>
+                                                                <a
+                                                                    title={item.key}
+                                                                    aria-label={item.key}
+                                                                    className="account-address word-break"
+                                                                >
+                                                                    <span className="">
+                                                                        {collapseAccount(item.key)}
+                                                                    </span>
+                                                                </a>
+                                                            </Link>
                                                             (w:
                                                             <b>{item.weight}</b>
                                                             )
@@ -567,8 +566,8 @@ const PublicNet = ({ props }) => {
                                             )}
                                         </ul>
                                         {information?.entries &&
-                                        Object.keys(information?.entries)
-                                            .length ? (
+                                            Object.keys(information?.entries)
+                                                .length ? (
                                             <>
                                                 <h4
                                                     style={{
@@ -628,7 +627,7 @@ const PublicNet = ({ props }) => {
                                                                         ": " +
                                                                         information
                                                                             ?.entries[
-                                                                            entry
+                                                                        entry
                                                                         ]}
                                                                 </li>
                                                             );
@@ -679,10 +678,10 @@ const PublicNet = ({ props }) => {
                                                     const number = totalInfo[0];
                                                     const decimal =
                                                         Number(totalInfo[1]) ==
-                                                        0
+                                                            0
                                                             ? ""
                                                             : "." +
-                                                              totalInfo[1];
+                                                            totalInfo[1];
 
                                                     return (
                                                         <a
@@ -712,7 +711,7 @@ const PublicNet = ({ props }) => {
                                                                 >
                                                                     {/* <span className="asset-icon icon icon-stellar"></span> */}
                                                                     {item.asset_code ==
-                                                                    undefined
+                                                                        undefined
                                                                         ? "XLM"
                                                                         : item.asset_code}
                                                                 </span>
@@ -731,25 +730,23 @@ const PublicNet = ({ props }) => {
                                         <div>
                                             <a
                                                 href="#"
-                                                className="tabs-item condensed selected"
-                                                onClick={() => {
+                                                className={`tabs-item condensed ${tabIndex === 1 ? 'selected' : ''}`}
+                                                onClick={(e) => {
+                                                    e.preventDefault(); // Prevent the default anchor tag behavior
                                                     setTabIndex(1);
                                                 }}
                                             >
-                                                <span className="tabs-item-text">
-                                                    Organization
-                                                </span>
+                                                <span className="tabs-item-text">Organization</span>
                                             </a>
                                             <a
                                                 href="#"
-                                                onClick={() => {
+                                                className={`tabs-item condensed ${tabIndex === 2 ? 'selected' : ''}`}
+                                                onClick={(e) => {
+                                                    e.preventDefault(); // Prevent the default anchor tag behavior
                                                     setTabIndex(2);
                                                 }}
-                                                className="tabs-item condensed"
                                             >
-                                                <span className="tabs-item-text">
-                                                    TOML code
-                                                </span>
+                                                <span className="tabs-item-text">TOML code</span>
                                             </a>
                                         </div>
                                     </div>
@@ -758,9 +755,9 @@ const PublicNet = ({ props }) => {
                                         {tabIndex == 1 ? (
                                             <div className="segment blank">
                                                 {information?.meta_data &&
-                                                information?.meta_data[
+                                                    information?.meta_data[
                                                     "ORG_NAME"
-                                                ] == undefined ? (
+                                                    ] == undefined ? (
                                                     <div
                                                         style={{
                                                             fontSize: "13px",
@@ -788,7 +785,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_NAME"
+                                                                    "ORG_NAME"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -799,7 +796,7 @@ const PublicNet = ({ props }) => {
                                                                     information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_URL"
+                                                                    "ORG_URL"
                                                                     ]
                                                                 }
                                                                 target="_blank"
@@ -808,7 +805,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_URL"
+                                                                    "ORG_URL"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -819,7 +816,7 @@ const PublicNet = ({ props }) => {
                                                                     information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_LOGO"
+                                                                    "ORG_LOGO"
                                                                     ]
                                                                 }
                                                                 target="_blank"
@@ -828,7 +825,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_LOGO"
+                                                                    "ORG_LOGO"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -851,7 +848,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_DESCRIPTION"
+                                                                    "ORG_DESCRIPTION"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -875,7 +872,7 @@ const PublicNet = ({ props }) => {
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_PHYSICAL_ADDRESS"
+                                                                    "ORG_PHYSICAL_ADDRESS"
                                                                     ]}
                                                             </span>
                                                         </dd>
@@ -884,20 +881,19 @@ const PublicNet = ({ props }) => {
                                                         </dt>
                                                         <dd>
                                                             <a
-                                                                href={`mailto:${
-                                                                    information?.meta_data &&
+                                                                href={`mailto:${information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                    "ORG_OFFICIAL_EMAIL"
                                                                     ]
-                                                                }`}
+                                                                    }`}
                                                                 target="_blank"
                                                                 rel="noreferrer noopener"
                                                             >
                                                                 {information?.meta_data &&
                                                                     information
                                                                         ?.meta_data[
-                                                                        "ORG_OFFICIAL_EMAIL"
+                                                                    "ORG_OFFICIAL_EMAIL"
                                                                     ]}
                                                             </a>
                                                         </dd>
@@ -913,7 +909,7 @@ const PublicNet = ({ props }) => {
                                                     }}
                                                 >
                                                     {information?.tomlInfo ==
-                                                    "" ? (
+                                                        "" ? (
                                                         <div
                                                             style={{
                                                                 width: "100%",
@@ -933,7 +929,7 @@ const PublicNet = ({ props }) => {
                                                                 ) => {
                                                                     if (
                                                                         toml ==
-                                                                            null ||
+                                                                        null ||
                                                                         toml.startsWith(
                                                                             "#"
                                                                         )

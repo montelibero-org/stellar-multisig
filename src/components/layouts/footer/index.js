@@ -1,24 +1,23 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link"; // Import Link for client-side navigation
 
 const Footer = ({ setTheme }) => {
     const [value, setValue] = useState("");
 
     useEffect(() => {
         const _theme = localStorage.getItem("theme");
-        if (!_theme) {
+        if (_theme) {
             setTheme(_theme);
+            setValue(_theme);
         }
     }, []);
 
     useEffect(() => {
-        if (value != "") {
+        if (value) {
             localStorage.setItem("theme", value);
             setTheme(value);
-        } else {
-            const _theme = localStorage.getItem("theme");
-            setValue(_theme);
         }
     }, [value]);
 
@@ -48,26 +47,21 @@ const Footer = ({ setTheme }) => {
                     </a>
                     <a
                         href="#"
-                        onClick={() => {
-                            setValue(
-                                value == "day" || value == "" ? "night" : "day"
-                            );
+                        onClick={(e) => {
+                            e.preventDefault(); // Prevent the default anchor tag behavior
+                            setValue(value === "day" ? "night" : "day");
                         }}
                     >
-                        <i
-                            className={`icon icon-${
-                                value == "day" || value == "" ? "night" : "day"
-                            }`}
-                        ></i>{" "}
-                        {value == "day" || value == "" ? "Dark" : "Light"} theme
+                        <i className={`icon icon-${value === "day" ? "night" : "day"}`}></i>{" "}
+                        {value === "day" ? "Dark" : "Light"} theme
                     </a>
                 </div>
                 <div className="dimmed condensed" style={{ fontSize: "0.8em" }}>
                     Donations:{" "}
                     <span className="" tabIndex="-1">
-                        <a href="/public/GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN">
+                        <Link href="/public/GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN">
                             GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN
-                        </a>
+                        </Link>
                     </span>
                 </div>
             </div>

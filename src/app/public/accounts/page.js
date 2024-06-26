@@ -7,6 +7,7 @@ import {
     getMainInformation,
 } from "@/hook";
 import React, { useEffect, useState } from "react";
+import Link from "next/link"; // Import Link for client-side navigation
 
 const Accounts = () => {
     const [filter, setFilter] = useState("");
@@ -14,7 +15,7 @@ const Accounts = () => {
 
     useEffect(() => {
         const handler = async () => {
-            if (filter == "") return;
+            if (filter === "") return;
             const mainInformation = await getMainInformation(filter);
             const home_domain = mainInformation.home_domain;
 
@@ -28,7 +29,7 @@ const Accounts = () => {
             let accountInfoArray = [];
 
             for (let i in splittedInformation) {
-                if (splittedInformation[i] == "[[CURRENCIES]]") {
+                if (splittedInformation[i] === "[[CURRENCIES]]") {
                     accounts = true;
                     continue;
                 }
@@ -37,7 +38,7 @@ const Accounts = () => {
                     continue;
                 }
 
-                if (splittedInformation[i] == "" && accounts) {
+                if (splittedInformation[i] === "" && accounts) {
                     accounts = false;
                     accountInfoArray.push(accountInfo);
                     accountInfo = {};
@@ -80,7 +81,7 @@ const Accounts = () => {
                                 placeholder="Search accounts by name, domain, or public key"
                                 value={filter}
                                 onKeyDown={(e) => {
-                                    if (e.keyCode == 13) {
+                                    if (e.keyCode === 13) {
                                         e.preventDefault();
                                     }
                                 }}
@@ -106,7 +107,7 @@ const Accounts = () => {
                                     <div>
                                         <b>{account.name}</b>{" "}
                                     </div>
-                                    <a
+                                    <Link
                                         title={account.issuer}
                                         aria-label={account.issuer}
                                         className="account-address"
@@ -116,7 +117,7 @@ const Accounts = () => {
                                         <span className="account-key">
                                             {account.issuer}
                                         </span>
-                                    </a>
+                                    </Link>
                                 </li>
                             );
                         })}

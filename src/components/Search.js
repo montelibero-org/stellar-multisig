@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,9 @@ import {
 import { useRouter } from "next/navigation";
 import { usePublic } from "@/context/net";
 
-const SearchBar = () => {
+const SearchBar = ({setParNet}) => {
     const [search, setSearch] = useState("");
-
-    const { net, setNet } = usePublic();
-
+    const [net, setNet] = React.useState("public");
     const router = useRouter();
 
     const changeHander = (e) => {
