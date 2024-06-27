@@ -7,8 +7,8 @@ import {
     getDomainInformation,
     getMainInformation,
 } from "@/hook";
-    import StellarBase from 'stellar-base'
-    import StellarSdk from 'stellar-sdk';
+import StellarBase from 'stellar-base'
+import StellarSdk from 'stellar-sdk';
 import React, { useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
 import "./public.css";
@@ -37,29 +37,29 @@ const PublicNet = ({ props }) => {
         const pathname = window.location.pathname;
         const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
         const checkAccount = async () => {
-          const serverUrl =
-            net === 'testnet'
-              ? 'https://horizon-testnet.stellar.org'
-              : 'https://horizon.stellar.org';
-          const server = new StellarSdk.Server(serverUrl);
+            const serverUrl =
+                net === 'testnet'
+                    ? 'https://horizon-testnet.stellar.org'
+                    : 'https://horizon.stellar.org';
+            const server = new StellarSdk.Server(serverUrl);
 
-          try {
-            await server.loadAccount(accountId);
-            setExists(true);
-            console.log('valid')
-            // Navigate to the account page if the account exists
-          } catch (e) {
-            if (e instanceof StellarSdk.NotFoundError) {
-              setExists(false);
-              setErrorvalid('Error: Account does not exist on the network. Make sure that you copied account address correctly and there was at least one payment to this address.')
-            } else {
-              console.error(e);
+            try {
+                await server.loadAccount(accountId);
+                setExists(true);
+                console.log('valid')
+                // Navigate to the account page if the account exists
+            } catch (e) {
+                if (e instanceof StellarSdk.NotFoundError) {
+                    setExists(false);
+                    setErrorvalid('Error: Account does not exist on the network. Make sure that you copied account address correctly and there was at least one payment to this address.')
+                } else {
+                    console.error(e);
+                }
             }
-          }
         };
 
         if (StellarSdk.StrKey.isValidEd25519PublicKey(accountId)) {
-          console.log('true')
+            console.log('true')
             checkAccount();
 
         } else {
@@ -68,7 +68,7 @@ const PublicNet = ({ props }) => {
             }, 2000);
             setErrorvalid(`"Cannot read properties of null (reading 'invalidAsset')" at ${pathname}`)
         }
-      }, [net, account]);
+    }, [net, account]);
 
 
     console.log(account)
@@ -148,37 +148,36 @@ const PublicNet = ({ props }) => {
                     {loading ? (
                         "Loading..."
                     ) :
-                        exists ? (
-                        <h2 className="word-break relative condensed">
-                            <div className="" style={{ display: 'flex' }}>
-                                <div className="w-1/2">
-                                    <span className="dimmed">Account&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                </div>
-                                <div className="w-1/2">
-                                    <span className="account-address plain row w-100">
-                                        <span className="account-key">{account}</span>
-                                        &nbsp;
-                                        <span>
+                        exists ? (<>
 
-                                            <a
-                                                href={`https://stellar.expert/explorer/${net}/account/${account}`}
-                                                target="_blank"
-                                                // className="icon icon-stellar"
-                                                rel="noopener noreferrer"
-                                                title="View on Stellar.Expert"
-                                            >
-                                                <Image
-                                                    src="/stellar-expert-logo.png"
-                                                    alt="Stellar Expert Logo"
-                                                    className="dark:invert"
-                                                    width={30}
-                                                    height={30}
-                                                    priority
-                                                />
-                                            </a></span>
+                            <h2 className="word-break relative condensed">
+                                <span className="dimmed">Account&nbsp;&nbsp;&nbsp;</span>
+                                <span className="account-address plain">
+                                    <span className="account-key">{account}</span>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <span className="account-key" style={{ width: '30px', height: "30px" }}>
+                                        <a
+                                            href={`https://stellar.expert/explorer/${net}/account/${account}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+
+                                            title="View on Stellar.Expert"
+                                        >
+                                            <Image
+                                                src="/stellar-expert-logo.png"
+                                                alt="Stellar Expert Logo"
+                                                className="dark:invert"
+                                                width={30}
+                                                style={{ display: "inline-block" }}
+                                                height={30}
+                                                priority
+                                            />
+
+                                        </a>
                                     </span>
-                                </div>
-                            </div>
+                                </span>
+                            </h2>
+
                             <div className="row space">
                                 <div className="column column-50">
                                     <div className="segment blank">
@@ -1065,13 +1064,13 @@ const PublicNet = ({ props }) => {
                                     </div>
                                 </div>
                             )}
-                        </h2>
-                        ) :(
+                        </>
+                        ) : (
                             <div className="cotainer">
-                                <div className={`"search ${exists === false ? 'error': ''} container narrow"`} style={{padding:'20px'}} >
-                                <h2 className="text-overflow">Search results for "{account}"</h2>
-                                {exists === true && <p>Account "{account}" exists on {net}!</p>}
-                                {exists === false && <span>{errorvalid}</span>}
+                                <div className={`"search ${exists === false ? 'error' : ''} container narrow"`} style={{ padding: '20px' }} >
+                                    <h2 className="text-overflow">Search results for "{account}"</h2>
+                                    {exists === true && <p>Account "{account}" exists on {net}!</p>}
+                                    {exists === false && <span>{errorvalid}</span>}
                                 </div>
                             </div>
                         )
