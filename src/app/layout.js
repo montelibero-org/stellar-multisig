@@ -10,33 +10,33 @@ import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const NetUpdater = () => {
-    const [net, setNet] = usePublic();
+// const NetUpdater = () => {
+//     const [net, setNet] = usePublic();
 
-    useEffect(() => {
-        const handleRouteChange = () => {
-            const segments = window.location.pathname.split('/');
-            if (segments.includes('public')) {
-                setNet('public');
-            } else if (segments.includes('testnet')) {
-                setNet('testnet');
-            }
-        };
+//     useEffect(() => {
+//         const handleRouteChange = () => {
+//             const segments = window.location.pathname.split('/');
+//             if (segments.includes('public')) {
+//                 setNet('public');
+//             } else if (segments.includes('testnet')) {
+//                 setNet('testnet');
+//             }
+//         };
 
-        // Listen for route changes using popstate event
-        window.addEventListener('popstate', handleRouteChange);
+//         // Listen for route changes using popstate event
+//         window.addEventListener('popstate', handleRouteChange);
 
-        // Check initial URL on mount
-        handleRouteChange();
+//         // Check initial URL on mount
+//         handleRouteChange();
 
-        // Clean up the event listener on unmount
-        return () => {
-            window.removeEventListener('popstate', handleRouteChange);
-        };
-    }, [setNet]);
+//         // Clean up the event listener on unmount
+//         return () => {
+//             window.removeEventListener('popstate', handleRouteChange);
+//         };
+//     }, [setNet]);
 
-    return null;
-};
+//     return null;
+// };
 
 export default function RootLayout({ children }) {
     const { theme, setTheme } = useTheme();
@@ -50,7 +50,7 @@ export default function RootLayout({ children }) {
         <html lang="en" data-theme={theme}>
             <body className={inter.className}>
                 <PublicProvider>
-            <NetUpdater /> {/* Component to update net based on URL */}
+            {/* <NetUpdater /> */} {/* Component to update net based on URL */}
                     <main className="flex min-h-screen flex-col">
                         <div className="blue-ribbon"></div>
                         <Header />
