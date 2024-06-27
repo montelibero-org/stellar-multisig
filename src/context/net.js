@@ -30,13 +30,18 @@ const PublicProvider = ({ children }) => {
             }
 
         } else {
-            const segments = window.location.pathname.split('/');
-            if (segments.includes('public')) {
+            const pathname = window.location.pathname.split('/');
+            if (pathname.includes('public')) {
                 setNetState('public');
-            } else if (segments.includes('testnet')) {
+                localStorage.setItem("net", 'public')
+            } else if (pathname.includes('testnet')) {
                 setNetState('testnet');
+                localStorage.setItem("net", 'testnet')
+            } else {
+                setNetState('public')
+                localStorage.setItem("net", 'public')
+
             }
-            setNetState('public')
         }
     }, []);
 
