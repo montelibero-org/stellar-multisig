@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
 import "./public.css";
 import { usePublic } from "@/context/net";
+import processKeys from "@/lib/processKeys";
 
 const PublicNet = ({ props }) => {
     const [account, setAccount] = useState("");
@@ -660,17 +661,10 @@ const PublicNet = ({ props }) => {
                                                         Object.keys(
                                                             information?.entries
                                                         ).map((entry, key) => {
+                                                            const { processedKey, processedValue } = processKeys(entry, information?.entries[entry]);
                                                             return (
-                                                                <li
-                                                                    className="word-break"
-                                                                    key={key}
-                                                                >
-                                                                    {entry +
-                                                                        ": " +
-                                                                        information
-                                                                            ?.entries[
-                                                                        entry
-                                                                        ]}
+                                                                <li className="word-break" key={key}>
+                                                                    {processedKey}: <span dangerouslySetInnerHTML={{ __html: processedValue }} />
                                                                 </li>
                                                             );
                                                         })}
