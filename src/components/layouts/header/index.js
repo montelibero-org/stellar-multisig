@@ -86,7 +86,7 @@ const Header = () => {
                         <div className="dropdown" ref={dropdownRef}>
                             <div className="dropdown-header" onClick={toggleDropdown}>
                                 Network <span className="dropdown-selected">{net}</span>
-                                <span className={isOpen ? "dd-toggle" : "dd-toggle visible"} ></span>
+                                <span className={isOpen ? "dd-toggle visible" : "dd-toggle"} ></span>
                             </div>
                             {isOpen && (
                                 <div className="dropdown-menu">
