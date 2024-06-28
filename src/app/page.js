@@ -15,7 +15,7 @@ export default function Home() {
             setNet('testnet')
         } else {
             setNet('public')
-            route.replace('/public')
+            route.replace('/public/')
         }
     })
     return (

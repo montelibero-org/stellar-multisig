@@ -37,9 +37,14 @@ const Header = () => {
         setIsOpen(false);
 
         const currentPath = window.location.pathname;
-
+        console.log(currentPath);
         // Check if the current path contains 'public' or 'testnet'
-        if (currentPath.includes('/public/') || currentPath.includes('/testnet/')) {
+        if ( currentPath == "/public" ||currentPath == "/testnet" ) {
+            const newPath = `/${network}`;
+
+            // Navigate to the new path
+            router.push(newPath);
+        } else if (currentPath.includes('/public/') || currentPath.includes('/testnet/')) {
             // Construct the new path with updated network segment
             const newPath = `/${network}${currentPath.substring(currentPath.indexOf('/', 1))}`;
 
