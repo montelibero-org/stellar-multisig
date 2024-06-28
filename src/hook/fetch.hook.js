@@ -1,6 +1,8 @@
+// utils/network.js
 "use client";
 
 import { Server } from "stellar-sdk";
+import cacheConfig from './cache-config.json';
 
 const horizonURI = "https://horizon.stellar.org";
 const apiStellarURI = "https://api.stellar.expert/explorer/directory?limit=20";
@@ -19,7 +21,7 @@ export const getMainInformation = async (accountId) => {
 
         setTimeout(() => {
             localStorage.removeItem("main-" + accountId);
-        }, 100000);
+        }, cacheConfig.mainInformationCacheDuration);
 
         return result;
     } catch (e) {
@@ -40,7 +42,7 @@ export const getAccountIssuerInformation = async (accountId) => {
 
         setTimeout(() => {
             localStorage.removeItem("issuer-" + accountId);
-        }, 100000);
+        }, cacheConfig.issuerInformationCacheDuration);
 
         return result;
     } catch (e) {
@@ -62,7 +64,7 @@ export const getDomainInformation = async (domain) => {
 
         setTimeout(() => {
             localStorage.removeItem("domain-" + domain);
-        }, 100000);
+        }, cacheConfig.domainInformationCacheDuration);
 
         return text;
     } catch (e) {

@@ -1,0 +1,16 @@
+{
+    "accounts": [
+      "mtla_delegate",
+      "mtl_delegate",
+      "mtla_c_delegate"
+    ],
+    "links": [
+      "^link$",
+      "^link \\d+$",
+      "^link_\\d+$"
+    ],
+    "names": [
+      "^name$",
+      "^about$"
+    ]
+  }

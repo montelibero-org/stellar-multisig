@@ -75,15 +75,31 @@ html,
     -webkit-tap-highlight-color: transparent; /* 7 */
 }
 
+body,
+html {
+    height: 100%;
+}
+
+
+body {
+    font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: ClearSans, sans-serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    letter-spacing: .01em;
+    line-height: 1.4285;
+    margin: 0;
+    min-width: 320px;
+    overflow-x: hidden;
+}
+
 /*
   1. Remove the margin in all browsers.
   2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
   */
-
-body {
-    margin: 0; /* 1 */
-    line-height: inherit; /* 2 */
-}
 
 /*
   1. Add the correct height in Firefox.
@@ -115,9 +131,14 @@ h3,
 h4,
 h5,
 h6 {
-    font-size: inherit;
-    font-weight: inherit;
+    font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
+    font-weight: 300;
+    letter-spacing: -.02em;
+    margin-bottom: .5em;
+    margin-top: .5em;
 }
+
+
 
 /*
   Reset links to optimize for opt-in styling instead of opt-out.
@@ -450,6 +471,30 @@ video {
     --ring: 224 71.4% 4.1%;
 
     --radius: 0.5rem;
+
+    --color-primary: #0691b7;
+    --color-highlight: #08b5e5;
+    --color-dimmed: #999;
+    --color-alert: #dc3545;
+    --color-success: #28a745;
+    --color-warning: #b27100;
+    --color-price-up: #00ba00;
+    --color-price-down: #df0000;
+    --color-modal-bg: #0003;
+}
+
+:root[data-theme=night] {
+    --color-bg: #1b414a;
+    --color-dashboard-bg: #272c2e;
+    --color-alt-bg: #12363f;
+    --color-alt-border: #2f464c;
+    --color-text: #eee;
+    --color-contrast-border: #535759;
+    --color-border-shadow: #b0b9bd1a;
+    --color-backdrop: #00000040;
+    --color-alert-bg: #553d49;
+    --color-warning-bg: #484f34;
+    --color-success-bg: #1b5340;
 }
 
 *,
@@ -1471,25 +1516,7 @@ html {
     scroll-behavior: smooth;
 }
 
-body,
-html {
-    height: 100%;
-}
 
-body {
-    font-smoothing: antialiased;
-    -webkit-font-smoothing: antialiased;
-    background: var(--color-bg);
-    color: var(--color-text);
-    font-family: ClearSans, sans-serif;
-    font-size: 1.6rem;
-    font-weight: 300;
-    letter-spacing: 0.01em;
-    line-height: 1.4285;
-    margin: 0;
-    min-width: 320px;
-    overflow-x: hidden;
-}
 
 ::-webkit-scrollbar {
     height: 6px;
@@ -2882,15 +2909,7 @@ p {
     text-align: justify;
 }
 
-h1,
-h2,
-h3,
-h4 {
-    font-weight: 300;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5em;
-    margin-top: 0.5em;
-}
+
 
 h1 {
     font-size: 3rem;
@@ -2982,9 +3001,8 @@ code {
     color: #0691b7;
 }
 
-.dimmed,
-.label {
-    color: #999;
+.dimmed, .label {
+    color: var(--color-dimmed);
 }
 
 .text-monospace {
@@ -3257,8 +3275,8 @@ ol > li > * {
 
 dl {
     display: block;
-    letter-spacing: -0.03em;
-    /* line-height: 1.59992; */
+    letter-spacing: -.03em;
+    line-height: 1.59992;
     margin: 0;
 }
 
@@ -3267,15 +3285,15 @@ dl > div {
 }
 
 dl dt {
-    font-size: 1.6rem;
-    color: #999;
+    color: var(--color-dimmed);
 }
 
 dl dd,
 dl dt {
-    font-size: 1.6rem;
+    /* font-size: 1.6rem; */
     display: inline;
     /* font-weight: 400; */
+    font-weight: 400;
 }
 
 dl dd {

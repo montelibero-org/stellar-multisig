@@ -48,7 +48,7 @@ export default function RootLayout({ children }) {
 
     return (
         <html lang="en" data-theme={theme}>
-            <body className={inter.className}>
+            <body /* className={inter.className} */>
                 <PublicProvider>
             {/* <NetUpdater /> */} {/* Component to update net based on URL */}
                     <main className="flex min-h-screen flex-col">
