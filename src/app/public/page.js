@@ -7,17 +7,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
     const [net, setNet] = usePublic();
     const route = useRouter();
-    useEffect(() => {
-        const currentPath = window.location.pathname;
-        if(currentPath.includes('/public/')) {
-            setNet('public')
-        } else if (currentPath.includes('/testnet/')) {
-            setNet('testnet')
-        } else {
-            setNet('public')
-            route.replace('/public')
-        }
-    })
+
     return (
         <MainLayout>
             <SearchBar setParNet={setNet} />
