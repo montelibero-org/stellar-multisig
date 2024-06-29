@@ -93,8 +93,8 @@ const SearchBar = () => {
     return (
         <>
         {errorvalid ? (
-                    <div className={`"search ${exists === false ? 'error' : ''} container narrow"`} style={{ padding: '20px' }} >
-                        <h2 className="text-overflow">Search results for "{search}"</h2>
+                    <div className={`search ${exists === false ? 'error' : ''} container narrow`} style={{ padding: '20px' }} >
+                        <h2 className="text-overflow">Search results for {search}</h2>
                         {exists === null && <p>Loading...</p>}
                         {exists === false && <span>{errorvalid}</span>}
                     </div>

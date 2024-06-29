@@ -1061,9 +1061,9 @@ const PublicNet = ({ props }) => {
                         </>
                         ) : (
                             <div className="cotainer">
-                                <div className={`"search ${exists === false ? 'error' : ''} container narrow"`} style={{ padding: '20px' }} >
-                                    <h2 className="text-overflow">Search results for "{account}"</h2>
-                                    {exists === true && <p>Account "{account}" exists on {net}!</p>}
+                                <div className={`search ${exists === false ? 'error' : ''} container narrow`} style={{ padding: '20px' }} >
+                                    <h2 className="text-overflow">Search results for {account}</h2>
+                                    {exists === true && <p>Account {account} exists on {net}!</p>}
                                     {exists === false && <span>{errorvalid}</span>}
                                 </div>
                             </div>
