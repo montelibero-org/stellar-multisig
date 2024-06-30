@@ -40,11 +40,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
     const { theme, setTheme } = useTheme();
-    useEffect(() => {
-        const _theme = localStorage.getItem("theme");
+    // useEffect(() => {
+    //     const _theme = localStorage.getItem("theme");
 
-        setTheme(_theme);
-    }, []);
+    //     setTheme(_theme);
+    // }, []);
 
     return (
         <html lang="en" data-theme={theme}>

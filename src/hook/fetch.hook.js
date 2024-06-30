@@ -8,6 +8,7 @@ const horizonURI = "https://horizon.stellar.org";
 const apiStellarURI = "https://api.stellar.expert/explorer/directory?limit=20";
 const server = new Server(horizonURI);
 
+// Function to fetch main account information
 export const getMainInformation = async (accountId) => {
     try {
         const mainInformation = localStorage.getItem("main-" + accountId);
@@ -21,7 +22,7 @@ export const getMainInformation = async (accountId) => {
 
         setTimeout(() => {
             localStorage.removeItem("main-" + accountId);
-        }, cacheConfig.mainInformationCacheDuration);
+        }, cacheConfig.stellarDataCacheDurationMs); // Cache duration for Stellar data in milliseconds (1 minute)
 
         return result;
     } catch (e) {
@@ -29,6 +30,7 @@ export const getMainInformation = async (accountId) => {
     }
 };
 
+// Function to fetch account issuer information
 export const getAccountIssuerInformation = async (accountId) => {
     try {
         const issuerInformation = localStorage.getItem("issuer-" + accountId);
@@ -42,7 +44,7 @@ export const getAccountIssuerInformation = async (accountId) => {
 
         setTimeout(() => {
             localStorage.removeItem("issuer-" + accountId);
-        }, cacheConfig.issuerInformationCacheDuration);
+        }, cacheConfig.stellarDataCacheDurationMs); // Cache duration for Stellar data in milliseconds (1 minute)
 
         return result;
     } catch (e) {
@@ -50,6 +52,7 @@ export const getAccountIssuerInformation = async (accountId) => {
     }
 };
 
+// Function to fetch domain information from Stellar TOML file
 export const getDomainInformation = async (domain) => {
     try {
         const domainInformation = localStorage.getItem("domain-" + domain);
@@ -64,7 +67,7 @@ export const getDomainInformation = async (domain) => {
 
         setTimeout(() => {
             localStorage.removeItem("domain-" + domain);
-        }, cacheConfig.domainInformationCacheDuration);
+        }, cacheConfig.stellarTomlCacheDurationMs); // Cache duration for Stellar TOML files in milliseconds (10 minutes)
 
         return text;
     } catch (e) {
@@ -72,6 +75,7 @@ export const getDomainInformation = async (domain) => {
     }
 };
 
+// Function to fetch directory information from Stellar API
 export const getDirectoryInformation = async (accountId) => {
     const result = await fetch(apiStellarURI);
     const json = await result.json();

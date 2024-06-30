@@ -1,26 +1,29 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
 import { usePublic } from "@/context/net";
 
 const Footer = ({ setTheme }) => {
     const [value, setValue] = useState("");
     const [net, setNet] = usePublic();
+    const stableSetTheme = useCallback((theme) => {
+        setTheme(theme);
+    }, [setTheme]);
     useEffect(() => {
         const _theme = localStorage.getItem("theme");
         if (_theme) {
-            setTheme(_theme);
+            stableSetTheme(_theme);
             setValue(_theme);
         }
-    }, []);
+    }, [stableSetTheme]); // Include stableSetTheme in the dependency array
 
     useEffect(() => {
         if (value) {
             localStorage.setItem("theme", value);
-            setTheme(value);
+            stableSetTheme(value);
         }
-    }, [value]);
+    }, [value, stableSetTheme]);
 
     return (
         <div className="footer">
