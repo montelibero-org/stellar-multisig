@@ -20,7 +20,7 @@ To learn more about Next.js, take a look at the following resources:
 
 ## Contributing
 
-Please read through our [Contributing Guidelines](CONTRIBUTING.md) and [Installation Instructions](INSTALL.md).
+Please read through our [Contributing Guidelines](CONTRIBUTING.md), [Architecture Overview](ARCHITECTURE.md) and [Installation Instructions](INSTALL.md).
 
 ## License
 
