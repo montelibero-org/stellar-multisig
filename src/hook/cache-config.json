@@ -1,5 +1,4 @@
 {
-"mainInformationCacheDuration": 60000,
-"issuerInformationCacheDuration": 60000,
-"domainInformationCacheDuration": 600000
-}
+    "stellarDataCacheDurationMs": 60000,
+    "stellarTomlCacheDurationMs": 600000
+  }
