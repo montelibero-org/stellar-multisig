@@ -1,98 +1,77 @@
 "use client";
 
 import MainLayout from "@/components/layouts";
-import {
-    getDirectoryInformation,
-    getDomainInformation,
-    getMainInformation,
-} from "@/hook";
 import React, { useEffect, useState } from "react";
-import Link from "next/link"; // Import Link for client-side navigation
+import Link from "next/link";
 import { usePublic } from "@/context/net";
+import assetsData from "@/hook/trusted-mtl-assets.json"; // Import the JSON file
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import './assets.css';
 
 const Assets = () => {
-    const [filter, setFilter] = useState("");
-    const [currenciesArray, setCurrenciesArray] = useState([]);
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    const initialFilter = searchParams.get('filter') || "";
+    const initialTags = searchParams.get('tags') ? new Set(searchParams.get('tags').split(",")) : new Set();
+
+    const [filter, setFilter] = useState(initialFilter);
+    const [selectedTags, setSelectedTags] = useState(initialTags);
+    const [assetsArray, setAssetsArray] = useState([]);
     const [net, setNet] = usePublic();
+
     useEffect(() => {
-        const handler = async () => {
-            if (filter === "") {
-                setCurrenciesArray([]);
-                return;
-            }
+        setAssetsArray(assetsData); // Set the initial assets from the imported JSON file
+    }, []);
 
-            const assetInfos = localStorage.getItem("asset-" + filter);
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (filter) params.set('filter', filter);
+        if (selectedTags.size > 0) params.set('tags', Array.from(selectedTags).join(","));
+        router.replace(`${pathname}?${params.toString()}`);
+    }, [filter, selectedTags, pathname, router]);
 
-            if (!assetInfos) {
-                const mainInformation = await getMainInformation(filter);
-                const home_domain = mainInformation.home_domain;
-
-                if (!home_domain) {
-                    setCurrenciesArray([]);
-                    return;
-                }
-
-                const domainInformation = await getDomainInformation(home_domain);
-
-                const splittedInformation = domainInformation.split("\n");
-                let currencies = false;
-                let currencyInfo = {};
-                let currencyInfoArray = [];
-
-                for (let i in splittedInformation) {
-                    if (splittedInformation[i] === "[[CURRENCIES]]") {
-                        currencies = true;
-                        continue;
-                    }
-
-                    if (!currencies) {
-                        continue;
-                    }
-
-                    if (splittedInformation[i] === "" && currencies) {
-                        currencies = false;
-                        currencyInfoArray.push(currencyInfo);
-                        currencyInfo = {};
-                        continue;
-                    }
-
-                    const _pattern = splittedInformation[i].split("=");
-                    currencyInfo[_pattern[0].trim()] = _pattern[1]
-                        .replace(/"/g, "")
-                        .trim();
-                }
-
-                setCurrenciesArray(currencyInfoArray);
-
-                localStorage.setItem(
-                    "asset-" + filter,
-                    JSON.stringify(currencyInfoArray)
-                );
+    const toggleTag = (tag) => {
+        setSelectedTags((prevTags) => {
+            const newTags = new Set(prevTags);
+            if (newTags.has(tag)) {
+                newTags.delete(tag);
             } else {
-                setCurrenciesArray(JSON.parse(assetInfos));
+                newTags.add(tag);
             }
-        };
+            return newTags;
+        });
+    };
 
-        handler();
-    }, [filter]);
+    const filteredAssets = assetsArray.filter(asset => {
+        const assetTag = (asset.tag || "other").toLowerCase();
+        const isTagMatch = selectedTags.size === 0 || selectedTags.has(assetTag);
+        const isFilterMatch = assetTag.includes(filter.toLowerCase()) ||
+            asset.code.toLowerCase().includes(filter.toLowerCase()) ||
+            asset.issuer.toLowerCase().includes(filter.toLowerCase());
+
+        return isTagMatch && isFilterMatch;
+    });
 
     function handleSearch(e) {
         e.preventDefault();
-
     }
 
     return (
         <MainLayout>
-            <div className="container narrow">
+            <div className="container wide">
                 <h2>Trusted MTL Assets</h2>
                 <div
                     className="text-right mobile-left"
                     style={{ marginTop: "-2.2em" }}
                 >
                     <a
-                        href="#"
+                        href="https://github.com/montelibero-org/stellar-multisig/tree/main/src/hook/trusted-mtl-assets.json"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="icon icon-github"
-                        title="Log in with Github"
+                        title="View config file on Github"
                         style={{ fontSize: "1.4em" }}
                     ></a>
                 </div>
@@ -121,51 +100,35 @@ const Assets = () => {
                                 Filter by tag:
                             </div>
                             <div className="row">
-                                <div className="column column-25">
-                                    <a className="tag-block" href="#exchange">
-                                        #exchange
-                                    </a>
-                                </div>
+                                {[...new Set(assetsArray.map(asset => asset.tag || "other"))].map(tag => (
+                                    <div key={tag} className="column column-25">
+                                        <a className={`tag-block ${selectedTags.has(tag) ? 'selected' : ''}`} onClick={() => toggleTag(tag)}>
+                                            #{tag}
+                                        </a>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
                     <ul className="striped space">
-                        {currenciesArray?.map((currency, index) => {
-                            return (
-                                <li
-                                    key={index}
-                                    style={{
-                                        padding: "1em",
-                                        lineHeight: "1.6",
-                                        overflow: "hidden",
-                                    }}
-                                >
-                                    <div>
-                                        <b>
-                                            {currency.name}({currency.code})
-                                        </b>{" "}
-                                        <a
-                                            href="https://null"
-                                            className="text-small"
-                                        ></a>
-                                        <a className="inline-tag" href="#">
-                                            #{currency.anchor_asset_type}
-                                        </a>
-                                    </div>
-                                    <Link
-                                        title={currency.issuer}
-                                        aria-label={currency.issuer}
-                                        className="account-address"
-                                        href={`/${net}/${currency.issuer}`}
-                                        style={{ marginRight: "1em" }}
-                                    >
-                                        <span className="account-key">
-                                            {currency.issuer}
-                                        </span>
-                                    </Link>
-                                </li>
-                            );
-                        })}
+                        {filteredAssets.map((asset, index) => (
+                            <li key={index} style={{padding: '1em', lineHeight: 1.6, overflow: 'hidden'}}>
+                                <div>
+                                    <b>{asset.code}</b>
+                                    &emsp;
+                                    {/* <Link href={`https://stellar.expert/explorer/public/asset/${asset.code}-${asset.issuer}`} passHref legacyBehavior>
+                                        <a className="text-small" target="_blank" rel="noopener noreferrer">{asset.issuer}</a>
+                                    </Link> */}
+                                    &emsp;
+                                    <span className="inline-tag">#{asset.tag || "other"}</span>
+                                </div>
+                                <Link href={`/${net}/${asset.issuer}`} passHref legacyBehavior>
+                                    <a title={asset.issuer} aria-label={asset.issuer} className="account-address" style={{ marginRight: '1em' }}>
+                                        <span className="account-key">{asset.issuer}</span>
+                                    </a>
+                                </Link>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </div>
