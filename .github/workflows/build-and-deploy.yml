@@ -23,6 +23,8 @@ jobs:
         run: |
           npm ci --legacy-peer-deps
           npm run build
+          mkdir -p out
+          touch out/.nojekyll
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
