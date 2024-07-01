@@ -2,7 +2,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import useTheme from "@/hook/theme";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/components/layouts/header";
 import Footer from "@/components/layouts/footer";
 import PublicProvider, { usePublic } from "@/context/net";
@@ -40,14 +40,25 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
     const { theme, setTheme } = useTheme();
-    // useEffect(() => {
-    //     const _theme = localStorage.getItem("theme");
-
-    //     setTheme(_theme);
-    // }, []);
 
     return (
         <html lang="en" data-theme={theme}>
+            <head>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            (function() {
+                                var theme = localStorage.getItem('theme');
+                                if (!theme) {
+                                    theme = 'night';
+                                    localStorage.setItem('theme', 'night');
+                                }
+                                document.documentElement.setAttribute('data-theme', theme);
+                            })();
+                        `,
+                    }}
+                />
+            </head>
             <body /* className={inter.className} */>
                 <PublicProvider>
             {/* <NetUpdater /> */} {/* Component to update net based on URL */}

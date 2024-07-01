@@ -72,7 +72,6 @@ const PublicNet = ({ props }) => {
     }, [net, account]);
 
 
-    console.log(account)
 
     useEffect(() => {
         const handler = async () => {

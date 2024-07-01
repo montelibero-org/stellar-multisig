@@ -28,7 +28,7 @@ const processKeys = (key, value) => {
     if (patterns.some(pattern => pattern.test(key))) {
       switch (type) {
         case 'accounts':
-          processedValue = `<a href="https://stellar.expert/explorer/public/account/${decodedValue}">${decodedValue}</a>`;
+          processedValue = `<a href="/public/${decodedValue}">${decodedValue}</a>`;
           break;
         case 'links':
           processedValue = `<a href="${decodedValue}">${decodedValue}</a>`;
