@@ -4,15 +4,18 @@
         "mtla_a_delegate",
         "mtla_c_delegate",
         "mtl_delegate",
-        "delegate"
+        "delegate",
+        "owner"
     ],
     "links": [
         "link",
         "link \\d+",
-        "link_\\d+"
+        "link_\\d+",
+        "website"
     ],
     "names": [
         "name",
-        "about"
+        "about",
+        "MTLA:PIIStandard"
     ]
 }
