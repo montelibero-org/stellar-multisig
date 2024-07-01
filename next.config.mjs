@@ -15,6 +15,9 @@ const nextConfig = {
     assetPrefix,
     basePath,
     output: "export", // Ensure this line is present
+    images: {
+        unoptimized: true,
+    },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
