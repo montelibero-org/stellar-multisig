@@ -16,28 +16,18 @@ import { usePublic } from "@/context/net";
 import processKeys from "@/lib/processKeys";
 
 
-const PublicNet = ({ props }) => {
-    const [account, setAccount] = useState("");
+const PublicNet = ({ params  }) => {
+    const { id } = params;
+    const [account, setAccount] = useState(id || "");
     const [net, setNet] = usePublic();
     const [information, setInformation] = useState({});
     const [exists, setExists] = useState(true);
     const [tabIndex, setTabIndex] = useState(1);
     const [errorvalid, setErrorvalid] = useState('')
-
     const [show, setShow] = useState(false);
-
     const [loading, setLoading] = useState(false);
-    console.log(net);
-    useEffect(() => {
-        const pathname = window.location.pathname;
-        const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
-
-        setAccount(accountId);
-    }, []);
 
     useEffect(() => {
-        const pathname = window.location.pathname;
-        const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
         const checkAccount = async () => {
             const serverUrl =
                 net === 'testnet'
@@ -46,7 +36,7 @@ const PublicNet = ({ props }) => {
             const server = new StellarSdk.Server(serverUrl);
 
             try {
-                await server.loadAccount(accountId);
+                await server.loadAccount(account);
                 setExists(true);
                 console.log('valid')
                 // Navigate to the account page if the account exists
@@ -60,7 +50,7 @@ const PublicNet = ({ props }) => {
             }
         };
 
-        if (StellarSdk.StrKey.isValidEd25519PublicKey(accountId)) {
+        if (StellarSdk.StrKey.isValidEd25519PublicKey(account)) {
             console.log('true')
             checkAccount();
 
