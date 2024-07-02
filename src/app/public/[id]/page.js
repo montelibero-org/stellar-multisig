@@ -15,7 +15,7 @@ import "./public.css";
 import { usePublic } from "@/context/net";
 import processKeys from "@/lib/processKeys";
 
-const PublicNet = ({ props }) => {
+const PublicNet = () => {
     const [account, setAccount] = useState("");
     const [net, setNet] = usePublic();
     const [information, setInformation] = useState({});
