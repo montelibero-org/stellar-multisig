@@ -13,8 +13,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
 import { usePublic } from "@/context/net";
 
-const PublicNet = ({ accountId }) => {
-    const [account, setAccount] = useState(accountId);
+const PublicNet = ({ props }) => {
+    const [account, setAccount] = useState("");
     const [net, setNet] = usePublic();
     const [information, setInformation] = useState({});
     const [exists, setExists] = useState(true);
@@ -25,6 +25,13 @@ const PublicNet = ({ accountId }) => {
 
     const [loading, setLoading] = useState(false);
     console.log(net);
+
+    useEffect(() => {
+        const pathname = window.location.pathname;
+        const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
+
+        setAccount(accountId);
+    }, []);
 
     useEffect(() => {
         const pathname = window.location.pathname;
