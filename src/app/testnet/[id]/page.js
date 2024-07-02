@@ -1,17 +1,17 @@
 import PublicNet from "./testnet";
 
-export async function generateStaticParams() {
-    // Fetch or define the possible values for `id`
-
-    const pathname = window.location.pathname;
-    const accountId = pathname.substring(pathname.lastIndexOf("/") + 1);
-
-    return accountId;
-}
-
 const PublicPage = ({ params }) => {
-    const accountId = params;
+    const { id: accountId } = params;  // Assuming `params` contains an `id` field
     return <PublicNet accountId={accountId} />;
 };
+
+export async function getServerSideProps(context) {
+    const { id } = context.params;  // Get the `id` from the context
+    return {
+        props: {
+            params: { id }
+        }
+    };
+}
 
 export default PublicPage;
