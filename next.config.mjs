@@ -12,12 +12,10 @@ if (isGithubActions) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    assetPrefix,
-    basePath,
-    output: "export", // Ensure this line is present
     images: {
-        unoptimized: true,
+        disableStaticImages: true, // Disable Image Optimization API for export mode
     },
+    trailingSlash: false,   // Ensure that each exported page has a trailing slash
 };
 
 export default nextConfig;
