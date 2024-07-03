@@ -41,26 +41,25 @@ const PublicNet = ({ params  }) => {
                 console.log('valid');
                 // Navigate to the account page if the account exists
             } catch (e) {
-                // if (e instanceof StellarSdk.NotFoundError) {
+                if (e instanceof StellarSdk.NotFoundError) {
                     setExists(false);
-                    // setErrorvalid('Error: Account does not exist on the network. Make sure that you copied account address correctly and there was at least one payment to this address.')
-                // } else {
+                    setErrorvalid('Error: Account does not exist on the network. Make sure that you copied account address correctly and there was at least one payment to this address.')
+                } else {
                     console.error(e);
-                // }
+                }
             }
         };
 
-        // if (StellarSdk.StrKey.isValidEd25519PublicKey(account)) {
-        //     console.log('true')
-        //     checkAccount();
+        if (StellarSdk.StrKey.isValidEd25519PublicKey(account)) {
+            console.log('true')
+            checkAccount();
 
-        // } else {
-        //     setTimeout(() => {
-        //         setExists(false);
-        //     }, 2000);
-        //     setErrorvalid(`"Cannot read properties of null (reading 'invalidAsset')" at ${account}`)
-        // }
-        checkAccount();
+        } else {
+            setTimeout(() => {
+                setExists(false);
+            }, 2000);
+            setErrorvalid(`"Cannot read properties of null (reading 'invalidAsset')" at ${account}`)
+        }
     }, [net, account]);
 
 
@@ -123,16 +122,6 @@ const PublicNet = ({ params  }) => {
         };
         handler();
     }, [account]);
-
-    useEffect(() => {
-        const fetchAccountInfo = async () => {
-            setLoading(true);
-            // Fetch additional account information
-            setLoading(false);
-        };
-
-        fetchAccountInfo();
-    }, [id]);
 
     const collapseAccount = (accountId) => {
         if (accountId == "" || accountId == null || accountId == undefined) {
