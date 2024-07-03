@@ -1,12 +1,3 @@
 [
-    {
-        "code": "USD",
-        "issuer": "GA223OFHVKVAH2NBXP4AURJRVJTSOVHGBMKJNL6GRJWNN4SARVGSITYG",
-        "tag": "exchange"
-    },
-    {
-        "code": "EUR",
-        "issuer": "GB7T4A2M6PQFJTI2JIK6I5VYZ5OGDY5CGM52NDZJ6HOVD7APCUWY4XQ5",
-        "tag": ""
-    }
+
 ]
