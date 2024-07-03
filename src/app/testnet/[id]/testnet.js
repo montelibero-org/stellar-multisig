@@ -57,7 +57,7 @@ const PublicNet = ({ params  }) => {
             setTimeout(() => {
                 setExists(false);
             }, 2000);
-            setErrorvalid(`"Cannot read properties of null (reading 'invalidAsset')" at ${pathname}`)
+            setErrorvalid(`"Cannot read properties of null (reading 'invalidAsset')" at ${account}`)
         }
     }, [net, account]);
 
