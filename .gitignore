@@ -32,6 +32,7 @@ Thumbs.db
 
 # next.js
 /.next/
+/.next
 /out/
 
 # production
