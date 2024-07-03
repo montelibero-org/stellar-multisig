@@ -22,6 +22,7 @@ Thumbs.db
 
 # dependencies
 /node_modules
+/New Folder
 /.pnp
 .pnp.js
 .yarn/install-state.gz
