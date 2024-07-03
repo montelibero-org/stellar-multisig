@@ -1,6 +1,6 @@
 // pages/public/[id].js
 import axios from 'axios';
-import PublicNet from "./publicnet"; // Adjust the import path as needed
+import PublicNet from "./testnet"; // Adjust the import path as needed
 
 // Fetching account IDs using Stellar Expert API
 const getAccountIds = async () => {
