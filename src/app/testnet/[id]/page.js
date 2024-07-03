@@ -1,5 +1,6 @@
-import PublicNet from "./testnet";
+// pages/public/[id].js
 import axios from 'axios';
+import PublicNet from "./publicnet"; // Adjust the import path as needed
 
 // Fetching account IDs using Stellar Expert API
 const getAccountIds = async () => {
@@ -14,13 +15,14 @@ const getAccountIds = async () => {
   }
 };
 
+// Function to generate static params
 export async function generateStaticParams() {
   const accounts = await getAccountIds();
-  return accounts.map((account) => ({
-    params: { id: account.id },
-  }));
+  const params = accounts.map(account => ({ id: account.id }));
+  return params;
 }
 
+// Page component
 export default function Page({ params }) {
   return <PublicNet params={params} />;
 }
