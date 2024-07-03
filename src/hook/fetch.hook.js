@@ -9,6 +9,18 @@ const apiStellarURI = "https://api.stellar.expert/explorer/directory?limit=20";
 const server = new Server(horizonURI);
 
 // Function to fetch main account information
+
+export const getInformation = async () => {
+    try {
+        const result = await server.loadAccount();
+
+
+        return result;
+    } catch (e) {
+        return [];
+    }
+};
+
 export const getMainInformation = async (accountId) => {
     try {
         const mainInformation = localStorage.getItem("main-" + accountId);
