@@ -12,6 +12,7 @@ if (isGithubActions) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'export',
     distDir: 'out',
     assetPrefix,
     basePath,
