@@ -34,9 +34,28 @@ jobs:
           mkdir -p out
           touch out/.nojekyll
 
+      - name: List output directory
+        run: ls -la out
+
+      - name: List gh-pages branch contents before deployment
+        run: |
+          git fetch origin gh-pages
+          git checkout gh-pages
+          ls -la
+
+      - name: Check git status
+        run: git status
+
       - name: Deploy
         if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: out
+          clean: true
+
+      - name: List gh-pages branch contents after deployment
+        run: |
+          git fetch origin gh-pages
+          git checkout gh-pages
+          ls -la
