@@ -49,7 +49,12 @@ jobs:
         run: git status
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        if: github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: out
+          clean: true
 
       - name: List gh-pages branch contents after deployment
         run: |
