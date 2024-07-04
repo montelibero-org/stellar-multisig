@@ -14,7 +14,6 @@ if (isGithubActions) {
 const nextConfig = {
     assetPrefix,
     basePath,
-    output: "export", // Ensure this line is present
     images: {
         unoptimized: true,
     },
