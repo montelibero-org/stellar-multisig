@@ -27,6 +27,7 @@ export async function generateStaticParams() {
 
 // Page component
 export default function Page({ params }) {
+    console.log("Received key:", params.id);
     if (!StellarSdk.StrKey.isValidEd25519PublicKey(params.id)) {
         // Handle case where params are not found or invalid
         return (
@@ -49,4 +50,4 @@ export default function Page({ params }) {
     }
     return <PublicNet params={params} />;
 }
-// 
+//
