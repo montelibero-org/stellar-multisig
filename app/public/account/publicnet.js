@@ -16,8 +16,7 @@ import { usePublic } from "@/context/net";
 import processKeys from "@/lib/processKeys";
 
 
-const PublicNet = ({ params  }) => {
-    const { id } = params;
+const PublicNet = ({ id }) => {
     const [account, setAccount] = useState(id || "");
     const [net, setNet] = usePublic();
     const [information, setInformation] = useState({});
@@ -155,7 +154,7 @@ const PublicNet = ({ params  }) => {
                                             title="View on Stellar.Expert"
                                         >
                                             <Image
-                                                src="/stellar-expert-logo.png"
+                                                src="../stellar-expert-logo.png"
                                                 alt="Stellar Expert Logo"
                                                 className="dark:invert"
                                                 width={30}

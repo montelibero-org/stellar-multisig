@@ -40,7 +40,7 @@ const SearchBar = () => {
             await server.loadAccount(search);
             setExists(true);
             // Navigate to the account page if the account exists
-            router.push(`/${net}/${search}`);
+            router.push(`/${net}/account?id=${search}`);
         } catch (e) {
             if (e instanceof StellarSdk.NotFoundError) {
                 setExists(false);

@@ -64,7 +64,7 @@ const Header = () => {
                     }}
                 >
                     <Image
-                        src="/montelibero-small-logo.png"
+                        src="../montelibero-small-logo.png"
                         alt="Montelibero Logo"
                         className="dark:invert"
                         width={30}
