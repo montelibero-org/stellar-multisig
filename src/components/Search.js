@@ -5,30 +5,25 @@ import { Search } from "lucide-react";
 import StellarSdk from "stellar-sdk";
 import { useRouter } from "next/navigation";
 import { usePublic } from "@/context/net";
-import {
-    getDirectoryInformation,
-    getDomainInformation,
-    getMainInformation,
-} from "@/hook";
+import useTheme from "@/hook/theme";
 
 const SearchBar = () => {
-    const [assets, getAsset] = useState([]);
+    const { theme } = useTheme();
     const [search, setSearch] = useState("");
-    const [net, setNet] = usePublic();
+    const [net] = usePublic();
     const router = useRouter();
     const [errorvalid, setErrorvalid] = useState(null);
     const [exists, setExists] = useState(null);
 
-    if (exists === true) {
-        // Render nothing while waiting for redirection
-        return null;
-    }
+    useEffect(() => {
+        console.log(theme);
+    }, [theme]);
 
     const changeHandler = (e) => {
         setErrorvalid(null);
         setSearch(e.currentTarget.value);
     };
-    
+
     const checkAccount = async () => {
         const serverUrl =
             net === "testnet"
@@ -39,16 +34,16 @@ const SearchBar = () => {
         try {
             await server.loadAccount(search);
             setExists(true);
-            // Navigate to the account page if the account exists
-            router.push(`/${net}/${search}`);
+            router.push(`/${net}/account?id=${search}`);
         } catch (e) {
             if (e instanceof StellarSdk.NotFoundError) {
                 setExists(false);
                 setErrorvalid(
-                    "Error: Account does not exist on the network. Make sure that you copied account address correctly and there was at least one payment to this address."
+                    "Error: Account does not exist on the network. Make sure that you copied the account address correctly and there was at least one payment to this address."
                 );
             } else {
                 console.error(e);
+                setErrorvalid("An unexpected error occurred. Please try again.");
             }
         }
     };
@@ -59,16 +54,11 @@ const SearchBar = () => {
         }
 
         if (StellarSdk.StrKey.isValidEd25519PublicKey(search)) {
-            console.log("true");
             checkAccount();
         } else {
-            setTimeout(() => {
-                setExists(false);
-            }, 2000);
+            setExists(false);
             setErrorvalid(`Not found at ${search}`);
         }
-
-        // router.push(`/search/${search}`);
     };
 
     const keyDownHandler = (e) => {
@@ -77,28 +67,11 @@ const SearchBar = () => {
         }
     };
 
-    // useEffect(() => {
-    //     const handle = async () => {
-    //         const domainInformation = await getDirectoryInformation();
-
-    //         // const splittedInformation = domainInformation.split("\n");
-    //         console.log(domainInformation);
-    //     }
-    //     handle();
-    // })
-
     return (
         <>
             {errorvalid ? (
-                <div
-                    className={`search ${
-                        exists === false ? "error" : ""
-                    } container narrow`}
-                    style={{ padding: "20px" }}
-                >
-                    <h2 className="text-overflow">
-                        Search results for {search}
-                    </h2>
+                <div className={`search ${exists === false ? "error" : ""} container narrow`} style={{ padding: "20px" }}>
+                    <h2 className="text-overflow">Search results for {search}</h2>
                     {exists === null && <p>Loading...</p>}
                     {exists === false && <span>{errorvalid}</span>}
                 </div>
@@ -120,10 +93,10 @@ const SearchBar = () => {
                     <Search />
                 </div>
                 <input
-                    className="search"
+                    className={"search"}
                     value={search}
-                    onKeyDown={(e) => keyDownHandler(e)}
-                    onChange={(e) => changeHandler(e)}
+                    onKeyDown={keyDownHandler}
+                    onChange={changeHandler}
                     placeholder="Paste an account address here"
                 />
             </div>

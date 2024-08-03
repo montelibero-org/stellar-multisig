@@ -3,24 +3,26 @@
 import { useEffect, useState } from "react";
 
 const useTheme = () => {
-    const [theme, setTheme] = useState('night');
+    const [theme, setTheme] = useState("night");
+
     useEffect(() => {
-        const _theme = localStorage.getItem("theme");
-        if(_theme) {
-            setTheme(_theme);
+        const savedTheme = typeof window !== "undefined" ? localStorage.getItem("theme") : null;
+        if (savedTheme) {
+            setTheme(savedTheme);
         } else {
-            localStorage.setItem('theme', 'night');
-            setTheme('night');
+            localStorage.setItem("theme", "night");
         }
     }, []);
 
-    const changeTheme = (value) => {
-        setTheme(value);
-    };
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            localStorage.setItem("theme", theme);
+        }
+    }, [theme]);
 
     return {
-        theme: theme,
-        setTheme: changeTheme,
+        theme,
+        setTheme,
     };
 };
 

@@ -4,12 +4,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link"; // Import Link for client-side navigation
 import { usePublic } from "@/context/net";
 
-const Footer = ({ setTheme }) => {
+const Footer = ({setTheme}) => {
+
     const [value, setValue] = useState("");
     const [net, setNet] = usePublic();
-    const stableSetTheme = useCallback((theme) => {
-        setTheme(theme);
-    }, [setTheme]);
+    const stableSetTheme = useCallback(
+        (theme) => {
+            setTheme(theme);
+        },
+        [setTheme]
+    );
     useEffect(() => {
         const _theme = localStorage.getItem("theme");
         if (_theme) {
@@ -52,18 +56,25 @@ const Footer = ({ setTheme }) => {
                     <a
                         href="#"
                         onClick={(e) => {
-                            e.preventDefault(); // Prevent the default anchor tag behavior
+                            e.preventDefault();
                             setValue(value === "day" ? "night" : "day");
+                            setTheme(value === "day" ? "night" : "day");
                         }}
                     >
-                        <i className={`icon icon-${value === "day" ? "night" : "day"}`}></i>{" "}
+                        <i
+                            className={`icon icon-${
+                                value === "day" ? "night" : "day"
+                            }`}
+                        ></i>{" "}
                         {value === "day" ? "Dark" : "Light"} theme
                     </a>
                 </div>
                 <div className="dimmed condensed" style={{ fontSize: "0.8em" }}>
                     Donations:{" "}
                     <span className="" tabIndex="-1">
-                        <Link href={`/${net}/GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN`}>
+                        <Link
+                            href={`/${net}/account?id=GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN`}
+                        >
                             GCSAXEHZBQY65URLO6YYDOCTRLIGTNMGCQHVW2RZPFNPTEJN6VN7TFIN
                         </Link>
                     </span>
@@ -74,3 +85,4 @@ const Footer = ({ setTheme }) => {
 };
 
 export default Footer;
+//

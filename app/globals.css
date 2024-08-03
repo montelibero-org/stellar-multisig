@@ -1,17 +1,26 @@
 .blue-ribbon {
-    border-top: 3px solid #08b5e5;
+    border-top: 3px solid #08B5E5;
 }
 
 .search {
     width: 100%;
-    border: 1px solid #08b5e5 !important;
+    outline: 1px solid #08b5e5;    padding: 10px;
+    border-radius: 20px;
+    background: transparent;
+    text-align: center;
+    color: white;
+}
+
+/* .search-light {
+    width: 100%;
+    border: 1px solid #66666681 !important;
     padding: 10px;
     border-radius: 20px;
     background: transparent;
     text-align: center;
     color: white;
-    box-shadow: 1px 1px #08b5e5 !important;
-}
+    box-shadow: 1px 4px #66666681 !important;
+} */
 
 .search:focus-visible {
     outline: none;
@@ -80,7 +89,6 @@ html {
     height: 100%;
 }
 
-
 body {
     font-smoothing: antialiased;
     -webkit-font-smoothing: antialiased;
@@ -89,7 +97,7 @@ body {
     font-family: ClearSans, sans-serif;
     font-size: 1.6rem;
     font-weight: 300;
-    letter-spacing: .01em;
+    letter-spacing: 0.01em;
     line-height: 1.4285;
     margin: 0;
     min-width: 320px;
@@ -133,12 +141,10 @@ h5,
 h6 {
     font-family: Roboto Condensed, Arial, Helvetica, sans-serif;
     font-weight: 300;
-    letter-spacing: -.02em;
-    margin-bottom: .5em;
-    margin-top: .5em;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
 }
-
-
 
 /*
   Reset links to optimize for opt-in styling instead of opt-out.
@@ -186,6 +192,10 @@ small {
 /*
   Prevent `sub` and `sup` elements from affecting the line height in all browsers.
   */
+
+.text-color {
+    color: #999;
+}
 
 sub,
 sup {
@@ -483,7 +493,7 @@ video {
     --color-modal-bg: #0003;
 }
 
-:root[data-theme=night] {
+:root[data-theme="night"] {
     --color-bg: #1b414a;
     --color-dashboard-bg: #272c2e;
     --color-alt-bg: #12363f;
@@ -1516,8 +1526,6 @@ html {
     scroll-behavior: smooth;
 }
 
-
-
 ::-webkit-scrollbar {
     height: 6px;
     width: 6px;
@@ -2080,7 +2088,6 @@ html {
 .icon-arrow-up:before {
     content: "\2191"; /* Unicode for upward arrow */
 }
-
 
 .icon-arrow-down:before {
     content: "\2193"; /* Unicode for downward arrow */
@@ -2909,8 +2916,6 @@ p {
     text-align: justify;
 }
 
-
-
 h1 {
     font-size: 3rem;
     line-height: 1.2;
@@ -3001,7 +3006,8 @@ code {
     color: #0691b7;
 }
 
-.dimmed, .label {
+.dimmed,
+.label {
     color: var(--color-dimmed);
 }
 
@@ -3275,7 +3281,7 @@ ol > li > * {
 
 dl {
     display: block;
-    letter-spacing: -.03em;
+    letter-spacing: -0.03em;
     line-height: 1.59992;
     margin: 0;
 }
