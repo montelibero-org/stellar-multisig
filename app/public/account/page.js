@@ -5,15 +5,9 @@ import MainLayout from "@/components/layouts";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-
     const [href, setHref] = useState("");
-    useEffect(() => {
-        setHref(window.location.href);
-    }, []);
-    console.log(href);
-
+    useEffect(() => setHref(window.location.href), []);
     const id = href.split("id=").pop();
-    console.log(id)
 
     if (!StellarSdk.StrKey.isValidEd25519PublicKey(id)) {
         return (

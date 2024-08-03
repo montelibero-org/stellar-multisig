@@ -4,16 +4,14 @@
 
 .search {
     width: 100%;
-    border: 1px solid #08b5e5 !important;
-    padding: 10px;
+    outline: 1px solid #08b5e5;    padding: 10px;
     border-radius: 20px;
     background: transparent;
     text-align: center;
     color: white;
-    box-shadow: 1px 4px #08b5e580 !important;
 }
 
-.search-light {
+/* .search-light {
     width: 100%;
     border: 1px solid #66666681 !important;
     padding: 10px;
@@ -22,7 +20,7 @@
     text-align: center;
     color: white;
     box-shadow: 1px 4px #66666681 !important;
-}
+} */
 
 .search:focus-visible {
     outline: none;
