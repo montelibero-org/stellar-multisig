@@ -1,9 +1,11 @@
-export type ThemeState = {
+export interface ThemeState {
   theme: string
 }
 
-export type ThemeActions = {
+export interface ThemeActions {
   setTheme: (theme: string) => void
 }
 
-export interface IThemeSlice extends ThemeState, ThemeActions {}
+interface IThemeSlice extends ThemeState, ThemeActions {}
+
+export default IThemeSlice

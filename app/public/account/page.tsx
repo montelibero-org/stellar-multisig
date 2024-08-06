@@ -5,9 +5,9 @@ import { MainLayout } from "@/widgets";
 import React, { FC, useEffect, useState } from "react";
 
 const Page: FC = () => {
-    const [href, setHref] = useState("");
+    const [href, setHref] = useState<string>("");
     useEffect(() => setHref(window.location.href), []);
-    const id = href.split("id=").pop();
+    const id: string | undefined = href.split("id=").pop();
 
     if (!StellarSdk.StrKey.isValidEd25519PublicKey(id)) {
         return (
@@ -26,7 +26,7 @@ const Page: FC = () => {
                 </MainLayout>
         );
     }
-    return <PublicNet id={id} />;
+    return <PublicNet id={id === undefined ? "" : id} />;
 }
 
 export default Page;

@@ -10,22 +10,21 @@ import { useShallow } from "zustand/react/shallow";
 
 export const Header: FC = () => {
     const router = useRouter();
-    const { net, setNet, theme, setTheme } = useStore(
+    const { net, setNet, theme } = useStore(
         useShallow((state) => ({
             net: state.net,
             setNet: state.setNet,
             theme: state.theme,
-            setTheme: state.setTheme,
         }))
     );
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef(null);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (
                 dropdownRef.current &&
-                !dropdownRef.current.contains(event.target)
+                !dropdownRef.current.contains(event.target as Node)
             ) {
                 setIsOpen(false); // Close dropdown if clicked outside
             }
@@ -33,6 +32,7 @@ export const Header: FC = () => {
 
         // Bind the event listener
         document.addEventListener("mousedown", handleClickOutside);
+
         return () => {
             // Unbind the event listener on cleanup
             document.removeEventListener("mousedown", handleClickOutside);
@@ -40,7 +40,6 @@ export const Header: FC = () => {
     }, []);
 
     useEffect(() => {
-        // Log the current state for debugging
         console.log("Net:", net);
         console.log("Theme:", theme);
     }, [net, theme]);

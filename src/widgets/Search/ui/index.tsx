@@ -1,41 +1,40 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
 import { Search } from "lucide-react";
 import StellarSdk from "stellar-sdk";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/features/store";
+import { Store } from "@/shared/types";
 import { useShallow } from "zustand/react/shallow";
-const SearchBar: FC = () => {
 
-    const { theme } = useStore(useShallow((state) => ({theme: state.theme})));
-    const [search, setSearch] = useState("");
-    const {net} = useStore(useShallow((state) => ({net: state.net})));
+const SearchBar: FC = () => {
+    const { theme, net }: Store = useStore(useShallow((state) => state));
+    const [search, setSearch] = useState<string>("");
     const router = useRouter();
-    const [errorvalid, setErrorvalid] = useState(null);
-    const [exists, setExists] = useState(null);
+    const [errorvalid, setErrorvalid] = useState<string | null>(null);
+    const [exists, setExists] = useState<boolean | null>(null);
 
     useEffect(() => {
         console.log(theme);
     }, [theme]);
 
-    const changeHandler = (e) => {
+    const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setErrorvalid(null);
         setSearch(e.currentTarget.value);
     };
 
     const checkAccount = async () => {
-        const serverUrl =
-            net === "testnet"
-                ? "https://horizon-testnet.stellar.org"
-                : "https://horizon.stellar.org";
+        const serverUrl = net === "testnet"
+            ? "https://horizon-testnet.stellar.org"
+            : "https://horizon.stellar.org";
         const server = new StellarSdk.Server(serverUrl);
 
         try {
             await server.loadAccount(search);
             setExists(true);
             router.push(`/${net}/account?id=${search}`);
-        } catch (e) {
+        } catch (e: unknown) {
             if (e instanceof StellarSdk.NotFoundError) {
                 setExists(false);
                 setErrorvalid(
@@ -61,8 +60,8 @@ const SearchBar: FC = () => {
         }
     };
 
-    const keyDownHandler = (e) => {
-        if (e.keyCode === 13) {
+    const keyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
             searchHandler();
         }
     };

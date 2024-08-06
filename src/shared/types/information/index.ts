@@ -31,6 +31,34 @@ export type Information = {
       };
   }>;
   tomlInfo?: string;
-  entries?: Array<string>;
+  entries: Array<string>;
   created_at?: string;
+}
+
+export type Issuer = {
+    paging_token: string;
+    asset_code: string;
+    accounts: {
+        authorized: number;
+    };
+};
+
+export type Signer = {
+    key: string;
+    weight: number;
+}
+
+export type Balance = {
+    balance: string;
+    asset_code?: string;
+    asset_issuer?: string;
+}
+
+export type TomlInfo = {
+    tomlInfo: string;
+}
+
+export type Entry = {
+    key: string;
+    value: string;
 }

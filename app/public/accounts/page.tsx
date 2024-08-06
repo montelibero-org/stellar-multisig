@@ -12,7 +12,7 @@ import { useShallow } from "zustand/react/shallow";
 
 const Accounts = () => {
     const [filter, setFilter] = useState("");
-    const [accountArray, setAccountArray] = useState([]);
+    const [accountArray, setAccountArray] = useState<Array<{name: string, issuer: string}>>([]);
     const {net} = useStore(useShallow((state) => ({net: state.net})));
     useEffect(() => {
         const handler = async () => {
@@ -26,32 +26,35 @@ const Accounts = () => {
 
             const splittedInformation = domainInformation.split("\n");
             let accounts = false;
-            let accountInfo = {};
-            let accountInfoArray = [];
+            let accountInfo: Record<string, string> = {};
+            const accountInfoArray = [];
 
-            for (let i in splittedInformation) {
+            for (const i in splittedInformation) {
                 if (splittedInformation[i] === "[[CURRENCIES]]") {
                     accounts = true;
                     continue;
                 }
-
+            
                 if (!accounts) {
                     continue;
                 }
-
+            
                 if (splittedInformation[i] === "" && accounts) {
                     accounts = false;
-                    accountInfoArray.push(accountInfo);
+                    accountInfoArray.push({
+                        name: accountInfo.name || "",
+                        issuer: accountInfo.issuer || "",
+                    });
                     accountInfo = {};
                     continue;
                 }
-
+            
                 const _pattern = splittedInformation[i].split("=");
                 accountInfo[_pattern[0].trim()] = _pattern[1]
                     .replace(/"/g, "")
                     .trim();
             }
-
+            
             setAccountArray(accountInfoArray);
         };
 

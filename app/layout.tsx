@@ -1,9 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
-import { useStore } from "@/features/store";
-import { useShallow } from "zustand/react/shallow";
-import { Footer, Header } from "@/widgets";
+import Layout from "@/pages/Layout"
 import "./globals.css";
 
 interface RootLayoutProps {
@@ -11,26 +9,7 @@ interface RootLayoutProps {
 }
 
 const RootLayout: FC<RootLayoutProps> = ({ children }) => {
-  const { theme } = useStore(
-    useShallow((state) => ({
-      theme: state.theme,
-    }))
-  );
-
-  return (
-    <html lang="en" data-theme={theme}>
-      <head>
-      </head>
-      <body>
-        <main className="flex min-h-screen flex-col">
-          <hr className="blue-ribbon" />
-          <Header />
-          {children}
-          <Footer />
-        </main>
-      </body>
-    </html>
-  );
+  return <Layout>{children}</Layout>;
 };
 
 export default RootLayout;

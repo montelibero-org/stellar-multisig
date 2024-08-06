@@ -7,26 +7,27 @@ import {
     getDomainInformation,
     getMainInformation,
 } from "@/features/hooks";
-import StellarBase from 'stellar-base'
 import StellarSdk from 'stellar-sdk';
-import React, { useEffect, useState } from "react";
-import Link from "next/link"; // Import Link for client-side navigation
+import React, { FC, useEffect, useState } from "react";
+import Link from "next/link";
 import processKeys from "@/shared/lib/processKeys";
-import { Information } from "@/shared/types";
+import { Balance, Information, Issuer, Signer } from "@/shared/types";
 import { useStore } from "@/features/store";
 import { useShallow } from "zustand/react/shallow";
+import { DocumentInfo } from "@/shared/types";
 
+interface Props {
+    id: string;
+}
 
-const PublicNet = ({ params  }) => {
-    const { id } = params;
-    const [account, setAccount] = useState(id || "");
+const PublicNet: FC<Props> = ({ id }) => {
+    const [account] = useState<string>(id);
     const {net} = useStore(useShallow((state) => state));
-    const [information, setInformation] = useState<Information>({});
-    const [exists, setExists] = useState(true);
-    const [tabIndex, setTabIndex] = useState(1);
-    const [errorvalid, setErrorvalid] = useState('')
-    const [show, setShow] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [information, setInformation] = useState<Information>({} as Information);
+    const [exists, setExists] = useState<boolean>(true);
+    const [tabIndex, setTabIndex] = useState<number>(1);
+    const [errorvalid, setErrorvalid] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const checkAccount = async () => {
@@ -84,9 +85,9 @@ const PublicNet = ({ params  }) => {
 
                 const splittedInformation = tomlInformation.split("\n");
                 let document = false;
-                let documentInfo = {};
+                const documentInfo: DocumentInfo = {};
 
-                for (let i in splittedInformation) {
+                for (const i in splittedInformation) {
                     if (splittedInformation[i] == "[DOCUMENTATION]") {
                         document = true;
                         continue;
@@ -124,7 +125,7 @@ const PublicNet = ({ params  }) => {
         handler();
     }, [account]);
 
-    const collapseAccount = (accountId) => {
+    const collapseAccount = (accountId: string) => {
         if (accountId == "" || accountId == null || accountId == undefined) {
             return <br />;
         }
@@ -457,7 +458,7 @@ const PublicNet = ({ params  }) => {
                                             </dd>
                                         </dl>
 
-                                        {information?.issuers?.length > 0 ? (
+                                        { information?.issuers?.length && information?.issuers?.length > 0 ? (
                                             <div className="account-issued-assets">
                                                 <h4
                                                     style={{
@@ -506,7 +507,7 @@ const PublicNet = ({ params  }) => {
                                                 <div className="text-small">
                                                     <ul>
                                                         {information?.issuers?.map(
-                                                            (issuer, key) => {
+                                                            (issuer: Issuer, key: number) => {
                                                                 return (
                                                                     <li
                                                                         key={
@@ -577,7 +578,7 @@ const PublicNet = ({ params  }) => {
                                         </h4>
                                         <ul className="text-small condensed">
                                             {information?.signers?.map(
-                                                (item, index) => {
+                                                (item: Signer, index: number) => {
                                                     return (
                                                         <li key={index}>
                                                             <Link href={`/${net}/${item.key}`} legacyBehavior>
@@ -651,8 +652,8 @@ const PublicNet = ({ params  }) => {
                                                     {information?.entries &&
                                                         Object.keys(
                                                             information?.entries
-                                                        ).map((entry, key) => {
-                                                            const { processedKey, processedValue } = processKeys(entry, information?.entries[entry]);
+                                                        ).map((entry: string, key: number) => {
+                                                            const { processedKey, processedValue } = processKeys(entry, information?.entries[key]);
                                                             return (
                                                                 <li className="word-break" key={key}>
                                                                     {processedKey}: <span dangerouslySetInnerHTML={{ __html: processedValue }} />
@@ -699,7 +700,7 @@ const PublicNet = ({ params  }) => {
                                         <hr className="flare"></hr>
                                         <div className="all-account-balances micro-space text-header">
                                             {information?.balances?.map(
-                                                (item, key) => {
+                                                (item: Balance, key: number) => {
                                                     const totalInfo =
                                                         item.balance.split(".");
                                                     const number = totalInfo[0];
@@ -724,7 +725,7 @@ const PublicNet = ({ params  }) => {
                                                             </div>
                                                             <div className="text-tiny condensed">
                                                                 <div>
-                                                                    {collapseAccount(
+                                                                    { item.asset_issuer !== undefined && collapseAccount(
                                                                         item.asset_issuer
                                                                     )}
                                                                 </div>
@@ -953,13 +954,7 @@ const PublicNet = ({ params  }) => {
                                                                 Empty Data
                                                             </div>
                                                         ) : (
-                                                            information?.tomlInfo
-                                                                ?.split("\n")
-                                                                ?.map(
-                                                                    (
-                                                                        toml,
-                                                                        keyinfo
-                                                                    ) => {
+                                                            information?.tomlInfo?.split("\n")?.map((toml: string, keyinfo: number) => {
                                                                         if (
                                                                             toml ==
                                                                             null ||
@@ -1054,8 +1049,8 @@ const PublicNet = ({ params  }) => {
                             <div className="cotainer">
                                 <div className={`search ${exists === false ? 'error' : ''} container narrow`} style={{ padding: '20px' }} >
                                     <h2 className="text-overflow">Search results for {account}</h2>
-                                    {exists === true && <p>Account {account} exists on {net}!</p>}
-                                    {exists === false && <span>{errorvalid}</span>}
+                                    {exists && <p>Account {account} exists on {net}!</p>}
+                                    {!exists && <span>{errorvalid}</span>}
                                 </div>
                             </div>
                         )

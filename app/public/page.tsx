@@ -1,9 +1,12 @@
-import SearchBar from "@/components/Search";
+import { SearchBar, MainLayout } from "@/widgets";
+import React from "react";
 
-export default function Home() {
+const Home = () => {
     return (
-        <div className="page-container">
+        <MainLayout>
             <SearchBar />
-        </div>
+        </MainLayout>
     );
-}
+};
+
+export default Home;

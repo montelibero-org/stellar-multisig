@@ -43,9 +43,10 @@ const buttonVariants = cva(
 const Button: FC<ButtonProps> = forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className, variant, size, asChild = false, ...props }, ref) => {
         const Comp = asChild ? Slot : "button";
+        const buttonClasses = className ? cn(buttonVariants({ variant, size }), className) : buttonVariants({ variant, size });
         return (
             <Comp
-                className={cn(buttonVariants({ variant, size }), className)}
+                className={buttonClasses}
                 ref={ref}
                 {...props}
             />

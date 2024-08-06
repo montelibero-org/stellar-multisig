@@ -1,7 +1,7 @@
 "use client";
 
 import { Server } from "stellar-sdk";
-import cacheConfig from "../lib/cache-config.json";
+import cacheConfig from "@/features/hooks/lib/cache-config";
 
 const horizonURI = "https://horizon.stellar.org";
 const apiStellarURI = "https://api.stellar.expert/explorer/directory?limit=20";
@@ -19,6 +19,7 @@ export const getMainInformation = async (accountId: string) => {
         ); // Cache duration for Stellar data in milliseconds (1 minute)
         return result;
     } catch (e) {
+        console.error(e);
         return [];
     }
 };
@@ -36,6 +37,7 @@ export const getAccountIssuerInformation = async (accountId: string) => {
         );
         return result;
     } catch (e) {
+        console.error(e);
         return [];
     }
 };
@@ -55,12 +57,13 @@ export const getDomainInformation = async (domain: string) => {
         ); // Cache duration for Stellar TOML files in milliseconds (10 minutes)
         return text;
     } catch (e) {
+        console.error(e);
         return "";
     }
 };
 
 // Function to fetch directory information from Stellar API
-export const getDirectoryInformation = async (accountId: string) => {
+export const getDirectoryInformation = async () => {
     const result = await fetch(apiStellarURI);
     const json = await result.json();
     return json;

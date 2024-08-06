@@ -6,10 +6,9 @@ import { useStore } from "@/features/store";
 import { useShallow } from "zustand/react/shallow";
 
 const Footer: FC = () => {
-    const { net, setNet, theme, setTheme } = useStore(
+    const { net, theme, setTheme } = useStore(
         useShallow((state) => ({
             net: state.net,
-            setNet: state.setNet,
             theme: state.theme,
             setTheme: state.setTheme,
         }))

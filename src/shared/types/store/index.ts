@@ -1,4 +1,5 @@
-import { INetSlice } from "@/shared/types/store/slices";
-import { IThemeSlice } from "@/shared/types/store/slices";
+import { INetSlice, IThemeSlice } from "@/shared/types/store/slices";
 
-export type Store = INetSlice & IThemeSlice
+interface Store extends INetSlice, IThemeSlice {}
+
+export default Store;

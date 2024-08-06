@@ -1,10 +1,10 @@
-// middleware.js
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export function middleware(request) {
+export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const { pathname } = request.nextUrl;
-  const network = request.cookies.get('network') || 'public';
+  const network = request.cookies.get('network')?.value || 'public';
 
   // Redirect from the root to the appropriate network
   if (pathname === '/') {
