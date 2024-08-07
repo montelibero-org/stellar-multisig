@@ -39,11 +39,6 @@ export const Header: FC = () => {
         };
     }, []);
 
-    useEffect(() => {
-        console.log("Net:", net);
-        console.log("Theme:", theme);
-    }, [net, theme]);
-
     const toggleDropdown = () => setIsOpen(!isOpen);
 
     const handleSelect = (network: string) => {

@@ -1,14 +1,20 @@
 import dataKeys from '../data-keys.json';
 
 // Function to decode base64 strings
-const decodeBase64 = (str: string): string => {
+const decodeBase64 = (str: string | undefined): string => {
+  if (typeof str !== "string") {
+    console.error("Input is not a valid string:", str);
+    return "";
+  }
+
   try {
     return atob(str);
-  } catch {
-    console.error("Invalid base64 string:", str);
+  } catch (error) {
+    console.error("Invalid base64 string:", str, error);
     return str;
   }
 };
+
 
 const processKeys = (key: string, value: string): { processedKey: string, processedValue: string } => {
   const processedKey = key;

@@ -1,6 +1,8 @@
 "use client";
 
-import React, { FC, useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
+import React, { FC,
+    
+    useState, ChangeEvent, KeyboardEvent } from "react";
 import { Search } from "lucide-react";
 import StellarSdk from "stellar-sdk";
 import { useRouter } from "next/navigation";
@@ -9,15 +11,11 @@ import { Store } from "@/shared/types";
 import { useShallow } from "zustand/react/shallow";
 
 const SearchBar: FC = () => {
-    const { theme, net }: Store = useStore(useShallow((state) => state));
+    const { net }: Store = useStore(useShallow((state) => state));
     const [search, setSearch] = useState<string>("");
     const router = useRouter();
     const [errorvalid, setErrorvalid] = useState<string | null>(null);
     const [exists, setExists] = useState<boolean | null>(null);
-
-    useEffect(() => {
-        console.log(theme);
-    }, [theme]);
 
     const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setErrorvalid(null);
