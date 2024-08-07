@@ -18,6 +18,7 @@ To learn more about Next.js, take a look at the following resources:
 - [Tailwind CSS](https://tailwindcss.com) - A utility-first CSS framework packed with classes like flex, pt-4, text-center and rotate-90 that can be composed to build any design, directly in your markup.
 - [JS Stellar SDK](https://github.com/stellar/js-stellar-sdk) - A JavaScript library for communicating with a Stellar Horizon server and Soroban RPC. It is used for building Stellar apps either on Node.js or in the browser, though it can be used in other environments with some tinkering.
 - [Zustand](https://github.com/pmndrs/zustand) - A state management library for React.
+- [TypeScript](https://www.typescriptlang.org) - A typed superset of JavaScript that compiles to plain JavaScript.
 
 ## Contributing
 
