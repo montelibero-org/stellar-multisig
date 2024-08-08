@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { FC, useEffect } from "react";
 import { useStore } from "@/features/store";
@@ -14,7 +14,7 @@ const PageLayout: FC<Props> = ({ children }) => {
         useShallow((state) => ({
             theme: state.theme,
             setTheme: state.setTheme,
-            setNet: state.setNet
+            setNet: state.setNet,
         }))
     );
 
@@ -25,6 +25,11 @@ const PageLayout: FC<Props> = ({ children }) => {
 
     return (
         <html lang="en" data-theme={theme}>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta name="commit-hash" content={process.env.NEXT_PUBLIC_COMMIT_HASH || ""} />
+                <title>Stellar Multisig</title>
+            </head>
             <body>
                 <main className="flex min-h-screen flex-col">
                     <hr className="blue-ribbon" />
