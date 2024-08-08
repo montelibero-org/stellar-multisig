@@ -619,7 +619,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                                                     return (
                                                         <li key={index}>
                                                             <Link
-                                                                href={`/${net}/${item.key}`}
+                                                                href={`/public/account?id=${item.key}`}
                                                                 legacyBehavior
                                                             >
                                                                 <a

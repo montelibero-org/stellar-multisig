@@ -1,7 +1,7 @@
 "use client";
 
 import PublicNet from "./publicnet";
-import StellarSdk from "stellar-sdk";
+import StellarSdk from "@stellar/stellar-sdk";
 import { MainLayout } from "@/widgets";
 import React, { FC, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -12,9 +12,7 @@ const Page: FC = () => {
     const id = params?.get("id");
 
     useEffect(() => {
-        if (id) {
-            setIsValidId(StellarSdk.StrKey.isValidEd25519PublicKey(id));
-        }
+        if (id) setIsValidId(StellarSdk);
     }, [id]);
 
     if (!id || isValidId === null) {
