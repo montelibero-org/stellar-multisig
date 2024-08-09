@@ -1,6 +1,5 @@
-/** @type {import('next').NextConfig} */
-
 import path from "path";
+import getCommitHash from "./getCommitHash.mjs";
 
 const nextConfig = {
     images: {
@@ -11,9 +10,11 @@ const nextConfig = {
             ...config.resolve.alias,
             "@": path.resolve(process.cwd(), "src/"),
             // Можно добавить дополнительные алиасы по мере необходимости
-            // '~': path.resolve(process.cwd(), 'src/')
         };
         return config;
+    },
+    env: {
+        NEXT_PUBLIC_COMMIT_HASH: getCommitHash(),
     },
 };
 

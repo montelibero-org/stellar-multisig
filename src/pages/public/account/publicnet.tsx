@@ -42,7 +42,6 @@ const PublicNet: FC<Props> = ({ id }) => {
             try {
                 await server.loadAccount(account);
                 setExists(true);
-                console.log("valid");
                 // Navigate to the account page if the account exists
             } catch (e) {
                 if (e instanceof StellarSdk.NotFoundError) {
@@ -57,7 +56,6 @@ const PublicNet: FC<Props> = ({ id }) => {
         };
 
         if (StellarSdk.StrKey.isValidEd25519PublicKey(account)) {
-            console.log("true");
             checkAccount();
         } else {
             setTimeout(() => {
@@ -621,7 +619,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                                                     return (
                                                         <li key={index}>
                                                             <Link
-                                                                href={`/${net}/${item.key}`}
+                                                                href={`/public/account?id=${item.key}`}
                                                                 legacyBehavior
                                                             >
                                                                 <a

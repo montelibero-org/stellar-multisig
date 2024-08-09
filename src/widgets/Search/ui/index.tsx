@@ -1,23 +1,21 @@
 "use client";
 
-import React, { FC, useEffect, useState, ChangeEvent, KeyboardEvent } from "react";
+import React, { FC, useState, ChangeEvent, KeyboardEvent } from "react";
 import { Search } from "lucide-react";
 import StellarSdk from "stellar-sdk";
+import { Server } from "stellar-sdk";
+import { StrKey } from "@stellar/stellar-sdk";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/features/store";
 import { Store } from "@/shared/types";
 import { useShallow } from "zustand/react/shallow";
 
 const SearchBar: FC = () => {
-    const { theme, net }: Store = useStore(useShallow((state) => state));
+    const { net }: Store = useStore(useShallow((state) => state));
     const [search, setSearch] = useState<string>("");
     const router = useRouter();
     const [errorvalid, setErrorvalid] = useState<string | null>(null);
     const [exists, setExists] = useState<boolean | null>(null);
-
-    useEffect(() => {
-        console.log(theme);
-    }, [theme]);
 
     const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setErrorvalid(null);
@@ -28,7 +26,7 @@ const SearchBar: FC = () => {
         const serverUrl = net === "testnet"
             ? "https://horizon-testnet.stellar.org"
             : "https://horizon.stellar.org";
-        const server = new StellarSdk.Server(serverUrl);
+        const server = new Server(serverUrl);
 
         try {
             await server.loadAccount(search);
@@ -52,7 +50,7 @@ const SearchBar: FC = () => {
             return;
         }
 
-        if (StellarSdk.StrKey.isValidEd25519PublicKey(search)) {
+        if (StrKey.isValidEd25519PublicKey(search)) {
             checkAccount();
         } else {
             setExists(false);
