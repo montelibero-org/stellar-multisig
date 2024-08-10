@@ -11,6 +11,7 @@ export type {
     TomlInfo,
     Entry
 } from "@/shared/types/information";
+export type {CurrencyInfo, RecordEnemy} from "@/shared/types/currencyInfo";
 export type DocumentInfo = {
   [key: string]: string;
 }
