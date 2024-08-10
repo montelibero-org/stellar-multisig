@@ -35,7 +35,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "src/shared/lib/popularTags"  ],
   "exclude": [
     "node_modules"
   ]

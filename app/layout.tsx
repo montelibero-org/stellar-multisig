@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
-import Layout from "@/pages/Layout"
+import Layout from "@/pages/Layout/_index"
 import "./globals.css";
 
 interface RootLayoutProps {
