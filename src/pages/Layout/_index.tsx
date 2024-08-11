@@ -19,33 +19,47 @@ const PageLayout: FC<Props> = ({ children }) => {
   );
 
   useEffect(() => {
-    setIsWindowDefined(typeof window !== 'undefined');
+    setIsWindowDefined(typeof window !== "undefined");
     if (isWindowDefined) {
-      if (localStorage.getItem("theme")) setTheme(localStorage.getItem("theme")!);
+      if (localStorage.getItem("theme"))
+        setTheme(localStorage.getItem("theme")!);
       if (localStorage.getItem("net")) setNet(localStorage.getItem("net")!);
     }
   }, [setTheme, setNet, isWindowDefined]);
 
-  const themeLS: string = isWindowDefined ? String(window.localStorage.getItem("theme")) : '';
+  const themeLS: string | undefined | null = isWindowDefined
+    ? window.localStorage.getItem("theme")
+      ? window.localStorage.getItem("theme")
+      : "night"
+    : "";
 
   if (!isWindowDefined) {
-    return <html>
+    return (
+      <html>
         <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="commit-hash" content={process.env.NEXT_PUBLIC_COMMIT_HASH || ""} />
-        <title>Stellar Multisig</title>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <meta
+            name="commit-hash"
+            content={process.env.NEXT_PUBLIC_COMMIT_HASH || ""}
+          />
+          <title>Stellar Multisig</title>
         </head>
-        <body>
-
-        </body>
-    </html>;
+        <body></body>
+      </html>
+    );
   }
 
   return (
     <html lang="en" data-theme={!theme || themeLS}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="commit-hash" content={process.env.NEXT_PUBLIC_COMMIT_HASH || ""} />
+        <meta
+          name="commit-hash"
+          content={process.env.NEXT_PUBLIC_COMMIT_HASH || ""}
+        />
         <title>Stellar Multisig</title>
       </head>
       <body>
