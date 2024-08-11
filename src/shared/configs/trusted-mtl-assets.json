@@ -1,5 +1,37 @@
-{
-  "code": "USD",
-  "issuer": "GA223OFHVKVAH2NBXP4AURJRVJTSOVHGBMKJNL6GRJWNN4SARVGSITYG",
-  "tag": ""
-}
+[
+  {
+    "code": "EURMTL",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "stablecoin"
+  },
+  {
+    "code": "USDM",
+    "issuer": "GDHDC4GBNPMENZAOBB4NCQ25TGZPDRK6ZGWUGSI22TVFATOLRPSUUSDM",
+    "tag": "stablecoin"
+  },
+  {
+    "code": "BTCMTL",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "stablecoin"
+  },
+  {
+    "code": "SATSMTL",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "stablecoin"
+  },
+  {
+    "code": "SATSMTL",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "stablecoin"
+  },
+  {
+    "code": "MTL",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "etf"
+  },
+  {
+    "code": "MTLRECT",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "etf"
+  }
+]

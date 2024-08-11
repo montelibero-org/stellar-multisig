@@ -4,14 +4,9 @@ Live: [stellar-multisig.montelibero.org](https://stellar-multisig.montelibero.or
 
 The repository is a part of the [Montelibero Organization](https://github.com/montelibero-org). This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Technology Stack
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js](https://nextjs.org) - A React framework for building full-stack web applications. Use React Components to build user interfaces, and Next.js for additional features and optimizations.
 - [next/font](https://nextjs.org/docs/basic-features/font-optimization) - Automatically optimize and load Inter, a custom Google Font.
 - [shadcn/ui](https://ui.shadcn.com) - Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.
 - [Radix Themes](https://www.radix-ui.com) - An open source component library optimized for fast development, easy maintenance, and accessibility.

@@ -127,10 +127,6 @@ const Assets: FC = () => {
           ></a>
         </div>
         <div className="segment blank directory">
-          <p className="dimmed text-small">
-            The list of well-known Stellar accounts curated by StellarExpert
-            team.
-          </p>
           <div className="text-center double-space">
             <form onSubmit={handleSubmit}>
               <input
@@ -138,7 +134,7 @@ const Assets: FC = () => {
                 name="search"
                 className="primary"
                 defaultValue={filter}
-                placeholder="Search assets by code, name, domain, or public key"
+                placeholder="Search assets by code, or public key"
                 style={{ maxWidth: "36em" }}
               />
             </form>
@@ -148,11 +144,10 @@ const Assets: FC = () => {
                 {popularTags.map((tag: ITag, index: number) => (
                   <div key={index} className="column column-25">
                     <Link
-                      className={`tag-block ${
-                        paramsTags.includes(tag.name.replace("#", ""))
-                          ? "active"
-                          : ""
-                      }`}
+                      className={`tag-block ${paramsTags.includes(tag.name.replace("#", ""))
+                        ? "active"
+                        : ""
+                        }`}
                       href={toggleTag(tag)}
                     >
                       {tag.name}
@@ -180,14 +175,14 @@ const Assets: FC = () => {
               <button
                 className={`button ${isPrevDisabled ? "disabled" : ""}`}
                 disabled={isPrevDisabled}
-                // onClick={() => !isPrevDisabled && changePage("prev")}
+              // onClick={() => !isPrevDisabled && changePage("prev")}
               >
                 Prev Page
               </button>
               <button
                 className={`button ${isNextDisabled ? "disabled" : ""}`}
                 disabled={isNextDisabled}
-                // onClick={() => !isNextDisabled && changePage("next")}
+              // onClick={() => !isNextDisabled && changePage("next")}
               >
                 Next Page
               </button>
