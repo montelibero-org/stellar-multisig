@@ -1,5 +1,5 @@
 export interface ThemeState {
-  theme: string
+  theme: string | null
 }
 
 export interface ThemeActions {

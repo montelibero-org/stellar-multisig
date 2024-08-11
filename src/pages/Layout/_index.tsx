@@ -23,8 +23,10 @@ const PageLayout: FC<Props> = ({ children }) => {
         if (localStorage.getItem("net")) setNet(localStorage.getItem("net")!);
     }, [setTheme, setNet]);
 
+    const themeLS = window.localStorage.getItem("theme");
+
     return (
-        <html lang="en" data-theme={theme}>
+        <html lang="en" data-theme={!theme || themeLS}>
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <meta name="commit-hash" content={process.env.NEXT_PUBLIC_COMMIT_HASH || ""} />
