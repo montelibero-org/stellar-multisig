@@ -1,9 +1,8 @@
-import dataKeys from '../data-keys.json';
+import dataKeys from '@/shared/configs/data-keys.json';
 
 // Function to decode base64 strings
 const decodeBase64 = (str: string | undefined): string => {
   if (typeof str !== "string") {
-    console.error("Input is not a valid string:", str);
     return "";
   }
 
