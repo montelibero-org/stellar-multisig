@@ -6,7 +6,7 @@ import { MainLayout } from "@/widgets";
 import AssetsListItem, { AssetsItem } from "./AssetsListItem";
 import trustedMtlAssets from "@/shared/configs/trusted-mtl-assets.json";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 20;
 
 const Assets: FC = () => {
   const searchParams = useSearchParams();
