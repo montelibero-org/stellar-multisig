@@ -13,7 +13,7 @@ const CurrencyListItem: FC<Props> = ({ RecordEnemy, net, paramsTags }) => (
     <div>
       <b>{RecordEnemy?.name}</b>{" "}
 
-      <a href="https://null" className="text-small">
+      <a href="#" className="text-small">
         {RecordEnemy?.domain}
       </a>
       {RecordEnemy?.tags.map((tag: string, index: number) =>
