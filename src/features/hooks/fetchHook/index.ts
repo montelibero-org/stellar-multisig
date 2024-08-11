@@ -1,6 +1,6 @@
 "use client";
 
-import cacheConfig from "@/features/hooks/lib/cache-config";
+import cacheConfig from "@/shared/configs/cache-config.json";
 import { Server } from 'stellar-sdk';
 
 const horizonURI = "https://horizon.stellar.org";
