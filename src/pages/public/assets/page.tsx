@@ -1,5 +1,11 @@
 "use client";
 
+// import axios, { AxiosError } from "axios";
+// import CurrencyListItem from "./CurrencyListItem";
+// const API_URL = "https://api.stellar.expert/explorer/directory";
+// import CurrencyListItem from "./CurrencyListItem";
+// import { useShallow } from "zustand/react/shallow";
+// import { useStore } from "@/features/store";
 import React, {
   // useEffect,
   // useCallback,
@@ -8,17 +14,13 @@ import React, {
   FormEvent,
   useMemo,
 } from "react";
-// import { useStore } from "@/features/store";
-// import { useShallow } from "zustand/react/shallow";
-// import axios, { AxiosError } from "axios";
-// import CurrencyListItem from "./CurrencyListItem";
-// const API_URL = "https://api.stellar.expert/explorer/directory";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { MainLayout } from "@/widgets";
 import { CurrencyInfo } from "@/shared/types";
 import { ITag, popularTags } from "@/shared/lib/popularTags";
 import trustedMtlAssets from "@/shared/configs/trusted-mtl-assets.json";
+import AssetsListItem, { AssetsItem } from "./AssetsListItem";
 
 const Assets: FC = () => {
   const searchParams = useSearchParams();
@@ -120,7 +122,7 @@ const Assets: FC = () => {
         <h2>Trusted MTL Assets</h2>
         <div className="text-right mobile-left" style={{ marginTop: "-2.2em" }}>
           <a
-            href="#"
+            href="https://github.com/montelibero-org/stellar-multisig/blob/main/src/shared/configs/trusted-mtl-assets.json"
             className="icon icon-github"
             title="Log in with Github"
             style={{ fontSize: "1.4em" }}
@@ -169,6 +171,12 @@ const Assets: FC = () => {
                 />
               )
             )} */}
+            {trustedMtlAssets.map((value: AssetsItem, index: number) => (
+              <AssetsListItem
+                key={index}
+                item={value}
+              />
+            ))}
           </ul>
           <div className="grid-actions text-center space relative">
             <div className="button-group">
