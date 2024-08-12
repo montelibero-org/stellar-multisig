@@ -36,7 +36,7 @@ const processKeys = (key: string, value: string): { processedKey: string, proces
           processedValue = `<a href="/public/account?id=${decodedValue}">${decodedValue}</a>`;
           break;
         case 'links':
-          processedValue = `<a href="${decodedValue}">${decodedValue}</a>`;
+          processedValue = `<a target="_blank" href="${decodedValue}">${decodedValue}</a>`;
           break;
         case 'names':
           processedValue = decodedValue; // Add specific processing for names if needed

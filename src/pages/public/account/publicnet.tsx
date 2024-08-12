@@ -22,7 +22,7 @@ interface Props {
 }
 
 const PublicNet: FC<Props> = ({ id }) => {
-  const account = id;
+  const account = id
   const { net } = useStore(useShallow((state) => ({ net: state.net })));
   const [information, setInformation] = useState<Information>(
     {} as Information

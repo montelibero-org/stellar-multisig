@@ -31,7 +31,7 @@ const AssetsListItem: FC<Props> = ({ item }) => {
             href={`/${net}/account?id=${item?.issuer}`}
             style={{ marginRight: "1em" }}
           >
-            <span className="account-key">{item?.code}</span>
+            <span className="account-key" style={{fontSize: "1.6rem"}}>{item?.code}</span>
           </Link>
         </b>
         {" "}
@@ -52,7 +52,7 @@ const AssetsListItem: FC<Props> = ({ item }) => {
             href={`/${net}/account?id=${item?.issuer}`}
             style={{ marginRight: "1em" }}
           >
-            <span className="account-key">{item?.issuer}</span>
+            <span className="account-key" style={{fontSize: "1.6rem"}}>{item?.issuer}</span>
           </Link>
     </li>
   );
