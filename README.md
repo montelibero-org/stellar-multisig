@@ -12,6 +12,7 @@ The repository is a part of the [Montelibero Organization](https://github.com/mo
 - [Radix Themes](https://www.radix-ui.com) - An open source component library optimized for fast development, easy maintenance, and accessibility.
 - [Tailwind CSS](https://tailwindcss.com) - A utility-first CSS framework packed with classes like flex, pt-4, text-center and rotate-90 that can be composed to build any design, directly in your markup.
 - [Axios](https://github.com/axios/axios) - A simple HTTP client for the browser and Node.js.
+- [React icons](https://react-icons.github.io/react-icons) - A library of SVG React icons.
 - [JS Stellar SDK](https://github.com/stellar/js-stellar-sdk) - A JavaScript library for communicating with a Stellar Horizon server and Soroban RPC. It is used for building Stellar apps either on Node.js or in the browser, though it can be used in other environments with some tinkering.
 - [Zustand](https://github.com/pmndrs/zustand) - A state management library for React.
 - [TypeScript](https://www.typescriptlang.org) - A typed superset of JavaScript that compiles to plain JavaScript.
