@@ -33,10 +33,6 @@ const PublicNet: FC<Props> = ({ id }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(information);
-  }, [information]);
-
-  useEffect(() => {
     const checkAccount = async () => {
       const serverUrl =
         net === "testnet"
