@@ -9,7 +9,6 @@ interface Props {
 
 const RootLayout: FC<Props> = ({ children }) => {
   return <Layout>{children}</Layout>;
-  // test
 };
 
 export default RootLayout;

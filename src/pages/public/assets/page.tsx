@@ -14,7 +14,6 @@ const Assets: FC = () => {
   const paramsSearch = searchParams?.get("search");
   const tags = searchParams?.get("tag[]")?.split(",") || [];
   const [staticTags, setStaticTags] = useState<string[]>([]);
-
   const [filter, setFilter] = useState<string>(paramsSearch || "");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [displayedItems, setDisplayedItems] = useState<AssetsItem[]>([]);
@@ -54,7 +53,7 @@ const Assets: FC = () => {
   useEffect(() => {
     if (!filter) {
       const uniqueTags = [...new Set(displayedItems.map((item) => item.tag))];
-      setStaticTags(uniqueTags);
+      setStaticTags(uniqueTags.sort());
     }
   }, [displayedItems, filter]);
 
@@ -127,10 +126,10 @@ const Assets: FC = () => {
               ? displayedItems
                   .filter((item) => tags.includes(item.tag))
                   .map((value: AssetsItem, index: number) => (
-                    <AssetsListItem key={index} item={value} />
+                    <AssetsListItem key={index} item={value} tags={tags} />
                   ))
               : displayedItems.map((value: AssetsItem, index: number) => (
-                  <AssetsListItem key={index} item={value} />
+                  <AssetsListItem key={index} item={value} tags={tags} />
                 ))}
           </ul>
           <div ref={observerRef} />
