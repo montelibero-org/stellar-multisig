@@ -31,7 +31,7 @@ export type Information = {
       };
   }>;
   tomlInfo?: string;
-  entries: Array<string>;
+  entries: Record<string, string>
   created_at?: string;
 }
 
