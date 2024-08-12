@@ -33,7 +33,7 @@ const processKeys = (key: string, value: string): { processedKey: string, proces
     if (patterns.some(pattern => pattern.test(key))) {
       switch (type) {
         case 'accounts':
-          processedValue = `<a href="/public/${decodedValue}">${decodedValue}</a>`;
+          processedValue = `<a href="/public/account?id=${decodedValue}">${decodedValue}</a>`;
           break;
         case 'links':
           processedValue = `<a href="${decodedValue}">${decodedValue}</a>`;
