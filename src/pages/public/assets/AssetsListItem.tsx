@@ -31,12 +31,9 @@ const AssetsListItem: FC<Props> = ({ item }) => {
             href={`/${net}/account?id=${item?.issuer}`}
             style={{ marginRight: "1em" }}
           >
-            <span className="account-key">{item?.issuer}</span>
+            <span className="account-key">{item?.code}</span>
           </Link>
         </b>
-        <a href="#" className="text-small">
-          {item?.code}
-        </a>
         {" "}
         {item?.tag ? (
           <a href="#" className="inline-tag">
@@ -48,6 +45,15 @@ const AssetsListItem: FC<Props> = ({ item }) => {
           </a>
         )}
       </div>
+      <Link
+            title={item?.issuer}
+            aria-label={item?.issuer}
+            className="account-address"
+            href={`/${net}/account?id=${item?.issuer}`}
+            style={{ marginRight: "1em" }}
+          >
+            <span className="account-key">{item?.issuer}</span>
+          </Link>
     </li>
   );
 };

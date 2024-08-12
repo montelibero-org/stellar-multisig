@@ -11,7 +11,6 @@ import StellarSdk from "stellar-sdk";
 import React, { FC, useEffect, useState } from "react";
 import Link from "next/link";
 import "./public.css";
-import processKeys from "@/shared/lib/processKeys";
 import { useStore } from "@/features/store";
 import { useShallow } from "zustand/react/shallow";
 import { Balance, Information, Signer } from "@/shared/types";
@@ -31,6 +30,10 @@ const PublicNet: FC<Props> = ({ id }) => {
   const [tabIndex, setTabIndex] = useState(1);
   const [errorvalid, setErrorvalid] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log(information);
+  }, [information]);
 
   useEffect(() => {
     const checkAccount = async () => {
@@ -477,9 +480,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                                   aria-label={item.key}
                                   className="account-address word-break"
                                 >
-                                  <span className="">
-                                    {collapseAccount(item.key)}
-                                  </span>
+                                  <span>{collapseAccount(item.key)} </span>
                                 </a>
                               </Link>
                               (w:
@@ -525,26 +526,13 @@ const PublicNet: FC<Props> = ({ id }) => {
                           </i>
                         </h4>
                         <ul className="text-small condensed">
-                          {information.entries &&
-                            Object.keys(
-                              (information?.entries ?? {}) as Record<
-                                number,
-                                string
-                              >
-                            ).map((entry: string, key: number) => {
-                              const { processedKey, processedValue } =
-                                processKeys(entry, information.entries[key]);
-                              return (
-                                <li className="word-break" key={key}>
-                                  {processedKey}:{" "}
-                                  <span
-                                    dangerouslySetInnerHTML={{
-                                      __html: processedValue,
-                                    }}
-                                  />
-                                </li>
-                              );
-                            })}
+                          {Object.entries(information?.entries).map(
+                            ([key, value]: [string, string]) => (
+                              <li className="word-break" key={key}>
+                                <span>{key}:</span> {value}
+                              </li>
+                            )
+                          )}
                         </ul>
                       </>
                     ) : (
