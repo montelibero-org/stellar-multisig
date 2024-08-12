@@ -477,8 +477,8 @@ const PublicNet: FC<Props> = ({ id }) => {
                                   aria-label={item.key}
                                   className="account-address word-break"
                                 >
-                                  <span className="">
-                                    {collapseAccount(item.key)}
+                                  <span>
+                                    {collapseAccount(item.key)}{" "}
                                   </span>
                                 </a>
                               </Link>
