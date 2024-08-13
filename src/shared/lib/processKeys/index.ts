@@ -1,4 +1,5 @@
-import dataKeys from '@/shared/configs/data-keys.json';
+import dataKeys from "@/shared/configs/data-keys.json";
+import stellarSdk from "stellar-sdk";
 
 // Function to decode base64 strings
 const decodeBase64 = (str: string | undefined): string => {
@@ -14,14 +15,18 @@ const decodeBase64 = (str: string | undefined): string => {
   }
 };
 
-
-const processKeys = (key: string, value: string): { processedKey: string, processedValue: string } => {
+const processKeys = (
+  key: string,
+  value: string
+): { processedKey: string; processedValue: string } => {
   const processedKey = key;
   let processedValue = value;
 
   // Convert regular expression strings to RegExp objects with boundaries and case-insensitive flag
-  const regexPatterns: { [type: string]: RegExp[] } = Object.entries(dataKeys).reduce((acc, [type, patterns]) => {
-    acc[type] = patterns.map(pattern => new RegExp(`^${pattern}$`, 'i'));
+  const regexPatterns: { [type: string]: RegExp[] } = Object.entries(
+    dataKeys
+  ).reduce((acc, [type, patterns]) => {
+    acc[type] = patterns.map((pattern) => new RegExp(`^${pattern}$`, "i"));
     return acc;
   }, {} as { [type: string]: RegExp[] });
 
@@ -30,15 +35,19 @@ const processKeys = (key: string, value: string): { processedKey: string, proces
 
   // Determine key type and process accordingly
   for (const [type, patterns] of Object.entries(regexPatterns)) {
-    if (patterns.some(pattern => pattern.test(key))) {
+    if (patterns.some((pattern) => pattern.test(key))) {
       switch (type) {
-        case 'accounts':
-          processedValue = `<a href="/public/account?id=${decodedValue}">${decodedValue}</a>`;
+        case "accounts":
+          processedValue = stellarSdk.StrKey.encodeEd25519PublicKey(
+            decodedValue
+          )
+            ? `<a href="/public/account?id=${decodedValue}">Ready</a>`
+            : `<a href="#">${decodedValue}</a>`;
           break;
-        case 'links':
+        case "links":
           processedValue = `<a target="_blank" href="${decodedValue}">${decodedValue}</a>`;
           break;
-        case 'names':
+        case "names":
           processedValue = decodedValue; // Add specific processing for names if needed
           break;
         default:

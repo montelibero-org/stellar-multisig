@@ -34,17 +34,17 @@ const AssetsListItem: FC<Props> = ({ item, tags }) => {
     <li style={{ padding: "1em", lineHeight: "1.6", overflow: "hidden" }}>
       <div>
         <b>
-          <Link
+          <a
             title={item?.issuer}
             aria-label={item?.issuer}
             className="account-address"
-            href={`/${net}/account?id=${item?.issuer}`}
+            href={`https://stellar.expert/explorer/${net}/asset/${item?.code}-${item?.issuer}`}
             style={{ marginRight: "1em" }}
           >
             <span className="account-key" style={{ fontSize: "1.6rem" }}>
               {item?.code}
             </span>
-          </Link>
+          </a>
         </b>{" "}
         {item?.tag &&
           (tags.includes(item.tag) ? (
@@ -60,17 +60,17 @@ const AssetsListItem: FC<Props> = ({ item, tags }) => {
             </Link>
           ))}
       </div>
-      <Link
+      <a
         title={item?.issuer}
         aria-label={item?.issuer}
         className="account-address"
-        href={`/${net}/account?id=${item?.issuer}`}
+        href={`https://stellar.expert/explorer/${net}/asset/${item?.code}-${item?.issuer}`}
         style={{ marginRight: "1em" }}
       >
         <span className="account-key" style={{ fontSize: "1.6rem" }}>
           {item?.issuer}
         </span>
-      </Link>
+      </a>
     </li>
   );
 };

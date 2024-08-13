@@ -17,6 +17,7 @@ export default function Home() {
             setNet("public");
             route.replace("/public");
         }
+        
     });
     return (
         <MainLayout>
