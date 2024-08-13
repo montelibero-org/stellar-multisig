@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useEffect, useState } from "react";
 import { useStore } from "@/features/store";
 import { Footer, Header } from "@/widgets";
