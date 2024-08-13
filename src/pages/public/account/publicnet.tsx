@@ -525,11 +525,11 @@ const PublicNet: FC<Props> = ({ id }) => {
                         <ul className="text-small condensed">
                           {information?.entries &&
                             Object.keys(information?.entries).map(
-                              (entry, key) => {
+                              (entry: string, key: number) => {
                                 const { processedKey, processedValue } =
                                   processKeys(
                                     entry,
-                                    information?.entries[entry]
+                                    information.entries[entry]
                                   );
                                 return (
                                   <li className="word-break" key={key}>
