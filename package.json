@@ -2,7 +2,7 @@
     "name": "mtl-stellar-multisig",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://stellar-multisig.montelibero.org",
+    "homepage": "https://monobladegg.github.io/stellar-multisig-stanging",
     "scripts": {
         "dev": "next dev",
         "build": "next build",

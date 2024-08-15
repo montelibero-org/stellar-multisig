@@ -40,20 +40,16 @@ const PublicNet: FC<Props> = ({ id }) => {
             try {
                 await server.loadAccount(account);
                 setExists(true);
-                console.log('valid')
                 // Navigate to the account page if the account exists
             } catch (e) {
                 if (e instanceof StellarSdk.NotFoundError) {
                     setExists(false);
                     setErrorvalid('Error: Account does not exist on the network. Make sure that you copied account address correctly and there was at least one payment to this address.')
-                } else {
-                    console.error(e);
                 }
             }
         };
 
         if (StellarSdk.StrKey.isValidEd25519PublicKey(account)) {
-            console.log('true')
             checkAccount();
 
         } else {
