@@ -11,7 +11,7 @@ interface Props {
 
 const BalanceItem: FC<Props> = ({ number, decimal, item }) => {
   const assetCode = item?.asset_code || "XLM";
-  const assetIssuer = `-${item?.asset_issuer}` || "";
+  const assetIssuer = item?.asset_issuer ? `-${item?.asset_issuer}` : "";
 
   return (
     <tr>
