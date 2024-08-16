@@ -515,7 +515,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                                                                                 aria-label={issuer.paging_token}
                                                                                 className="asset-link"
                                                                             >
-                                                                                {issuer.asset_code}
+                                                                                {issuer?.asset_code}
                                                                             </a>
                                                                         </Link>
                                                                         &nbsp;
@@ -734,10 +734,10 @@ const PublicNet: FC<Props> = ({ id }) => {
                                                                     className="asset-link"
                                                                 >
                                                                     {/* <span className="asset-icon icon icon-stellar"></span> */}
-                                                                    {item.asset_code ==
+                                                                    {item?.asset_code ==
                                                                         undefined
                                                                         ? "XLM"
-                                                                        : item.asset_code}
+                                                                        : item?.asset_code}
                                                                 </span>
                                                             </span>
                                                         </a>

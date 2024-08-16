@@ -1,4 +1,3 @@
-
 "use client";
 
 import { MainLayout } from "@/widgets";
@@ -17,6 +16,7 @@ import { useShallow } from "zustand/react/shallow";
 import { Balance, Information, Signer } from "@/shared/types";
 import { DocumentInfo, Issuer } from "@/shared/types";
 import { processKeys } from "@/shared/lib";
+import BalanceItem from "@/pages/public/account/(BalanceItem)";
 
 interface Props {
   id: string | undefined | null;
@@ -32,7 +32,7 @@ export const collapseAccount = (accountId: string) => {
 };
 
 const PublicNet: FC<Props> = ({ id }) => {
-  const account = id
+  const account = id;
   const { net } = useStore(useShallow((state) => ({ net: state.net })));
   const [information, setInformation] = useState<Information>(
     {} as Information
@@ -134,7 +134,6 @@ const PublicNet: FC<Props> = ({ id }) => {
     };
     handler();
   }, [account]);
-
 
   return (
     <MainLayout>
@@ -419,7 +418,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                                         aria-label={issuer.paging_token}
                                         className="asset-link"
                                       >
-                                        {issuer.asset_code}
+                                        {issuer?.asset_code}
                                       </a>
                                     </Link>
                                     &nbsp;
@@ -582,42 +581,44 @@ const PublicNet: FC<Props> = ({ id }) => {
                       </i>
                     </h3>
                     <hr className="flare"></hr>
-                    <div className="all-account-balances micro-space text-header">
-                      {information?.balances?.map(
-                        (item: Balance, key: number) => {
-                          const totalInfo = item.balance.split(".");
-                          const number = totalInfo[0];
-                          const decimal =
-                            Number(totalInfo[1]) == 0 ? "" : "." + totalInfo[1];
+                    <div>
+                      <div className="asset-list-view">
+                        <table
+                          className="table exportable space"
+                          style={{ width: "100%" }}
+                        >
+                          <tbody>
+                            {information?.balances?.filter((item: Balance) => !item?.asset_code).map(
+                              (item: Balance, index: number) => {
+                                const totalInfo = item.balance.split(".");
+                                const number = totalInfo[0];
+                                const decimal =
+                                  Number(totalInfo[1]) === 0
+                                    ? ""
+                                    : "." + totalInfo[1];
 
-                          return (
-                            <a href="#" key={key} className="account-balance">
-                              <div className="condensed">
-                                {number}
-                                <span className="text-small">{decimal}</span>
-                              </div>
-                              <div className="text-tiny condensed">
-                                {item.asset_issuer && (
-                                  <div>
-                                    {collapseAccount(item.asset_issuer)}
-                                  </div>
-                                )}
-                              </div>
-                              <span className="text-small">
-                                <span
-                                  aria-label={item.asset_issuer}
-                                  className="asset-link"
-                                >
-                                  {/* <span className="asset-icon icon icon-stellar"></span> */}
-                                  {item.asset_code == undefined
-                                    ? "XLM"
-                                    : item.asset_code}
-                                </span>
-                              </span>
-                            </a>
-                          );
-                        }
-                      )}
+                                return (
+                                  <BalanceItem key={index} number={number} decimal={decimal} item={item} />
+                                );
+                              }
+                            )}
+                            {information?.balances?.filter((item: Balance) => item?.asset_code).map(
+                              (item: Balance, index: number) => {
+                                const totalInfo = item.balance.split(".");
+                                const number = totalInfo[0];
+                                const decimal =
+                                  Number(totalInfo[1]) === 0
+                                    ? ""
+                                    : "." + totalInfo[1];
+
+                                return (
+                                  <BalanceItem key={index} number={number} decimal={decimal} item={item} />
+                                );
+                              }
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>

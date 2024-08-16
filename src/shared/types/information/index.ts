@@ -52,6 +52,7 @@ export type Balance = {
     balance: string;
     asset_code?: string;
     asset_issuer?: string;
+    asset_type?: string;
 }
 
 export type TomlInfo = {
