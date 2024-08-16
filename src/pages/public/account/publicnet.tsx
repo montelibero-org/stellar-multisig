@@ -137,8 +137,8 @@ const PublicNet: FC<Props> = ({ id }) => {
   }, [account]);
 
   useEffect(() => {
-    console.log(information.meta_data);
-  }, [information.meta_data]);
+    console.log(information);
+  }, [information]);
 
   return (
     <MainLayout>
@@ -539,12 +539,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                                   );
                                 return (
                                   <li className="word-break" key={key}>
-                                    {processedKey}:{" "}
-                                    <span
-                                      dangerouslySetInnerHTML={{
-                                        __html: processedValue,
-                                      }}
-                                    />
+                                    {processedKey}: {" "}{processedValue}
                                   </li>
                                 );
                               }
@@ -641,9 +636,8 @@ const PublicNet: FC<Props> = ({ id }) => {
               {information?.meta_data &&
               information?.meta_data["ORG_NAME"] !== undefined &&
               ignoredHomeDomains &&
-                ignoredHomeDomains.includes(
-                  information?.meta_data["ORG_URL"]
-                ) ? (
+              information?.home_domain &&
+              ignoredHomeDomains.includes(information?.home_domain) ? (
                 ""
               ) : (
                 <div className="toml-props">

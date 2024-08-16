@@ -30,9 +30,8 @@ const BalanceItem: FC<Props> = ({ number, decimal, item }) => {
         <a
           aria-label={item?.asset_code || "Asset"}
           className="asset-link"
-          href={`https://stellar.expert/explorer/public/asset/${
-            item?.asset_code || "XLM"
-          }-${item?.asset_issuer}`}
+          href={`https://stellar.expert/explorer/public/asset/${ item.asset_code ?
+            item?.asset_code + "-" + item?.asset_issuer : "XLM" }`}
           target="_blank"
         >
           {item?.asset_code || "XLM"}
