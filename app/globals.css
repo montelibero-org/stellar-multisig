@@ -5344,3 +5344,7 @@ h4 {
   margin-bottom: 0.5em;
   margin-top: 0.5em;
 }
+
+.is-open-add-account-modal {
+  opacity: 0.4;
+}

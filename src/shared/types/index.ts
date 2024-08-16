@@ -2,7 +2,7 @@
 // @ts-ignore
 
 export { type default as Store } from "./store";
-export type { INetSlice, IThemeSlice } from "@/shared/types/store/slices";
+export type { INetSlice, IThemeSlice, IAccountsSlice, IAccount } from "@/shared/types/store/slices";
 export type {
     Information,
     Issuer,

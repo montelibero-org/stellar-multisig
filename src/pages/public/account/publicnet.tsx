@@ -1,3 +1,4 @@
+
 "use client";
 
 import { MainLayout } from "@/widgets";
@@ -20,6 +21,15 @@ import { processKeys } from "@/shared/lib";
 interface Props {
   id: string | undefined | null;
 }
+
+export const collapseAccount = (accountId: string) => {
+  if (accountId == "" || accountId == null || accountId == undefined) {
+    return <br />;
+  }
+  const first4Str = accountId.substring(0, 4);
+  const last4Str = accountId.substr(-4);
+  return first4Str + "..." + last4Str;
+};
 
 const PublicNet: FC<Props> = ({ id }) => {
   const account = id
@@ -125,14 +135,6 @@ const PublicNet: FC<Props> = ({ id }) => {
     handler();
   }, [account]);
 
-  const collapseAccount = (accountId: string) => {
-    if (accountId == "" || accountId == null || accountId == undefined) {
-      return <br />;
-    }
-    const first4Str = accountId.substring(0, 4);
-    const last4Str = accountId.substr(-4);
-    return first4Str + "..." + last4Str;
-  };
 
   return (
     <MainLayout>
