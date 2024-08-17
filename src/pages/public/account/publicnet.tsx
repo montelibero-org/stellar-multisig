@@ -136,10 +136,6 @@ const PublicNet: FC<Props> = ({ id }) => {
     handler();
   }, [account]);
 
-  useEffect(() => {
-    console.log(information);
-  }, [information]);
-
   return (
     <MainLayout>
       <div className="container">

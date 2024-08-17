@@ -6,7 +6,7 @@ import { Balance } from "@/shared/types";
 interface Props {
   number: string;
   decimal: string;
-  item?: Balance;  // Сделаем item необязательным
+  item?: Balance; 
 }
 
 const BalanceItem: FC<Props> = ({ number, decimal, item }) => {
