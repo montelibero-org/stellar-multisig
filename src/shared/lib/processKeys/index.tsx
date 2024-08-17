@@ -1,5 +1,6 @@
 import dataKeys from "@/shared/configs/data-keys.json";
 import stellarSdk from "stellar-sdk";
+import Link from "next/link";
 
 // Function to decode base64 strings
 const decodeBase64 = (str: string | undefined): string => {
@@ -18,9 +19,9 @@ const decodeBase64 = (str: string | undefined): string => {
 const processKeys = (
   key: string,
   value: string
-): { processedKey: string; processedValue: string } => {
+): { processedKey: string; processedValue: JSX.Element } => {
   const processedKey = key;
-  let processedValue = value;
+  let processedValue: JSX.Element = <span>{decodeBase64(value)}</span>;
 
   // Convert regular expression strings to RegExp objects with boundaries and case-insensitive flag
   const regexPatterns: { [type: string]: RegExp[] } = Object.entries(
@@ -39,14 +40,14 @@ const processKeys = (
       switch (type) {
         case "accounts":
           processedValue = stellarSdk.StrKey.isValidEd25519PublicKey(decodedValue)
-            ? `<a href="/public/account?id=${decodedValue}">${decodedValue}</a>`
-            : `<span>${decodedValue}</span>`;
+            ? <Link href={`/public/account?id=${decodedValue}`} legacyBehavior><a>{decodedValue}</a></Link>
+            : <span>{decodedValue}</span>;
           break;
         case "links":
-          processedValue = `<a target="_blank" href="${decodedValue}">${decodedValue}</a>`;
+          processedValue = <Link href={decodedValue} legacyBehavior><a target="_blank">{decodedValue}</a></Link>;
           break;
         case "names":
-          processedValue = decodedValue; // Add specific processing for names if needed
+          processedValue = <span>{decodedValue}</span>; // Add specific processing for names if needed
           break;
         default:
           break;

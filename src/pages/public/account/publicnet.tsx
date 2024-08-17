@@ -17,6 +17,7 @@ import { Balance, Information, Signer } from "@/shared/types";
 import { DocumentInfo, Issuer } from "@/shared/types";
 import { processKeys } from "@/shared/lib";
 import BalanceItem from "@/pages/public/account/(BalanceItem)";
+import ignoredHomeDomains from "@/shared/configs/ignored-home-domains.json";
 
 interface Props {
   id: string | undefined | null;
@@ -534,12 +535,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                                   );
                                 return (
                                   <li className="word-break" key={key}>
-                                    {processedKey}:{" "}
-                                    <span
-                                      dangerouslySetInnerHTML={{
-                                        __html: processedValue,
-                                      }}
-                                    />
+                                    {processedKey}: {" "}{processedValue}
                                   </li>
                                 );
                               }
@@ -588,8 +584,9 @@ const PublicNet: FC<Props> = ({ id }) => {
                           style={{ width: "100%" }}
                         >
                           <tbody>
-                            {information?.balances?.filter((item: Balance) => !item?.asset_code).map(
-                              (item: Balance, index: number) => {
+                            {information?.balances
+                              ?.filter((item: Balance) => !item?.asset_code)
+                              .map((item: Balance, index: number) => {
                                 const totalInfo = item.balance.split(".");
                                 const number = totalInfo[0];
                                 const decimal =
@@ -598,12 +595,17 @@ const PublicNet: FC<Props> = ({ id }) => {
                                     : "." + totalInfo[1];
 
                                 return (
-                                  <BalanceItem key={index} number={number} decimal={decimal} item={item} />
+                                  <BalanceItem
+                                    key={index}
+                                    number={number}
+                                    decimal={decimal}
+                                    item={item}
+                                  />
                                 );
-                              }
-                            )}
-                            {information?.balances?.filter((item: Balance) => item?.asset_code).map(
-                              (item: Balance, index: number) => {
+                              })}
+                            {information?.balances
+                              ?.filter((item: Balance) => item?.asset_code)
+                              .map((item: Balance, index: number) => {
                                 const totalInfo = item.balance.split(".");
                                 const number = totalInfo[0];
                                 const decimal =
@@ -612,10 +614,14 @@ const PublicNet: FC<Props> = ({ id }) => {
                                     : "." + totalInfo[1];
 
                                 return (
-                                  <BalanceItem key={index} number={number} decimal={decimal} item={item} />
+                                  <BalanceItem
+                                    key={index}
+                                    number={number}
+                                    decimal={decimal}
+                                    item={item}
+                                  />
                                 );
-                              }
-                            )}
+                              })}
                           </tbody>
                         </table>
                       </div>
@@ -624,7 +630,10 @@ const PublicNet: FC<Props> = ({ id }) => {
                 </div>
               </div>
               {information?.meta_data &&
-              information?.meta_data["ORG_NAME"] == undefined ? (
+              information?.meta_data["ORG_NAME"] !== undefined &&
+              ignoredHomeDomains &&
+              information?.home_domain &&
+              ignoredHomeDomains.includes(information?.home_domain) ? (
                 ""
               ) : (
                 <div className="toml-props">
@@ -662,12 +671,9 @@ const PublicNet: FC<Props> = ({ id }) => {
                       {tabIndex == 1 ? (
                         <div className="segment blank">
                           {information?.meta_data &&
-                          information?.meta_data["ORG_NAME"] == undefined ? (
+                          information.meta_data?.["ORG_NAME"] == undefined ? (
                             <div
-                              style={{
-                                fontSize: "13px",
-                                textAlign: "center",
-                              }}
+                              style={{ fontSize: "13px", textAlign: "center" }}
                             >
                               Empty Data
                             </div>
