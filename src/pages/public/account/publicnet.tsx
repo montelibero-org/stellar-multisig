@@ -20,7 +20,7 @@ import BalanceItem from "@/pages/public/account/(BalanceItem)";
 import ignoredHomeDomains from "@/shared/configs/ignored-home-domains.json";
 
 interface Props {
-  id: string | undefined | null;
+  id: string;
 }
 
 export const collapseAccount = (accountId: string) => {
@@ -33,15 +33,19 @@ export const collapseAccount = (accountId: string) => {
 };
 
 const PublicNet: FC<Props> = ({ id }) => {
-  const account = id;
-  const { net } = useStore(useShallow((state) => ({ net: state.net })));
+  const account: string = id;
+  const { net }: { net: string } = useStore(
+    useShallow((state) => ({ net: state.net }))
+  );
   const [information, setInformation] = useState<Information>(
     {} as Information
   );
-  const [exists, setExists] = useState(true);
-  const [tabIndex, setTabIndex] = useState(1);
-  const [errorvalid, setErrorvalid] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [exists, setExists] = useState<boolean>(true);
+  const [tabIndex, setTabIndex] = useState<number>(1);
+  const [errorvalid, setErrorvalid] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isVisibleHomeDomainInfo, setIsVisibleHomeDomainInfo] =
+    useState<boolean>(true);
 
   useEffect(() => {
     const checkAccount = async () => {
@@ -136,6 +140,36 @@ const PublicNet: FC<Props> = ({ id }) => {
     handler();
   }, [account]);
 
+  useEffect(() => {
+    if (information.tomlInfo) {
+      const accountsMatch = information.tomlInfo.match(
+        /ACCOUNTS=\[([\s\S]*?)\]/
+      );
+      if (accountsMatch && accountsMatch[1]) {
+        const newAccounts = accountsMatch[1]
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line && !line.startsWith("#"))
+          .map((line) => line.replace(/^"|"$|,$|"$/g, ""))
+          .map((line) => line.replace(/"$/, ""));
+          /**
+           * Logic to create an array of strings where item is an accountID
+           * that is not fake in the home_domain set by the account
+           */
+        const foundAccount = newAccounts.find((accountId) => accountId === id);
+        if (foundAccount) {
+          setIsVisibleHomeDomainInfo(true);
+        } else {
+          setIsVisibleHomeDomainInfo(false);
+        }
+      } else {
+        setIsVisibleHomeDomainInfo(false);
+      }
+    } else {
+      setIsVisibleHomeDomainInfo(false);
+    }
+  }, [information.tomlInfo, id]);
+
   return (
     <MainLayout>
       <div className="container">
@@ -184,22 +218,23 @@ const PublicNet: FC<Props> = ({ id }) => {
                     <h3>Summary</h3>
                     <hr className="flare"></hr>
                     <dl>
-                      {information?.home_domain == undefined ? (
-                        ""
-                      ) : (
+                      {information?.home_domain !== undefined &&
+                      isVisibleHomeDomainInfo &&
+                      information.home_domain &&
+                      !ignoredHomeDomains.includes(information.home_domain) ? (
                         <>
                           <dt>Home domain:</dt>
                           <dd>
                             <a
                               href={`${
-                                information?.home_domain == undefined
+                                information?.home_domain === undefined
                                   ? "#"
                                   : information?.home_domain
                               }`}
                               rel="noreferrer noopener"
                               target="_blank"
                             >
-                              {information?.home_domain == undefined
+                              {information?.home_domain === undefined
                                 ? "none"
                                 : information?.home_domain}
                             </a>
@@ -233,7 +268,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                             </i>
                           </dd>
                         </>
-                      )}
+                      ) : null}
                       <dt>Account lock status:</dt>
                       <dd>
                         unlocked
@@ -535,7 +570,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                                   );
                                 return (
                                   <li className="word-break" key={key}>
-                                    {processedKey}: {" "}{processedValue}
+                                    {processedKey}: {processedValue}
                                   </li>
                                 );
                               }
@@ -633,9 +668,8 @@ const PublicNet: FC<Props> = ({ id }) => {
               information?.meta_data["ORG_NAME"] !== undefined &&
               ignoredHomeDomains &&
               information?.home_domain &&
-              ignoredHomeDomains.includes(information?.home_domain) ? (
-                ""
-              ) : (
+              !ignoredHomeDomains.includes(information.home_domain) &&
+              isVisibleHomeDomainInfo ? (
                 <div className="toml-props">
                   <div className="tabs space inline-right">
                     <div className="tabs-header">
@@ -646,7 +680,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                             tabIndex === 1 ? "selected" : ""
                           }`}
                           onClick={(e) => {
-                            e.preventDefault(); // Prevent the default anchor tag behavior
+                            e.preventDefault();
                             setTabIndex(1);
                           }}
                         >
@@ -658,7 +692,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                             tabIndex === 2 ? "selected" : ""
                           }`}
                           onClick={(e) => {
-                            e.preventDefault(); // Prevent the default anchor tag behavior
+                            e.preventDefault();
                             setTabIndex(2);
                           }}
                         >
@@ -842,7 +876,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                     </div>
                   </div>
                 </div>
-              )}
+              ) : null}
             </>
           ) : (
             <div className="cotainer">

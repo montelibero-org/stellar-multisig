@@ -4,7 +4,6 @@ import "./header.scss";
 import React, { FC, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useStore } from "@/features/store";
 import { useShallow } from "zustand/react/shallow";
 import { IAccount } from "@/shared/types";
@@ -38,41 +37,35 @@ export const Header: FC = () => {
   const dropdownRefNet = useRef<HTMLDivElement>(null);
   const dropdownRefAccount = useRef<HTMLDivElement>(null);
   const dropdownRefAddAccount = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (isOpenAddAccountModal) {
-        return;
-      }
+      if (isOpenAddAccountModal) return;
 
       if (
         dropdownRefNet.current &&
         !dropdownRefNet.current.contains(event.target as Node)
-      ) {
+      )
         setIsOpenNet(false);
-      }
 
       if (
         dropdownRefAccount.current &&
         !dropdownRefAccount.current.contains(event.target as Node)
-      ) {
+      )
         setIsOpenAccount(false);
-      }
 
       if (
         dropdownRefAddAccount.current &&
         !dropdownRefAddAccount.current.contains(event.target as Node)
-      ) {
+      )
         setIsOpenAddAccountModal(false);
-      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpenAddAccountModal, setIsOpenAddAccountModal]); // Добавляем зависимость
+  }, [isOpenAddAccountModal, setIsOpenAddAccountModal]);
 
   const toggleDropdownNet = () => setIsOpenNet(!isOpenNet);
   const toggleDropdownAccount = () => setIsOpenAccount(!isOpenAccount);
@@ -82,40 +75,21 @@ export const Header: FC = () => {
     localStorage.setItem("net", network);
     setIsOpenNet(false);
 
-    const currentPath = window.location.pathname;
-    if (currentPath === "/public" || currentPath === "/testnet") {
-      const newPath = `/${network}`;
-      router.push(newPath);
-    } else if (
-      currentPath.includes("/public/") ||
-      currentPath.includes("/testnet/")
-    ) {
-      // Construct the new path with updated network segment
-      const newPath = `/${network}`
-      router.push(newPath);
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const pathSegments = url.pathname.split("/");
+
+    if (pathSegments[1] === "public" || pathSegments[1] === "testnet") {
+      pathSegments[1] = network;
     }
+
+    const newUrl = `${url.origin}${pathSegments.join("/")}${url.search}`;
+    window.history.pushState({ path: newUrl }, "", newUrl);
   };
 
-  // const handleSelectAccount = (account: IAccount) => {
-  //   setAccounts([...accounts, account]);
-  //   const accountLS = JSON.parse(localStorage.getItem("accounts")!) as
-  //     | IAccount[]
-  //     | null;
-  //   localStorage.setItem(
-  //     "accounts",
-  //     JSON.stringify([account, ...(accountLS ?? [])])
-  //   );
-  //   setIsOpenAccount(false);
-  // };
-
   const logout = () => {
-    // Удаляем текущий аккаунт
     const updatedAccounts = accounts.filter((account) => !account.isCurrent);
-
-    // Определяем новый текущий аккаунт
     const newCurrentAccount = updatedAccounts[0];
-
-    // Если новый текущий аккаунт существует, устанавливаем его как текущий
     if (newCurrentAccount) {
       setAccounts(
         updatedAccounts.map((account) => ({
@@ -166,13 +140,6 @@ export const Header: FC = () => {
                   }
                   onClick={toggleDropdownAccount}
                 >
-                  <span
-                    className={
-                      theme === "day" ? "network-text-light" : "network-text"
-                    }
-                  >
-                    Current account:{" "}
-                  </span>
                   {theme !== "day" ? (
                     <span className="dropdown-selected">
                       {collapseAccount(
@@ -191,7 +158,14 @@ export const Header: FC = () => {
                         color: "#666",
                       }}
                     >
-                      {net}
+                      {collapseAccount(
+                        accounts
+                          .filter(
+                            (account: IAccount) => account.isCurrent === true
+                          )
+                          .filter((account: IAccount) => account.net === net)
+                          .map((account: IAccount) => account.accountID)[0]
+                      )}
                     </span>
                   )}
                   <span
@@ -247,13 +221,14 @@ export const Header: FC = () => {
                                 (account: IAccount) => account.net === net
                               )
                               .map((account: IAccount) => account)[0]
-                            }
+                          }
                         />
                       </div>
                       <hr />
                       {accounts
                         .filter((account: IAccount) => account.net === net)
-                        .filter((account: IAccount) => account.isMultiSig)
+                        .filter((account: IAccount) => !account.isMultiSig)
+                        .filter((account: IAccount) => !account.isCurrent)
                         .map((account: IAccount, index: number) => (
                           <div key={index}>
                             <AccountItem
@@ -270,7 +245,8 @@ export const Header: FC = () => {
                       <hr />
                       {accounts
                         .filter((account: IAccount) => account.net === net)
-                        .filter((account: IAccount) => !account.isMultiSig)
+                        .filter((account: IAccount) => account.isMultiSig)
+                        .filter((account: IAccount) => !account.isCurrent)
                         .map((account: IAccount, index: number) => (
                           <div key={index}>
                             <AccountItem
@@ -350,7 +326,9 @@ export const Header: FC = () => {
                   Network{" "}
                 </span>
                 {theme !== "day" ? (
-                  <span className={`dropdown-selected`}>{net}</span>
+                  <span className={`dropdown-selected`}>
+                    {net === "public" ? "public" : "testnet"}
+                  </span>
                 ) : (
                   <span
                     style={{
@@ -358,7 +336,7 @@ export const Header: FC = () => {
                       color: "#666",
                     }}
                   >
-                    {net}
+                    {net === "public" ? "public" : "testnet"}
                   </span>
                 )}
                 <span
@@ -382,18 +360,18 @@ export const Header: FC = () => {
                   <div
                     className={`dropdown-item${
                       theme === "night" ? "" : "-light"
-                    } ${net !== "testnet" ? "selected" : ""}`}
-                    onClick={() => handleSelectNet("testnet")}
+                    } ${net !== "public" ? "selected" : ""}`}
+                    onClick={() => handleSelectNet("public")}
                   >
-                    Testnet
+                    public
                   </div>
                   <div
                     className={`dropdown-item${
                       theme === "night" ? "" : "-light"
-                    } ${net !== "public" ? "selected" : ""}`}
-                    onClick={() => handleSelectNet("public")}
+                    } ${net !== "testnet" ? "selected" : ""}`}
+                    onClick={() => handleSelectNet("testnet")}
                   >
-                    Public
+                    testnet
                   </div>
                 </div>
               )}
