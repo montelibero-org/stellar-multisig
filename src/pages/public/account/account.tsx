@@ -41,7 +41,7 @@ const Page: FC = () => {
     );
   }
 
-  return <PublicNet id={id} />;
+  return typeof id === "string" && <PublicNet id={id} />;
 };
 
 export default Page;
