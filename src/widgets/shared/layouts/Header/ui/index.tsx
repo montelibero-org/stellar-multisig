@@ -94,6 +94,7 @@ export const Header: FC = () => {
       newPath = `/${network}${currentUrl.pathname}`;
     }
 
+    // Сохраняем query параметры
     const newUrl = `${newPath}${currentUrl.search}`;
 
     router.push(newUrl);
@@ -169,13 +170,6 @@ export const Header: FC = () => {
                   }
                   onClick={toggleDropdownAccount}
                 >
-                  <span
-                    className={
-                      theme === "day" ? "network-text-light" : "network-text"
-                    }
-                  >
-                    Current account:{" "}
-                  </span>
                   {theme !== "day" ? (
                     <span className="dropdown-selected">
                       {collapseAccount(
@@ -263,7 +257,8 @@ export const Header: FC = () => {
                       <hr />
                       {accounts
                         .filter((account: IAccount) => account.net === net)
-                        .filter((account: IAccount) => account.isMultiSig)
+                        .filter((account: IAccount) => !account.isMultiSig)
+                        .filter((account: IAccount) => !account.isCurrent)
                         .map((account: IAccount, index: number) => (
                           <div key={index}>
                             <AccountItem
@@ -280,7 +275,8 @@ export const Header: FC = () => {
                       <hr />
                       {accounts
                         .filter((account: IAccount) => account.net === net)
-                        .filter((account: IAccount) => !account.isMultiSig)
+                        .filter((account: IAccount) => account.isMultiSig)
+                        .filter((account: IAccount) => !account.isCurrent)
                         .map((account: IAccount, index: number) => (
                           <div key={index}>
                             <AccountItem

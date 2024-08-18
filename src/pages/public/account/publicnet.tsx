@@ -157,11 +157,13 @@ const PublicNet: FC<Props> = ({ id }) => {
            * Logic to create an array of strings where item is an accountID
            * that is not fake in the home_domain set by the account
            * 
-           * example: newAccounts: string[] = ['GBR2RQKJY6S5JXKZVJYK6YH5CQXN5KUWQXKQO6G7XK5E5WQ4',
+           * example:
+           * ['GCGLKWJX5BPX2BOCOHYA6KUBZ67FR23DAHLG7VD3YRTGEYGZX57KUGFP',
            * 'GBEUDKANIFPTFHPWJ5T3R6RIO36RQBFGHYPAQ6STH7KMNDHAT36LHOLD',
            * 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT']
            */
 
+          console.log(newAccounts)
         const foundAccount = newAccounts.find((accountId) => accountId === id);
 
         if (foundAccount) {
