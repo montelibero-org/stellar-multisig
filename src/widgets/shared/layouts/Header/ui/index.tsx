@@ -4,7 +4,6 @@ import "./header.scss";
 import React, { FC, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useStore } from "@/features/store";
 import { useShallow } from "zustand/react/shallow";
 import { IAccount } from "@/shared/types";
@@ -38,7 +37,6 @@ export const Header: FC = () => {
   const dropdownRefNet = useRef<HTMLDivElement>(null);
   const dropdownRefAccount = useRef<HTMLDivElement>(null);
   const dropdownRefAddAccount = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
