@@ -51,6 +51,7 @@ const PageLayout: FC<Props> = ({ children }) => {
     );
   }, [accounts, net, setIsAuth]);
 
+
   const themeLS: string | undefined | null = isWindowDefined
     ? window.localStorage.getItem("theme")
       ? window.localStorage.getItem("theme")

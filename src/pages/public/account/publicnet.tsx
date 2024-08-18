@@ -157,7 +157,7 @@ const PublicNet: FC<Props> = ({ id }) => {
            * Logic to create an array of strings where item is an accountID
            * that is not fake in the home_domain set by the account
            * 
-           * example: newAccounts: string[] = ['GCGLKWJX5BPX2BOCOHYA6KUBZ67FR23DAHLG7VD3YRTGEYGZX57KUGFP',
+           * example: newAccounts: string[] = ['GBR2RQKJY6S5JXKZVJYK6YH5CQXN5KUWQXKQO6G7XK5E5WQ4',
            * 'GBEUDKANIFPTFHPWJ5T3R6RIO36RQBFGHYPAQ6STH7KMNDHAT36LHOLD',
            * 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT']
            */
@@ -900,7 +900,6 @@ const PublicNet: FC<Props> = ({ id }) => {
                   </p>
                 ) : (
                   <span>{errorvalid}</span>
-
                 )}
               </div>
             </div>
