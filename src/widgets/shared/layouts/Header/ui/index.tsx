@@ -94,7 +94,6 @@ export const Header: FC = () => {
       newPath = `/${network}${currentUrl.pathname}`;
     }
 
-    // Сохраняем query параметры
     const newUrl = `${newPath}${currentUrl.search}`;
 
     router.push(newUrl);

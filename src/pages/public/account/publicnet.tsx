@@ -163,7 +163,6 @@ const PublicNet: FC<Props> = ({ id }) => {
            * 'GA2T6GR7VXXXBETTERSAFETHANSORRYXXXPROTECTEDBYLOBSTRVAULT']
            */
 
-          console.log(newAccounts)
         const foundAccount = newAccounts.find((accountId) => accountId === id);
 
         if (foundAccount) {
