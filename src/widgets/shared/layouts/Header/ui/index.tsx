@@ -77,16 +77,16 @@ export const Header: FC = () => {
     localStorage.setItem("net", network);
     setIsOpenNet(false);
 
-    const currentUrl = new URL(window.location.href);
-    const pathSegments = currentUrl.pathname.split("/").filter(Boolean);
-    let newPath: string;
-    if (pathSegments[0] === "public" || pathSegments[0] === "testnet")
-      newPath = `/${network}${
-        pathSegments.length > 1 ? "/" + pathSegments.slice(1).join("/") : ""
-      }`;
-    else newPath = `/${network}${currentUrl.pathname}`;
-    const newUrl = `${newPath}${currentUrl.search}`;
-    router.push(newUrl);
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const pathSegments = url.pathname.split("/");
+
+    if (pathSegments[1] === "public" || pathSegments[1] === "testnet") {
+      pathSegments[1] = network;
+    }
+
+    const newUrl = `${url.origin}${pathSegments.join("/")}${url.search}`;
+    window.history.pushState({ path: newUrl }, "", newUrl);
   };
 
   const logout = () => {
@@ -329,7 +329,7 @@ export const Header: FC = () => {
                 </span>
                 {theme !== "day" ? (
                   <span className={`dropdown-selected`}>
-                    {net === "public" ? "Public" : "Testnet"}
+                    {net === "public" ? "public" : "testnet"}
                   </span>
                 ) : (
                   <span
@@ -338,7 +338,7 @@ export const Header: FC = () => {
                       color: "#666",
                     }}
                   >
-                    {net === "public" ? "Public" : "Testnet"}
+                    {net === "public" ? "public" : "testnet"}
                   </span>
                 )}
                 <span
@@ -365,7 +365,7 @@ export const Header: FC = () => {
                     } ${net !== "public" ? "selected" : ""}`}
                     onClick={() => handleSelectNet("public")}
                   >
-                    Public
+                    public
                   </div>
                   <div
                     className={`dropdown-item${
@@ -373,7 +373,7 @@ export const Header: FC = () => {
                     } ${net !== "testnet" ? "selected" : ""}`}
                     onClick={() => handleSelectNet("testnet")}
                   >
-                    Testnet
+                    testnet
                   </div>
                 </div>
               )}
