@@ -191,7 +191,14 @@ export const Header: FC = () => {
                         color: "#666",
                       }}
                     >
-                      {net}
+                      {collapseAccount(
+                        accounts
+                          .filter(
+                            (account: IAccount) => account.isCurrent === true
+                          )
+                          .filter((account: IAccount) => account.net === net)
+                          .map((account: IAccount) => account.accountID)[0]
+                      )}
                     </span>
                   )}
                   <span
@@ -350,7 +357,7 @@ export const Header: FC = () => {
                   Network{" "}
                 </span>
                 {theme !== "day" ? (
-                  <span className={`dropdown-selected`}>{net}</span>
+                  <span className={`dropdown-selected`}>{net === "public" ? "Public" : "Testnet"}</span>
                 ) : (
                   <span
                     style={{
@@ -358,7 +365,7 @@ export const Header: FC = () => {
                       color: "#666",
                     }}
                   >
-                    {net}
+                    {net === "public" ? "Public" : "Testnet"}
                   </span>
                 )}
                 <span
@@ -382,18 +389,18 @@ export const Header: FC = () => {
                   <div
                     className={`dropdown-item${
                       theme === "night" ? "" : "-light"
-                    } ${net !== "testnet" ? "selected" : ""}`}
-                    onClick={() => handleSelectNet("testnet")}
-                  >
-                    Testnet
-                  </div>
-                  <div
-                    className={`dropdown-item${
-                      theme === "night" ? "" : "-light"
                     } ${net !== "public" ? "selected" : ""}`}
                     onClick={() => handleSelectNet("public")}
                   >
                     Public
+                  </div>
+                  <div
+                    className={`dropdown-item${
+                      theme === "night" ? "" : "-light"
+                    } ${net !== "testnet" ? "selected" : ""}`}
+                    onClick={() => handleSelectNet("testnet")}
+                  >
+                    Testnet
                   </div>
                 </div>
               )}
