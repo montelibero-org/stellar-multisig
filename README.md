@@ -16,6 +16,7 @@ The repository is a part of the [Montelibero Organization](https://github.com/mo
 - [Zustand](https://github.com/pmndrs/zustand) - A state management library for React.
 - [TypeScript](https://www.typescriptlang.org) - A typed superset of JavaScript that compiles to plain JavaScript.
 - [Eslint](https://eslint.org) - A static and automatic code checker for your JavaScript projects.
+- [Font-Awesome](https://fontawesome.com) - A library that provides scalable vector icons.
 
 ## Contributing
 
