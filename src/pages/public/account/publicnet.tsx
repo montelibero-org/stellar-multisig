@@ -141,31 +141,31 @@ const PublicNet: FC<Props> = ({ id }) => {
   }, [account]);
 
   useEffect(() => {
+  
     if (information.tomlInfo) {
       const accountsMatch = information.tomlInfo.match(
-        /ACCOUNTS=\[([\s\S]*?)\]/
+        /ACCOUNTS\s*=\s*\[([\s\S]*?)\]/
       );
+  
       if (accountsMatch && accountsMatch[1]) {
         const newAccounts = accountsMatch[1]
-          .split("\n")
-          .map((line) => line.trim())
-          .filter((line) => line && !line.startsWith("#"))
-          .map((line) => line.replace(/^"|"$|,$|"$/g, ""))
-          .map((line) => line.replace(/"$/, ""));
-          /**
-           * Logic to create an array of strings where item is an accountID
-           * that is not fake in the home_domain set by the account
-           */
-        const foundAccount = newAccounts.find((accountId) => accountId === id);
-        if (foundAccount) {
-          setIsVisibleHomeDomainInfo(true);
-        } else {
-          setIsVisibleHomeDomainInfo(false);
-        }
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+          .map(line => line.replace(/^"|"$|,$/g, ''));
+        
+        
+        const cleanedAccounts = newAccounts.map(account => account.replace(/"/g, ''));
+  
+        const foundAccount = cleanedAccounts.some(accountId => accountId === id);
+  
+        setIsVisibleHomeDomainInfo(foundAccount);
       } else {
+        console.error("No accounts found in TOML");
         setIsVisibleHomeDomainInfo(false);
       }
     } else {
+      console.error("No TOML info available");
       setIsVisibleHomeDomainInfo(false);
     }
   }, [information.tomlInfo, id]);
