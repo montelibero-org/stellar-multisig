@@ -1,8 +1,23 @@
 [
   {
+    "code": "MTL",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "etf"
+  },
+  {
+    "code": "MTLRECT",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "etf"
+  },
+  {
     "code": "EURMTL",
     "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
     "tag": "stablecoin"
+  },
+  {
+    "code": "EURDEBT",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "debt"
   },
   {
     "code": "USDM",
@@ -15,18 +30,48 @@
     "tag": "stablecoin"
   },
   {
+    "code": "BTCDEBT",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "debt"
+  },
+  {
     "code": "SATSMTL",
     "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
     "tag": "stablecoin"
   },
   {
-    "code": "MTL",
+    "code": "TONMTL",
     "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
-    "tag": "etf"
+    "tag": "stablecoin"
   },
   {
-    "code": "MTLRECT",
+    "code": "TONDEBT",
     "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
-    "tag": "etf"
+    "tag": "debt"
+  },
+  {
+    "code": "AUMTL",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "stablecoin"
+  },
+  {
+    "code": "AUDEBT",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "debt"
+  },
+  {
+    "code": "MTLand",
+    "issuer": "GACKTN5DAZGWXRWB2WLM6OPBDHAMT6SJNGLJZPQMEZBUR4JUGBX2UK7V",
+    "tag": "share"
+  },
+  {
+    "code": "MTLAP",
+    "issuer": "GCNVDZIHGX473FEI7IXCUAEXUJ4BGCKEMHF36VYP5EMS7PX2QBLAMTLA",
+    "tag": "nft"
+  },
+  {
+    "code": "MTLAC",
+    "issuer": "GCNVDZIHGX473FEI7IXCUAEXUJ4BGCKEMHF36VYP5EMS7PX2QBLAMTLA",
+    "tag": "nft"
   }
 ]
