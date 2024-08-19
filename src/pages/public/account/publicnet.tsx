@@ -143,25 +143,25 @@ const PublicNet: FC<Props> = ({ id }) => {
   useEffect(() => {
     if (information.tomlInfo) {
       const accountsMatch = information.tomlInfo.match(
-        /ACCOUNTS=\[([\s\S]*?)\]/
+        /ACCOUNTS\s*=\s*\[([\s\S]*?)\]/
       );
+
       if (accountsMatch && accountsMatch[1]) {
         const newAccounts = accountsMatch[1]
           .split("\n")
           .map((line) => line.trim())
-          .filter((line) => line && !line.startsWith("#"))
-          .map((line) => line.replace(/^"|"$|,$|"$/g, ""))
-          .map((line) => line.replace(/"$/, ""));
-        /**
-         * Logic to create an array of strings where item is an accountID
-         * that is not fake in the home_domain set by the account
-         */
-        const foundAccount = newAccounts.find((accountId) => accountId === id);
-        if (foundAccount) {
-          setIsVisibleHomeDomainInfo(true);
-        } else {
-          setIsVisibleHomeDomainInfo(false);
-        }
+          .filter((line) => line.length > 0)
+          .map((line) => line.replace(/^"|"$|,$/g, ""));
+
+        const cleanedAccounts = newAccounts.map((account) =>
+          account.replace(/"/g, "")
+        );
+
+        const foundAccount = cleanedAccounts.some(
+          (accountId) => accountId === id
+        );
+
+        setIsVisibleHomeDomainInfo(foundAccount);
       } else {
         setIsVisibleHomeDomainInfo(false);
       }
@@ -768,41 +768,53 @@ const PublicNet: FC<Props> = ({ id }) => {
                                     information?.meta_data["ORG_DESCRIPTION"]}
                                 </span>
                               </dd>
-                              <dt>Org physical address:</dt>
-                              <dd>
-                                <span
-                                  className="block-select"
-                                  tabIndex={-1}
-                                  style={{
-                                    whiteSpace: "normal",
-                                    overflow: "visible",
-                                    display: "inline",
-                                  }}
-                                >
-                                  {information?.meta_data &&
-                                    information?.meta_data[
-                                    "ORG_PHYSICAL_ADDRESS"
-                                    ]}
-                                </span>
-                              </dd>
-                              <dt>Org official email:</dt>
-                              <dd>
-                                <a
-                                  href={`mailto:${information?.meta_data &&
-                                    information?.meta_data["ORG_OFFICIAL_EMAIL"]
-                                    }`}
-                                  target="_blank"
-                                  rel="noreferrer noopener"
-                                >
-                                  {information?.meta_data &&
-                                    information?.meta_data[
-                                    "ORG_OFFICIAL_EMAIL"
-                                    ]}
-                                </a>
-                              </dd>
-                            </dl>
+                              {information.meta_data["ORG_PHYSICAL_ADDRESS"] !==
+                                undefined && (
+                                  <>
+                                    <dt>Org physical address:</dt>
+                                    <dd>
+                                      <span
+                                        className="block-select"
+                                        tabIndex={-1}
+                                        style={{
+                                          whiteSpace: "normal",
+                                          overflow: "visible",
+                                          display: "inline",
+                                        }}
+                                      >
+                                        {information.meta_data &&
+                                          information?.meta_data[
+                                          "ORG_PHYSICAL_ADDRESS"
+                                          ]}
+                                      </span>
+                                    </dd>
+                                  </>
+                                )}
+                              {information.meta_data["ORG_OFFICIAL_EMAIL"] !==
+                                undefined && (
+                                  <>
+                                    <dt>Org official email:</dt>
+                                    <dd>
+                                      <a
+                                        href={`mailto:${information?.meta_data &&
+                                          information?.meta_data[
+                                          "ORG_OFFICIAL_EMAIL"
+                                          ]
+                                          }`}
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                      >
+                                        {information?.meta_data &&
+                                          information?.meta_data[
+                                          "ORG_OFFICIAL_EMAIL"
+                                          ]}
+                                      </a>
+                                    </dd>
+                                  </>
+                                )}
+                            </dl >
                           )}
-                        </div>
+                        </div >
                       ) : (
                         <div>
                           <pre
@@ -869,9 +881,9 @@ const PublicNet: FC<Props> = ({ id }) => {
                           </pre>
                         </div>
                       )}
-                    </div>
-                  </div>
-                </div>
+                    </div >
+                  </div >
+                </div >
               ) : null}
             </>
           ) : (
@@ -892,9 +904,9 @@ const PublicNet: FC<Props> = ({ id }) => {
               </div>
             </div>
           )}
-        </div>
-      </div>
-    </MainLayout>
+        </div >
+      </div >
+    </MainLayout >
   );
 };
 
