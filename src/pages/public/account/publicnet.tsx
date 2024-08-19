@@ -152,10 +152,10 @@ const PublicNet: FC<Props> = ({ id }) => {
           .filter((line) => line && !line.startsWith("#"))
           .map((line) => line.replace(/^"|"$|,$|"$/g, ""))
           .map((line) => line.replace(/"$/, ""));
-          /**
-           * Logic to create an array of strings where item is an accountID
-           * that is not fake in the home_domain set by the account
-           */
+        /**
+         * Logic to create an array of strings where item is an accountID
+         * that is not fake in the home_domain set by the account
+         */
         const foundAccount = newAccounts.find((accountId) => accountId === id);
         if (foundAccount) {
           setIsVisibleHomeDomainInfo(true);
@@ -219,18 +219,17 @@ const PublicNet: FC<Props> = ({ id }) => {
                     <hr className="flare"></hr>
                     <dl>
                       {information?.home_domain !== undefined &&
-                      isVisibleHomeDomainInfo &&
-                      information.home_domain &&
-                      !ignoredHomeDomains.includes(information.home_domain) ? (
+                        isVisibleHomeDomainInfo &&
+                        information.home_domain &&
+                        !ignoredHomeDomains.includes(information.home_domain) ? (
                         <>
                           <dt>Home domain:</dt>
                           <dd>
                             <a
-                              href={`${
-                                information?.home_domain === undefined
-                                  ? "#"
-                                  : information?.home_domain
-                              }`}
+                              href={`${information?.home_domain === undefined
+                                ? "#"
+                                : information?.home_domain
+                                }`}
                               rel="noreferrer noopener"
                               target="_blank"
                             >
@@ -353,9 +352,9 @@ const PublicNet: FC<Props> = ({ id }) => {
                           ? "immutable, "
                           : ""}
                         {information?.flags?.auth_required == false &&
-                        information?.flags?.auth_revocable == false &&
-                        information?.flags?.auth_clawback_enabled == false &&
-                        information?.flags?.auth_immutable == false
+                          information?.flags?.auth_revocable == false &&
+                          information?.flags?.auth_clawback_enabled == false &&
+                          information?.flags?.auth_immutable == false
                           ? "none"
                           : ""}
 
@@ -409,7 +408,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                     </dl>
 
                     {information?.issuers?.length &&
-                    information?.issuers?.length > 0 ? (
+                      information?.issuers?.length > 0 ? (
                       <div className="account-issued-assets">
                         <h4
                           style={{
@@ -473,7 +472,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                     )}
 
                     <h4 style={{ marginBottom: "0px" }}>
-                      Account Signers
+                      Signers
                       <i className="trigger icon info-tooltip small icon-help">
                         <div
                           className="tooltip-wrapper"
@@ -525,7 +524,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                       )}
                     </ul>
                     {information?.entries &&
-                    Object.keys(information?.entries).length ? (
+                      Object.keys(information?.entries).length ? (
                       <>
                         <h4
                           style={{
@@ -585,7 +584,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                 <div className="column column-50">
                   <div className="segment blank">
                     <h3>
-                      Account Balances
+                      Balances
                       <i className="trigger icon info-tooltip small icon-help">
                         <div
                           className="tooltip-wrapper"
@@ -665,20 +664,19 @@ const PublicNet: FC<Props> = ({ id }) => {
                 </div>
               </div>
               {information?.meta_data &&
-              information?.meta_data["ORG_NAME"] !== undefined &&
-              ignoredHomeDomains &&
-              information?.home_domain &&
-              !ignoredHomeDomains.includes(information.home_domain) &&
-              isVisibleHomeDomainInfo ? (
+                information?.meta_data["ORG_NAME"] !== undefined &&
+                ignoredHomeDomains &&
+                information?.home_domain &&
+                !ignoredHomeDomains.includes(information.home_domain) &&
+                isVisibleHomeDomainInfo ? (
                 <div className="toml-props">
                   <div className="tabs space inline-right">
                     <div className="tabs-header">
                       <div>
                         <a
                           href="#"
-                          className={`tabs-item condensed ${
-                            tabIndex === 1 ? "selected" : ""
-                          }`}
+                          className={`tabs-item condensed ${tabIndex === 1 ? "selected" : ""
+                            }`}
                           onClick={(e) => {
                             e.preventDefault();
                             setTabIndex(1);
@@ -688,9 +686,8 @@ const PublicNet: FC<Props> = ({ id }) => {
                         </a>
                         <a
                           href="#"
-                          className={`tabs-item condensed ${
-                            tabIndex === 2 ? "selected" : ""
-                          }`}
+                          className={`tabs-item condensed ${tabIndex === 2 ? "selected" : ""
+                            }`}
                           onClick={(e) => {
                             e.preventDefault();
                             setTabIndex(2);
@@ -705,7 +702,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                       {tabIndex == 1 ? (
                         <div className="segment blank">
                           {information?.meta_data &&
-                          information.meta_data?.["ORG_NAME"] == undefined ? (
+                            information.meta_data?.["ORG_NAME"] == undefined ? (
                             <div
                               style={{ fontSize: "13px", textAlign: "center" }}
                             >
@@ -784,23 +781,22 @@ const PublicNet: FC<Props> = ({ id }) => {
                                 >
                                   {information?.meta_data &&
                                     information?.meta_data[
-                                      "ORG_PHYSICAL_ADDRESS"
+                                    "ORG_PHYSICAL_ADDRESS"
                                     ]}
                                 </span>
                               </dd>
                               <dt>Org official email:</dt>
                               <dd>
                                 <a
-                                  href={`mailto:${
-                                    information?.meta_data &&
+                                  href={`mailto:${information?.meta_data &&
                                     information?.meta_data["ORG_OFFICIAL_EMAIL"]
-                                  }`}
+                                    }`}
                                   target="_blank"
                                   rel="noreferrer noopener"
                                 >
                                   {information?.meta_data &&
                                     information?.meta_data[
-                                      "ORG_OFFICIAL_EMAIL"
+                                    "ORG_OFFICIAL_EMAIL"
                                     ]}
                                 </a>
                               </dd>
@@ -881,9 +877,8 @@ const PublicNet: FC<Props> = ({ id }) => {
           ) : (
             <div className="cotainer">
               <div
-                className={`search ${
-                  exists === false ? "error" : ""
-                } container narrow`}
+                className={`search ${exists === false ? "error" : ""
+                  } container narrow`}
                 style={{ padding: "20px" }}
               >
                 <h2 className="text-overflow">Search results for {account}</h2>
