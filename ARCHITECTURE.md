@@ -10,4 +10,5 @@
   - `accounts` - Stellar accounts are shown on the site as links.
   - `links` - Links to another services.
   - `names` - Names and titles.
+- [`/src/shared/configs/ignored-home-domains.json`](/src/shared/configs/ignored-home-domains.json) - Home domains in accounts that are ignored when loading `stellar.toml` files.
 - [`/src/shared/configs/cache-config.json`](/src/shared/configs/cache-config.json) - Parameters for caching data received from Stellar Network.
