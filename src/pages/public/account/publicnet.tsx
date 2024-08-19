@@ -161,7 +161,6 @@ const PublicNet: FC<Props> = ({ id }) => {
   
         setIsVisibleHomeDomainInfo(foundAccount);
       } else {
-        console.error("No accounts found in TOML");
         setIsVisibleHomeDomainInfo(false);
       }
     } else {
