@@ -141,24 +141,26 @@ const PublicNet: FC<Props> = ({ id }) => {
   }, [account]);
 
   useEffect(() => {
-  
     if (information.tomlInfo) {
       const accountsMatch = information.tomlInfo.match(
         /ACCOUNTS\s*=\s*\[([\s\S]*?)\]/
       );
-  
+
       if (accountsMatch && accountsMatch[1]) {
         const newAccounts = accountsMatch[1]
-          .split('\n')
-          .map(line => line.trim())
-          .filter(line => line.length > 0)
-          .map(line => line.replace(/^"|"$|,$/g, ''));
-        
-        
-        const cleanedAccounts = newAccounts.map(account => account.replace(/"/g, ''));
-  
-        const foundAccount = cleanedAccounts.some(accountId => accountId === id);
-  
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line.length > 0)
+          .map((line) => line.replace(/^"|"$|,$/g, ""));
+
+        const cleanedAccounts = newAccounts.map((account) =>
+          account.replace(/"/g, "")
+        );
+
+        const foundAccount = cleanedAccounts.some(
+          (accountId) => accountId === id
+        );
+
         setIsVisibleHomeDomainInfo(foundAccount);
       } else {
         setIsVisibleHomeDomainInfo(false);
@@ -769,39 +771,51 @@ const PublicNet: FC<Props> = ({ id }) => {
                                     information?.meta_data["ORG_DESCRIPTION"]}
                                 </span>
                               </dd>
-                              <dt>Org physical address:</dt>
-                              <dd>
-                                <span
-                                  className="block-select"
-                                  tabIndex={-1}
-                                  style={{
-                                    whiteSpace: "normal",
-                                    overflow: "visible",
-                                    display: "inline",
-                                  }}
-                                >
-                                  {information?.meta_data &&
-                                    information?.meta_data[
-                                      "ORG_PHYSICAL_ADDRESS"
-                                    ]}
-                                </span>
-                              </dd>
-                              <dt>Org official email:</dt>
-                              <dd>
-                                <a
-                                  href={`mailto:${
-                                    information?.meta_data &&
-                                    information?.meta_data["ORG_OFFICIAL_EMAIL"]
-                                  }`}
-                                  target="_blank"
-                                  rel="noreferrer noopener"
-                                >
-                                  {information?.meta_data &&
-                                    information?.meta_data[
-                                      "ORG_OFFICIAL_EMAIL"
-                                    ]}
-                                </a>
-                              </dd>
+                              {information.meta_data["ORG_PHYSICAL_ADDRESS"] !==
+                                undefined && (
+                                <>
+                                  <dt>Org physical address:</dt>
+                                  <dd>
+                                    <span
+                                      className="block-select"
+                                      tabIndex={-1}
+                                      style={{
+                                        whiteSpace: "normal",
+                                        overflow: "visible",
+                                        display: "inline",
+                                      }}
+                                    >
+                                      {information.meta_data &&
+                                        information?.meta_data[
+                                          "ORG_PHYSICAL_ADDRESS"
+                                        ]}
+                                    </span>
+                                  </dd>
+                                </>
+                              )}
+                              {information.meta_data["ORG_OFFICIAL_EMAIL"] !==
+                                undefined && (
+                                <>
+                                  <dt>Org official email:</dt>
+                                  <dd>
+                                    <a
+                                      href={`mailto:${
+                                        information?.meta_data &&
+                                        information?.meta_data[
+                                          "ORG_OFFICIAL_EMAIL"
+                                        ]
+                                      }`}
+                                      target="_blank"
+                                      rel="noreferrer noopener"
+                                    >
+                                      {information?.meta_data &&
+                                        information?.meta_data[
+                                          "ORG_OFFICIAL_EMAIL"
+                                        ]}
+                                    </a>
+                                  </dd>
+                                </>
+                              )}
                             </dl>
                           )}
                         </div>
