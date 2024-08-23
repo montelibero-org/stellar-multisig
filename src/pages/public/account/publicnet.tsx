@@ -17,7 +17,8 @@ import { Balance, Information, Signer } from "@/shared/types";
 import { DocumentInfo, Issuer } from "@/shared/types";
 import { processKeys } from "@/shared/lib";
 import BalanceItem from "@/pages/public/account/(BalanceItem)";
-import { ignoredHomeDomains } from "@/shared/configs";
+import ignoredHomeDomains from "@/shared/configs/ignored-home-domains.json";
+import cacheConfig from "@/shared/configs/cache-config.json";
 
 interface Props {
   id: string;
@@ -89,7 +90,7 @@ const PublicNet: FC<Props> = ({ id }) => {
           console.error("Error fetching data:", error);
       } finally {
           setLoading(false);
-          console.log("Data fetched successfully");
+          console.log("Data fetched successfully " + new Date().getMinutes() + ":" + new Date().getSeconds());
       }
   };
 
@@ -133,7 +134,7 @@ const PublicNet: FC<Props> = ({ id }) => {
     FetchData();
     const intervalID = setInterval(() => {
       FetchData();
-    }, 60000);
+    }, cacheConfig.stellarDataCacheDurationMs);
     return () => clearInterval(intervalID);
   }, []);
 
