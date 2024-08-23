@@ -17,7 +17,8 @@ import { Balance, Information, Signer } from "@/shared/types";
 import { DocumentInfo, Issuer } from "@/shared/types";
 import { processKeys } from "@/shared/lib";
 import BalanceItem from "@/pages/public/account/(BalanceItem)";
-import { ignoredHomeDomains, cacheConfig } from "@/shared/configs";
+import ignoredHomeDomains from "@/shared/configs/ignored-home-domains.json";
+import cacheConfig from "@/shared/configs/cache-config.json";
 
 interface Props {
   id: string;
@@ -47,49 +48,50 @@ const PublicNet: FC<Props> = ({ id }) => {
   const [isVisibleHomeDomainInfo, setIsVisibleHomeDomainInfo] =
     useState<boolean>(true);
 
-  const FetchData = async () => {
-    setLoading(true);
-    if (account !== "") {
-      const horizonInfo = await getMainInformation(account);
-      const accountIssuer = await getAccountIssuerInformation(account);
-      let tomlInformation = "";
-      if (horizonInfo.home_domain != undefined)
-        tomlInformation = await getDomainInformation(horizonInfo.home_domain);
-      const splittedInformation = tomlInformation.split("\n");
-      let document = false;
-      const documentInfo: DocumentInfo = {};
-      for (const i in splittedInformation) {
-        if (splittedInformation[i] == "[DOCUMENTATION]") {
-          document = true;
-          continue;
-        }
-
-        if (!document) {
-          continue;
-        }
-
-        if (splittedInformation[i] == "" && document) {
-          document = false;
-          continue;
-        }
-
-        const _pattern = splittedInformation[i].split("=");
-        documentInfo[_pattern[0].trim()] = _pattern[1].replace(/"/g, "").trim();
+    const FetchData = async () => {
+      setLoading(true);
+      try {
+          const horizonInfo = await getMainInformation(account);
+          const accountIssuer = await getAccountIssuerInformation(account);
+          let tomlInformation = "";
+          if (horizonInfo.home_domain !== undefined) tomlInformation = await getDomainInformation(horizonInfo.home_domain);
+          const splittedInformation = tomlInformation.split("\n");
+          let document = false;
+          const documentInfo: DocumentInfo = {};
+          for (const i in splittedInformation) {
+              if (splittedInformation[i] === "[DOCUMENTATION]") {
+                  document = true;
+                  continue;
+              }
+              if (!document) {
+                  continue;
+              }
+              if (splittedInformation[i] === "" && document) {
+                  document = false;
+                  continue;
+              }
+              const _pattern = splittedInformation[i].split("=");
+              documentInfo[_pattern[0].trim()] = _pattern[1].replace(/"/g, "").trim();
+          }
+  
+          setInformation({
+              home_domain: horizonInfo.home_domain,
+              created_at: horizonInfo.last_modified_time,
+              thresholds: horizonInfo.thresholds,
+              flags: horizonInfo.flags,
+              signers: horizonInfo.signers,
+              entries: horizonInfo.data_attr,
+              balances: horizonInfo.balances,
+              meta_data: documentInfo,
+              issuers: accountIssuer.records,
+              tomlInfo: tomlInformation,
+          });
+      } catch (error) {
+          console.error("Error fetching data:", error);
+      } finally {
+          setLoading(false);
+          console.log("Data fetched successfully " + new Date().getMinutes() + ":" + new Date().getSeconds());
       }
-      setInformation({
-        home_domain: horizonInfo.home_domain,
-        created_at: horizonInfo.last_modified_time,
-        thresholds: horizonInfo.thresholds,
-        flags: horizonInfo.flags,
-        signers: horizonInfo.signers,
-        entries: horizonInfo.data_attr,
-        balances: horizonInfo.balances,
-        meta_data: documentInfo,
-        issuers: accountIssuer.records,
-        tomlInfo: tomlInformation,
-      });
-    }
-    setLoading(false);
   };
 
   useEffect(() => {
