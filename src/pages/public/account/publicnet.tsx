@@ -17,7 +17,7 @@ import { Balance, Information, Signer } from "@/shared/types";
 import { DocumentInfo, Issuer } from "@/shared/types";
 import { processKeys } from "@/shared/lib";
 import BalanceItem from "@/pages/public/account/(BalanceItem)";
-import ignoredHomeDomains from "@/shared/configs/ignored-home-domains.json";
+import { ignoredHomeDomains, cacheConfig } from "@/shared/configs";
 
 interface Props {
   id: string;
@@ -46,6 +46,51 @@ const PublicNet: FC<Props> = ({ id }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isVisibleHomeDomainInfo, setIsVisibleHomeDomainInfo] =
     useState<boolean>(true);
+
+  const FetchData = async () => {
+    setLoading(true);
+    if (account !== "") {
+      const horizonInfo = await getMainInformation(account);
+      const accountIssuer = await getAccountIssuerInformation(account);
+      let tomlInformation = "";
+      if (horizonInfo.home_domain != undefined)
+        tomlInformation = await getDomainInformation(horizonInfo.home_domain);
+      const splittedInformation = tomlInformation.split("\n");
+      let document = false;
+      const documentInfo: DocumentInfo = {};
+      for (const i in splittedInformation) {
+        if (splittedInformation[i] == "[DOCUMENTATION]") {
+          document = true;
+          continue;
+        }
+
+        if (!document) {
+          continue;
+        }
+
+        if (splittedInformation[i] == "" && document) {
+          document = false;
+          continue;
+        }
+
+        const _pattern = splittedInformation[i].split("=");
+        documentInfo[_pattern[0].trim()] = _pattern[1].replace(/"/g, "").trim();
+      }
+      setInformation({
+        home_domain: horizonInfo.home_domain,
+        created_at: horizonInfo.last_modified_time,
+        thresholds: horizonInfo.thresholds,
+        flags: horizonInfo.flags,
+        signers: horizonInfo.signers,
+        entries: horizonInfo.data_attr,
+        balances: horizonInfo.balances,
+        meta_data: documentInfo,
+        issuers: accountIssuer.records,
+        tomlInfo: tomlInformation,
+      });
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     const checkAccount = async () => {
@@ -84,61 +129,12 @@ const PublicNet: FC<Props> = ({ id }) => {
   }, [net, account]);
 
   useEffect(() => {
-    const handler = async () => {
-      setLoading(true);
-      if (account != "") {
-        const horizonInfo = await getMainInformation(account as string);
-        const accountIssuer = await getAccountIssuerInformation(
-          account as string
-        );
-
-        let tomlInformation = "";
-
-        if (horizonInfo.home_domain != undefined) {
-          tomlInformation = await getDomainInformation(horizonInfo.home_domain);
-        }
-
-        const splittedInformation = tomlInformation.split("\n");
-        let document = false;
-        const documentInfo: DocumentInfo = {};
-
-        for (const i in splittedInformation) {
-          if (splittedInformation[i] == "[DOCUMENTATION]") {
-            document = true;
-            continue;
-          }
-
-          if (!document) {
-            continue;
-          }
-
-          if (splittedInformation[i] == "" && document) {
-            document = false;
-            continue;
-          }
-
-          const _pattern = splittedInformation[i].split("=");
-          documentInfo[_pattern[0].trim()] = _pattern[1]
-            .replace(/"/g, "")
-            .trim();
-        }
-        setInformation({
-          home_domain: horizonInfo.home_domain,
-          created_at: horizonInfo.last_modified_time,
-          thresholds: horizonInfo.thresholds,
-          flags: horizonInfo.flags,
-          signers: horizonInfo.signers,
-          entries: horizonInfo.data_attr,
-          balances: horizonInfo.balances,
-          meta_data: documentInfo,
-          issuers: accountIssuer.records,
-          tomlInfo: tomlInformation,
-        });
-      }
-      setLoading(false);
-    };
-    handler();
-  }, [account]);
+    FetchData();
+    const intervalID = setInterval(() => {
+      FetchData();
+    }, cacheConfig.stellarDataCacheDurationMs);
+    return () => clearInterval(intervalID);
+  }, []);
 
   useEffect(() => {
     if (information.tomlInfo) {
@@ -219,17 +215,18 @@ const PublicNet: FC<Props> = ({ id }) => {
                     <hr className="flare"></hr>
                     <dl>
                       {information?.home_domain !== undefined &&
-                        isVisibleHomeDomainInfo &&
-                        information.home_domain &&
-                        !ignoredHomeDomains.includes(information.home_domain) ? (
+                      isVisibleHomeDomainInfo &&
+                      information.home_domain &&
+                      !ignoredHomeDomains.includes(information.home_domain) ? (
                         <>
                           <dt>Home domain:</dt>
                           <dd>
                             <a
-                              href={`${information?.home_domain === undefined
-                                ? "#"
-                                : information?.home_domain
-                                }`}
+                              href={`${
+                                information?.home_domain === undefined
+                                  ? "#"
+                                  : information?.home_domain
+                              }`}
                               rel="noreferrer noopener"
                               target="_blank"
                             >
@@ -352,9 +349,9 @@ const PublicNet: FC<Props> = ({ id }) => {
                           ? "immutable, "
                           : ""}
                         {information?.flags?.auth_required == false &&
-                          information?.flags?.auth_revocable == false &&
-                          information?.flags?.auth_clawback_enabled == false &&
-                          information?.flags?.auth_immutable == false
+                        information?.flags?.auth_revocable == false &&
+                        information?.flags?.auth_clawback_enabled == false &&
+                        information?.flags?.auth_immutable == false
                           ? "none"
                           : ""}
 
@@ -408,7 +405,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                     </dl>
 
                     {information?.issuers?.length &&
-                      information?.issuers?.length > 0 ? (
+                    information?.issuers?.length > 0 ? (
                       <div className="account-issued-assets">
                         <h4
                           style={{
@@ -524,7 +521,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                       )}
                     </ul>
                     {information?.entries &&
-                      Object.keys(information?.entries).length ? (
+                    Object.keys(information?.entries).length ? (
                       <>
                         <h4
                           style={{
@@ -664,19 +661,20 @@ const PublicNet: FC<Props> = ({ id }) => {
                 </div>
               </div>
               {information?.meta_data &&
-                information?.meta_data["ORG_NAME"] !== undefined &&
-                ignoredHomeDomains &&
-                information?.home_domain &&
-                !ignoredHomeDomains.includes(information.home_domain) &&
-                isVisibleHomeDomainInfo ? (
+              information?.meta_data["ORG_NAME"] !== undefined &&
+              ignoredHomeDomains &&
+              information?.home_domain &&
+              !ignoredHomeDomains.includes(information.home_domain) &&
+              isVisibleHomeDomainInfo ? (
                 <div className="toml-props">
                   <div className="tabs space inline-right">
                     <div className="tabs-header">
                       <div>
                         <a
                           href="#"
-                          className={`tabs-item condensed ${tabIndex === 1 ? "selected" : ""
-                            }`}
+                          className={`tabs-item condensed ${
+                            tabIndex === 1 ? "selected" : ""
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             setTabIndex(1);
@@ -686,8 +684,9 @@ const PublicNet: FC<Props> = ({ id }) => {
                         </a>
                         <a
                           href="#"
-                          className={`tabs-item condensed ${tabIndex === 2 ? "selected" : ""
-                            }`}
+                          className={`tabs-item condensed ${
+                            tabIndex === 2 ? "selected" : ""
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             setTabIndex(2);
@@ -702,7 +701,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                       {tabIndex == 1 ? (
                         <div className="segment blank">
                           {information?.meta_data &&
-                            information.meta_data?.["ORG_NAME"] == undefined ? (
+                          information.meta_data?.["ORG_NAME"] == undefined ? (
                             <div
                               style={{ fontSize: "13px", textAlign: "center" }}
                             >
@@ -770,51 +769,52 @@ const PublicNet: FC<Props> = ({ id }) => {
                               </dd>
                               {information.meta_data["ORG_PHYSICAL_ADDRESS"] !==
                                 undefined && (
-                                  <>
-                                    <dt>Org physical address:</dt>
-                                    <dd>
-                                      <span
-                                        className="block-select"
-                                        tabIndex={-1}
-                                        style={{
-                                          whiteSpace: "normal",
-                                          overflow: "visible",
-                                          display: "inline",
-                                        }}
-                                      >
-                                        {information.meta_data &&
-                                          information?.meta_data[
+                                <>
+                                  <dt>Org physical address:</dt>
+                                  <dd>
+                                    <span
+                                      className="block-select"
+                                      tabIndex={-1}
+                                      style={{
+                                        whiteSpace: "normal",
+                                        overflow: "visible",
+                                        display: "inline",
+                                      }}
+                                    >
+                                      {information.meta_data &&
+                                        information?.meta_data[
                                           "ORG_PHYSICAL_ADDRESS"
-                                          ]}
-                                      </span>
-                                    </dd>
-                                  </>
-                                )}
+                                        ]}
+                                    </span>
+                                  </dd>
+                                </>
+                              )}
                               {information.meta_data["ORG_OFFICIAL_EMAIL"] !==
                                 undefined && (
-                                  <>
-                                    <dt>Org official email:</dt>
-                                    <dd>
-                                      <a
-                                        href={`mailto:${information?.meta_data &&
-                                          information?.meta_data[
+                                <>
+                                  <dt>Org official email:</dt>
+                                  <dd>
+                                    <a
+                                      href={`mailto:${
+                                        information?.meta_data &&
+                                        information?.meta_data[
                                           "ORG_OFFICIAL_EMAIL"
-                                          ]
-                                          }`}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                      >
-                                        {information?.meta_data &&
-                                          information?.meta_data[
+                                        ]
+                                      }`}
+                                      target="_blank"
+                                      rel="noreferrer noopener"
+                                    >
+                                      {information?.meta_data &&
+                                        information?.meta_data[
                                           "ORG_OFFICIAL_EMAIL"
-                                          ]}
-                                      </a>
-                                    </dd>
-                                  </>
-                                )}
-                            </dl >
+                                        ]}
+                                    </a>
+                                  </dd>
+                                </>
+                              )}
+                            </dl>
                           )}
-                        </div >
+                        </div>
                       ) : (
                         <div>
                           <pre
@@ -881,16 +881,17 @@ const PublicNet: FC<Props> = ({ id }) => {
                           </pre>
                         </div>
                       )}
-                    </div >
-                  </div >
-                </div >
+                    </div>
+                  </div>
+                </div>
               ) : null}
             </>
           ) : (
             <div className="cotainer">
               <div
-                className={`search ${exists === false ? "error" : ""
-                  } container narrow`}
+                className={`search ${
+                  exists === false ? "error" : ""
+                } container narrow`}
                 style={{ padding: "20px" }}
               >
                 <h2 className="text-overflow">Search results for {account}</h2>
@@ -904,9 +905,9 @@ const PublicNet: FC<Props> = ({ id }) => {
               </div>
             </div>
           )}
-        </div >
-      </div >
-    </MainLayout >
+        </div>
+      </div>
+    </MainLayout>
   );
 };
 
