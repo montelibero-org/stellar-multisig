@@ -17,7 +17,7 @@ import { Balance, Information, Signer } from "@/shared/types";
 import { DocumentInfo, Issuer } from "@/shared/types";
 import { processKeys } from "@/shared/lib";
 import BalanceItem from "@/pages/public/account/(BalanceItem)";
-import { ignoredHomeDomains, cacheConfig } from "@/shared/configs";
+import { ignoredHomeDomains } from "@/shared/configs";
 
 interface Props {
   id: string;
