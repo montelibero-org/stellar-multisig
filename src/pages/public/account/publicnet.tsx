@@ -649,7 +649,6 @@ const PublicNet: FC<Props> = ({ id }) => {
                                     Number(totalInfo[1]) === 0
                                       ? ""
                                       : "." + totalInfo[1];
-                                  console.log(item)
                                   if (item.asset_code) {
                                     return (
                                       <BalanceItem
