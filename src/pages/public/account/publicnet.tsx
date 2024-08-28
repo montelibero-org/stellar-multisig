@@ -84,11 +84,6 @@ const PublicNet: FC<Props> = ({ id }) => {
   }, [net, account]);
 
   useEffect(() => {
-    console.log(information);
-  }, [information])
-  
-
-  useEffect(() => {
     const handler = async () => {
       setLoading(true);
       if (account != "") {
