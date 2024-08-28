@@ -171,6 +171,10 @@ const PublicNet: FC<Props> = ({ id }) => {
     }
   }, [information.tomlInfo, id]);
 
+  useEffect(() => {
+    console.log(information);
+  }, [information])
+
   return (
     <MainLayout>
       <div className="container">
@@ -180,7 +184,14 @@ const PublicNet: FC<Props> = ({ id }) => {
           ) : exists ? (
             <>
               <h2 className="word-break relative condensed">
-                <span className="dimmed">Account&nbsp;&nbsp;&nbsp;</span>
+                <span className="dimmed">
+                  {information.signers?.length === 1 ? (
+                    <span>Personal</span>
+                  ) : (
+                    <span>Corporate</span>
+                  )}{" "}
+                  Account&nbsp;&nbsp;&nbsp;
+                </span>
                 <span className="account-address plain">
                   <span className="account-key">{account}</span>
                   &nbsp;&nbsp;&nbsp;
@@ -218,8 +229,8 @@ const PublicNet: FC<Props> = ({ id }) => {
                           <dd>
                             <a
                               href={`${information?.home_domain === undefined
-                                  ? "#"
-                                  : information?.home_domain
+                                ? "#"
+                                : information?.home_domain
                                 }`}
                               rel="noreferrer noopener"
                               target="_blank"
