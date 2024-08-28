@@ -171,9 +171,9 @@ const PublicNet: FC<Props> = ({ id }) => {
     }
   }, [information.tomlInfo, id]);
 
-  useEffect(() => {
-    console.log(information);
-  }, [information])
+  // useEffect(() => {
+  //   console.log(information);
+  // }, [information])
 
   return (
     <MainLayout>
