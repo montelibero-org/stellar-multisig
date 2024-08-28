@@ -38,6 +38,7 @@ export type Information = {
 export type Issuer = {
     paging_token: string;
     asset_code: string;
+    asset_issuer?: string;
     accounts: {
         authorized: number;
     };
