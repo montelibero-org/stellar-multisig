@@ -461,8 +461,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                             marginBottom: "0px",
                           }}
                         >
-                          Assets Issued by this
-                          Account
+                          Issued Assets
                           <i className="trigger icon info-tooltip small icon-help">
                             <div
                               className="tooltip-wrapper"
