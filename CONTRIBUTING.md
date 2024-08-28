@@ -38,3 +38,55 @@ When contributing to this repository, please first discuss the change you wish t
 ### Key branches
 
 - `main` is the latest, deployed version
+
+## Cloud AI Code Helpers
+
+- https://chatgpt.com
+- https://gemini.google.com
+- https://claude.ai
+- https://chat.reka.ai
+- https://www.perplexity.ai
+
+## Style Guides
+
+### Git Commit Messages
+
+- Include an issue number to the beginning of the first line (if applicable). Example `#234 YOUR_COMMIT_NAME`.
+- Use the present tense ("Add feature" not "Added feature").
+- Use the imperative mood ("Move cursor to..." not "Moves cursor to...").
+- In case changing only texts or documentations include `[ci skip]` to the end of the first line.
+- Limit the first line to 72 characters or less.
+- Reference issues and pull requests liberally after the first line.
+
+### Documentation Style Guide
+
+All `*.md` files must adhere to [Markdown Syntax](https://www.markdownguide.org/basic-syntax/).
+
+### JavaScript Style Guide
+
+JavaScript Code MUST adhere to [JavaScript Standard Style](https://standardjs.com).
+
+Recommended IDE:
+  - [VS Code](https://code.visualstudio.com)
+    - [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
+  - [Cursor](https://cursor.sh)
+  - [Project IDX](https://idx.google.com)
+  - [PhpStorm](https://www.jetbrains.com/phpstorm/)
+  - [Eclipse](https://www.eclipse.org)
+  - [Sublime Text](https://www.sublimetext.com)
+
+- Prefer the object spread operator (`{...anotherObj}`) to `Object.assign()`
+- Inline `export`s with expressions whenever possible
+
+```javascript
+  // Use this:
+  export default class ClassName {
+
+  }
+
+  // Instead of:
+  class ClassName {
+
+  }
+  export default ClassName
+```
