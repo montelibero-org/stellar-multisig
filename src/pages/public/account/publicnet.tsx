@@ -1,7 +1,7 @@
 "use client";
 
 import { MainLayout } from "@/widgets";
-import Image from "next/image";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   getAccountIssuerInformation,
   getDomainInformation,
@@ -18,6 +18,7 @@ import { DocumentInfo, Issuer } from "@/shared/types";
 import { processKeys } from "@/shared/lib";
 import BalanceItem from "@/pages/public/account/(BalanceItem)";
 import ignoredHomeDomains from "@/shared/configs/ignored-home-domains.json";
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   id: string;
@@ -196,17 +197,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                       rel="noopener noreferrer"
                       title="View on Stellar.Expert"
                     >
-                      <Image
-                        src="../stellar-expert-logo.png"
-                        alt="Stellar Expert Logo"
-                        className="dark:invert"
-                        width={30}
-                        style={{
-                          display: "inline-block",
-                        }}
-                        height={30}
-                        priority
-                      />
+                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                     </a>
                   </span>
                 </span>
