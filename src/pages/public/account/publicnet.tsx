@@ -1,7 +1,6 @@
 "use client";
 
 import { MainLayout } from "@/widgets";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   getAccountIssuerInformation,
   getDomainInformation,
@@ -18,7 +17,6 @@ import { DocumentInfo, Issuer } from "@/shared/types";
 import { processKeys } from "@/shared/lib";
 import BalanceItem from "@/pages/public/account/(BalanceItem)";
 import ignoredHomeDomains from "@/shared/configs/ignored-home-domains.json";
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   id: string;
@@ -179,7 +177,7 @@ const PublicNet: FC<Props> = ({ id }) => {
     <MainLayout>
       <div className="container">
         <div className="account-view">
-          {loading ? (
+      {loading ? (
             "Loading..."
           ) : exists ? (
             <>
@@ -202,14 +200,13 @@ const PublicNet: FC<Props> = ({ id }) => {
                       height: "30px",
                     }}
                   >
-                    <a
-                      href={`https://stellar.expert/explorer/${net}/account/${account}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="View on Stellar.Expert"
-                    >
-                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                    </a>
+                      <a
+                        href={`https://stellar.expert/explorer/${net}/account/${account}`}
+                        title="View on Stellar.Expert"
+                        target="_blank"
+                      >
+                        <i className="fa-solid fa-up-right-from-square"></i>
+                      </a>
                   </span>
                 </span>
               </h2>
@@ -450,14 +447,14 @@ const PublicNet: FC<Props> = ({ id }) => {
                               (issuer: Issuer, key: number) => {
                                 return (
                                   <li key={key}>
-                                      <a
-                                        aria-label={issuer.paging_token}
-                                        className="asset-link"
-                                        href={`https://stellar.expert/explorer/${net}/asset/${issuer.asset_code}-${issuer.asset_issuer}`}
-                                        target="_blank"
-                                      >
-                                        {issuer?.asset_code}
-                                      </a>
+                                    <a
+                                      aria-label={issuer.paging_token}
+                                      className="asset-link"
+                                      href={`https://stellar.expert/explorer/${net}/asset/${issuer.asset_code}-${issuer.asset_issuer}`}
+                                      target="_blank"
+                                    >
+                                      {issuer?.asset_code}
+                                    </a>
                                     &nbsp;
                                   </li>
                                 );

@@ -1,69 +1,66 @@
 .dimmed {
-    color: #999;
-    font-size: 24px;
+  color: #999;
+  font-size: 24px;
 }
 
 .account-address {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 
 .account-address.plain * {
-    font: inherit;
-    white-space: normal;
+  white-space: normal;
 }
 
 .account-address .account-key {
-    white-space: normal;
-    word-break: break-word;
-    font-size: 24px;
-}
-
-.account-address {
-    white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  font-size: 24px;
 }
 
 .condensed {
-    letter-spacing: -0.045em;
+  letter-spacing: -0.045em;
 }
 
 .all-account-balances {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    width: 100%;
-    max-height: 21.5em;
-    overflow-y: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+  max-height: 21.5em;
+  overflow-y: auto;
+}
 
-    .account-balance {
-        display: block;
-        padding: $space-micro 0 0.8 * $space-micro;
-        margin: 0.2em;
-        font-size: 1.15em;
-        flex: 0 0 30%;
-        max-width: 30%;
-        height: 5em;
-        background: var(--color-highlight);
-        color: var(--color-bg);
-        text-align: center;
+.account-balance {
+  display: block;
+  padding: 0.5em 0 0.4em; /* пример замены $space-micro */
+  margin: 0.2em;
+  font-size: 1.15em;
+  flex: 0 0 30%;
+  max-width: 30%;
+  height: 5em;
+  background: var(--color-highlight);
+  color: var(--color-bg);
+  text-align: center;
+}
 
-        *,
-        *:hover {
-            color: var(--color-bg);
-        }
+.account-balance *,
+.account-balance *:hover {
+  color: var(--color-bg);
+}
 
-        .text-tiny {
-            opacity: 0.8;
-        }
-    }
+.text-tiny {
+  opacity: 0.8;
+}
 
-    @media (max-width: $responsive-mobile-browser-width) {
-        margin-left: 0;
-        margin-right: 0;
-        .account-balance {
-            margin-top: $space-micro;
-            flex: 0 0 96%;
-            max-width: 96%;
-        }
-    }
+@media (max-width: 600px) {
+  .all-account-balances {
+      margin-left: 0;
+      margin-right: 0;
+  }
+  .account-balance {
+      margin-top: 0.5em;
+      flex: 0 0 96%;
+      max-width: 96%;
+  }
 }
