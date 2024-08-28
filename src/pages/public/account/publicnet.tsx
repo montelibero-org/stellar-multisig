@@ -450,18 +450,15 @@ const PublicNet: FC<Props> = ({ id }) => {
                               (issuer: Issuer, key: number) => {
                                 return (
                                   <li key={key}>
-                                    <Link href="#" legacyBehavior>
                                       <a
                                         aria-label={issuer.paging_token}
                                         className="asset-link"
+                                        href={`https://stellar.expert/explorer/${net}/asset/${issuer.asset_code}-${issuer.asset_issuer}`}
+                                        target="_blank"
                                       >
                                         {issuer?.asset_code}
                                       </a>
-                                    </Link>
                                     &nbsp;
-                                    <span className="">
-                                      ({issuer.accounts.authorized} trustlines)
-                                    </span>
                                   </li>
                                 );
                               }
