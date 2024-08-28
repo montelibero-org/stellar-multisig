@@ -219,17 +219,18 @@ const PublicNet: FC<Props> = ({ id }) => {
                     <hr className="flare"></hr>
                     <dl>
                       {information?.home_domain !== undefined &&
-                        isVisibleHomeDomainInfo &&
-                        information.home_domain &&
-                        !ignoredHomeDomains.includes(information.home_domain) ? (
+                      isVisibleHomeDomainInfo &&
+                      information.home_domain &&
+                      !ignoredHomeDomains.includes(information.home_domain) ? (
                         <>
                           <dt>Home domain:</dt>
                           <dd>
                             <a
-                              href={`${information?.home_domain === undefined
-                                ? "#"
-                                : information?.home_domain
-                                }`}
+                              href={`${
+                                information?.home_domain === undefined
+                                  ? "#"
+                                  : information?.home_domain
+                              }`}
                               rel="noreferrer noopener"
                               target="_blank"
                             >
@@ -352,9 +353,9 @@ const PublicNet: FC<Props> = ({ id }) => {
                           ? "immutable, "
                           : ""}
                         {information?.flags?.auth_required == false &&
-                          information?.flags?.auth_revocable == false &&
-                          information?.flags?.auth_clawback_enabled == false &&
-                          information?.flags?.auth_immutable == false
+                        information?.flags?.auth_revocable == false &&
+                        information?.flags?.auth_clawback_enabled == false &&
+                        information?.flags?.auth_immutable == false
                           ? "none"
                           : ""}
 
@@ -408,7 +409,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                     </dl>
 
                     {information?.issuers?.length &&
-                      information?.issuers?.length > 0 ? (
+                    information?.issuers?.length > 0 ? (
                       <div className="account-issued-assets">
                         <h4
                           style={{
@@ -524,7 +525,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                       )}
                     </ul>
                     {information?.entries &&
-                      Object.keys(information?.entries).length ? (
+                    Object.keys(information?.entries).length ? (
                       <>
                         <h4
                           style={{
@@ -618,44 +619,48 @@ const PublicNet: FC<Props> = ({ id }) => {
                           style={{ width: "100%" }}
                         >
                           <tbody>
-                            {information?.balances
-                              ?.filter((item: Balance) => !item?.asset_code)
-                              .map((item: Balance, index: number) => {
-                                const totalInfo = item.balance.split(".");
-                                const number = totalInfo[0];
-                                const decimal =
-                                  Number(totalInfo[1]) === 0
-                                    ? ""
-                                    : "." + totalInfo[1];
-
-                                return (
-                                  <BalanceItem
-                                    key={index}
-                                    number={number}
-                                    decimal={decimal}
-                                    item={item}
-                                  />
-                                );
-                              })}
-                            {information?.balances
-                              ?.filter((item: Balance) => item?.asset_code)
-                              .map((item: Balance, index: number) => {
-                                const totalInfo = item.balance.split(".");
-                                const number = totalInfo[0];
-                                const decimal =
-                                  Number(totalInfo[1]) === 0
-                                    ? ""
-                                    : "." + totalInfo[1];
-
-                                return (
-                                  <BalanceItem
-                                    key={index}
-                                    number={number}
-                                    decimal={decimal}
-                                    item={item}
-                                  />
-                                );
-                              })}
+                            {information.balances &&
+                              information.balances.map(
+                                (item: Balance, index: number) => {
+                                  const totalInfo = item.balance.split(".");
+                                  const number = totalInfo[0];
+                                  const decimal =
+                                    Number(totalInfo[1]) === 0
+                                      ? ""
+                                      : "." + totalInfo[1];
+                                  if (item.asset_type === "native") {
+                                    return (
+                                      <BalanceItem
+                                        key={index}
+                                        number={number}
+                                        decimal={decimal}
+                                        item={item}
+                                      />
+                                    );
+                                  }
+                                }
+                              )}
+                            {information.balances &&
+                              information.balances.map(
+                                (item: Balance, index: number) => {
+                                  const totalInfo = item.balance.split(".");
+                                  const number = totalInfo[0];
+                                  const decimal =
+                                    Number(totalInfo[1]) === 0
+                                      ? ""
+                                      : "." + totalInfo[1];
+                                  if (item.asset_code) {
+                                    return (
+                                      <BalanceItem
+                                        key={index}
+                                        number={number}
+                                        decimal={decimal}
+                                        item={item}
+                                      />
+                                    );
+                                  }
+                                }
+                              )}
                           </tbody>
                         </table>
                       </div>
@@ -664,19 +669,20 @@ const PublicNet: FC<Props> = ({ id }) => {
                 </div>
               </div>
               {information?.meta_data &&
-                information?.meta_data["ORG_NAME"] !== undefined &&
-                ignoredHomeDomains &&
-                information?.home_domain &&
-                !ignoredHomeDomains.includes(information.home_domain) &&
-                isVisibleHomeDomainInfo ? (
+              information?.meta_data["ORG_NAME"] !== undefined &&
+              ignoredHomeDomains &&
+              information?.home_domain &&
+              !ignoredHomeDomains.includes(information.home_domain) &&
+              isVisibleHomeDomainInfo ? (
                 <div className="toml-props">
                   <div className="tabs space inline-right">
                     <div className="tabs-header">
                       <div>
                         <a
                           href="#"
-                          className={`tabs-item condensed ${tabIndex === 1 ? "selected" : ""
-                            }`}
+                          className={`tabs-item condensed ${
+                            tabIndex === 1 ? "selected" : ""
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             setTabIndex(1);
@@ -686,8 +692,9 @@ const PublicNet: FC<Props> = ({ id }) => {
                         </a>
                         <a
                           href="#"
-                          className={`tabs-item condensed ${tabIndex === 2 ? "selected" : ""
-                            }`}
+                          className={`tabs-item condensed ${
+                            tabIndex === 2 ? "selected" : ""
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             setTabIndex(2);
@@ -702,7 +709,7 @@ const PublicNet: FC<Props> = ({ id }) => {
                       {tabIndex == 1 ? (
                         <div className="segment blank">
                           {information?.meta_data &&
-                            information.meta_data?.["ORG_NAME"] == undefined ? (
+                          information.meta_data?.["ORG_NAME"] == undefined ? (
                             <div
                               style={{ fontSize: "13px", textAlign: "center" }}
                             >
@@ -770,51 +777,52 @@ const PublicNet: FC<Props> = ({ id }) => {
                               </dd>
                               {information.meta_data["ORG_PHYSICAL_ADDRESS"] !==
                                 undefined && (
-                                  <>
-                                    <dt>Org physical address:</dt>
-                                    <dd>
-                                      <span
-                                        className="block-select"
-                                        tabIndex={-1}
-                                        style={{
-                                          whiteSpace: "normal",
-                                          overflow: "visible",
-                                          display: "inline",
-                                        }}
-                                      >
-                                        {information.meta_data &&
-                                          information?.meta_data[
+                                <>
+                                  <dt>Org physical address:</dt>
+                                  <dd>
+                                    <span
+                                      className="block-select"
+                                      tabIndex={-1}
+                                      style={{
+                                        whiteSpace: "normal",
+                                        overflow: "visible",
+                                        display: "inline",
+                                      }}
+                                    >
+                                      {information.meta_data &&
+                                        information?.meta_data[
                                           "ORG_PHYSICAL_ADDRESS"
-                                          ]}
-                                      </span>
-                                    </dd>
-                                  </>
-                                )}
+                                        ]}
+                                    </span>
+                                  </dd>
+                                </>
+                              )}
                               {information.meta_data["ORG_OFFICIAL_EMAIL"] !==
                                 undefined && (
-                                  <>
-                                    <dt>Org official email:</dt>
-                                    <dd>
-                                      <a
-                                        href={`mailto:${information?.meta_data &&
-                                          information?.meta_data[
+                                <>
+                                  <dt>Org official email:</dt>
+                                  <dd>
+                                    <a
+                                      href={`mailto:${
+                                        information?.meta_data &&
+                                        information?.meta_data[
                                           "ORG_OFFICIAL_EMAIL"
-                                          ]
-                                          }`}
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                      >
-                                        {information?.meta_data &&
-                                          information?.meta_data[
+                                        ]
+                                      }`}
+                                      target="_blank"
+                                      rel="noreferrer noopener"
+                                    >
+                                      {information?.meta_data &&
+                                        information?.meta_data[
                                           "ORG_OFFICIAL_EMAIL"
-                                          ]}
-                                      </a>
-                                    </dd>
-                                  </>
-                                )}
-                            </dl >
+                                        ]}
+                                    </a>
+                                  </dd>
+                                </>
+                              )}
+                            </dl>
                           )}
-                        </div >
+                        </div>
                       ) : (
                         <div>
                           <pre
@@ -881,16 +889,17 @@ const PublicNet: FC<Props> = ({ id }) => {
                           </pre>
                         </div>
                       )}
-                    </div >
-                  </div >
-                </div >
+                    </div>
+                  </div>
+                </div>
               ) : null}
             </>
           ) : (
             <div className="cotainer">
               <div
-                className={`search ${exists === false ? "error" : ""
-                  } container narrow`}
+                className={`search ${
+                  exists === false ? "error" : ""
+                } container narrow`}
                 style={{ padding: "20px" }}
               >
                 <h2 className="text-overflow">Search results for {account}</h2>
@@ -904,9 +913,9 @@ const PublicNet: FC<Props> = ({ id }) => {
               </div>
             </div>
           )}
-        </div >
-      </div >
-    </MainLayout >
+        </div>
+      </div>
+    </MainLayout>
   );
 };
 
