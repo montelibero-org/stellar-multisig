@@ -50,7 +50,6 @@ const PageLayout: FC<Props> = ({ children }) => {
     );
   }, [accounts, net, setIsAuth]);
 
-
   const themeLS: string | undefined | null = isWindowDefined
     ? window.localStorage.getItem("theme")
       ? window.localStorage.getItem("theme")
@@ -74,14 +73,15 @@ const PageLayout: FC<Props> = ({ children }) => {
 
   return (
     <html lang="en" data-theme={!theme || themeLS}>
-      <Head>
+      <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
           name="commit-hash"
           content={process.env.NEXT_PUBLIC_COMMIT_HASH || ""}
         />
         <title>Stellar Multisig</title>
-      </Head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+      </head>
       <body>
         <main
           className={`flex min-h-screen flex-col ${

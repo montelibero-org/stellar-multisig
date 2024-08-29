@@ -1,7 +1,6 @@
 "use client";
 
 import { MainLayout } from "@/widgets";
-import Image from "next/image";
 import {
   getAccountIssuerInformation,
   getDomainInformation,
@@ -170,16 +169,27 @@ const PublicNet: FC<Props> = ({ id }) => {
     }
   }, [information.tomlInfo, id]);
 
+  // useEffect(() => {
+  //   console.log(information);
+  // }, [information])
+
   return (
     <MainLayout>
       <div className="container">
         <div className="account-view">
-          {loading ? (
+      {loading ? (
             "Loading..."
           ) : exists ? (
             <>
               <h2 className="word-break relative condensed">
-                <span className="dimmed">Account&nbsp;&nbsp;&nbsp;</span>
+                <span className="dimmed">
+                  {information.signers?.length === 1 ? (
+                    <span>Personal</span>
+                  ) : (
+                    <span>Corporate</span>
+                  )}{" "}
+                  Account&nbsp;&nbsp;&nbsp;
+                </span>
                 <span className="account-address plain">
                   <span className="account-key">{account}</span>
                   &nbsp;&nbsp;&nbsp;
@@ -190,24 +200,13 @@ const PublicNet: FC<Props> = ({ id }) => {
                       height: "30px",
                     }}
                   >
-                    <a
-                      href={`https://stellar.expert/explorer/${net}/account/${account}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="View on Stellar.Expert"
-                    >
-                      <Image
-                        src="../stellar-expert-logo.png"
-                        alt="Stellar Expert Logo"
-                        className="dark:invert"
-                        width={30}
-                        style={{
-                          display: "inline-block",
-                        }}
-                        height={30}
-                        priority
-                      />
-                    </a>
+                      <a
+                        href={`https://stellar.expert/explorer/${net}/account/${account}`}
+                        title="View on Stellar.Expert"
+                        target="_blank"
+                      >
+                        <i className="fa-solid fa-up-right-from-square"></i>
+                      </a>
                   </span>
                 </span>
               </h2>
@@ -227,8 +226,8 @@ const PublicNet: FC<Props> = ({ id }) => {
                           <dd>
                             <a
                               href={`${information?.home_domain === undefined
-                                  ? "#"
-                                  : information?.home_domain
+                                ? "#"
+                                : information?.home_domain
                                 }`}
                               rel="noreferrer noopener"
                               target="_blank"
@@ -448,18 +447,15 @@ const PublicNet: FC<Props> = ({ id }) => {
                               (issuer: Issuer, key: number) => {
                                 return (
                                   <li key={key}>
-                                    <Link href="#" legacyBehavior>
-                                      <a
-                                        aria-label={issuer.paging_token}
-                                        className="asset-link"
-                                      >
-                                        {issuer?.asset_code}
-                                      </a>
-                                    </Link>
+                                    <a
+                                      aria-label={issuer.paging_token}
+                                      className="asset-link"
+                                      href={`https://stellar.expert/explorer/${net}/asset/${issuer.asset_code}-${issuer.asset_issuer}`}
+                                      target="_blank"
+                                    >
+                                      {issuer?.asset_code}
+                                    </a>
                                     &nbsp;
-                                    <span className="">
-                                      ({issuer.accounts.authorized} trustlines)
-                                    </span>
                                   </li>
                                 );
                               }
