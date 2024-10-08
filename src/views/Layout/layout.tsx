@@ -81,7 +81,7 @@ const PageLayout: FC<Props> = ({ children }) => {
             name="viewport"
             content="width=device-width, initial-scale=1.0"
           />
-          <title>Stellar Multisig</title>
+          <title>MTL Stellar Multisig</title>
         </head>
         <body></body>
       </html>
