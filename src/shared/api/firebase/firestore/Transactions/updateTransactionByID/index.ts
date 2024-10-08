@@ -37,14 +37,13 @@ async function updateTransactionByID(
     throw new Error("Firestore не инициализирован");
   }
 
-  // Определяем название коллекции на основе сети
   let collectionName: string;
   if (net === "public") {
     collectionName = "TransactionsForSignPublic";
   } else if (net === "testnet") {
     collectionName = "TransactionsForSignTestnet";
   } else {
-    throw new Error(`Неизвестная сеть: ${net}`);
+    throw new Error(`Unknown net: ${net}`);
   }
 
   const transactionRef = doc(firestore, collectionName, transactionId).withConverter(
@@ -52,23 +51,20 @@ async function updateTransactionByID(
   );
 
   try {
-    // Обновляем документ с предоставленными данными
     await updateDoc(transactionRef, {
       ...updatedData,
       updatedAt: Date.now(),
     });
 
-    // Получаем обновленный документ
     const updatedDoc = await getDoc(transactionRef);
 
     if (updatedDoc.exists()) {
       return updatedDoc.data();
     } else {
-      console.log("Транзакция не найдена после обновления");
       return null;
     }
   } catch (error) {
-    console.error("Ошибка при обновлении транзакции: ", error);
+    console.error("Error updating transaction: ", error);
     throw error;
   }
 }

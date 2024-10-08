@@ -31,17 +31,16 @@ async function getAllTransactions(
   net: "public" | "testnet"
 ): Promise<TransactionData[]> {
   if (!firestore) {
-    throw new Error("Firestore не инициализирован");
+    throw new Error("Firestore not initialized");
   }
 
-  // Определяем название коллекции на основе сети
   let collectionName: string;
   if (net === "public") {
     collectionName = "TransactionsForSignPublic";
   } else if (net === "testnet") {
     collectionName = "TransactionsForSignTestnet";
   } else {
-    throw new Error(`Неизвестная сеть: ${net}`);
+    throw new Error(`Unknown net: ${net}`);
   }
 
   const transactionsCollection = collection(
@@ -59,7 +58,7 @@ async function getAllTransactions(
     }));
     return transactions;
   } catch (error) {
-    console.error("Ошибка при получении транзакций: ", error);
+    console.error("Error getting documents: ", error);
     throw error;
   }
 }

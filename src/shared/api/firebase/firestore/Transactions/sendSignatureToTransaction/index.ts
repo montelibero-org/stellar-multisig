@@ -7,14 +7,12 @@ async function sendSignatureToTransaction(
   net: "public" | "testnet"
 ): Promise<DocumentData | undefined> {
   if (!firestore) {
-    throw new Error("Firestore не инициализирован");
+    throw new Error("Firestore not initialized");
   }
 
   if (!signedXDR) {
-    throw new Error("Отсутствует подписанная транзакция");
+    throw new Error("Absence of a signed transaction");
   }
-
-  console.log(transactionId, net);
 
   let collectionName: string;
   if (net === "public") {
@@ -22,7 +20,7 @@ async function sendSignatureToTransaction(
   } else if (net === "testnet") {
     collectionName = "TransactionsForSignTestnet";
   } else {
-    throw new Error(`Неизвестная сеть: ${net}`);
+    throw new Error(`Unknown net: ${net}`);
   }
 
   const transactionRef = doc(firestore, collectionName, transactionId);
@@ -35,14 +33,13 @@ async function sendSignatureToTransaction(
 
     const updatedDoc = await getDoc(transactionRef);
     if (updatedDoc.exists()) {
-      console.log("Обновленный документ:", updatedDoc.data());
     } else {
-      console.log("Документ не найден после обновления");
+      console.log("Document does not exist");
     }
 
     return updatedDoc.data()
   } catch (error) {
-    console.error("Ошибка при обновлении транзакции: ", error);
+    console.error("Error updating transaction: ", error);
     throw error;
   }
 }

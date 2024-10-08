@@ -24,7 +24,6 @@ const editTransaction = async (
       xdr: XDR,
       updatedAt: Date.now(),
     });
-    console.log(txHash);
     return txHash;
   } catch (error) {
     console.error(error);

@@ -28,17 +28,16 @@ async function getTransactionByID(
   transactionId: string
 ): Promise<TransactionData | null> {
   if (!firestore) {
-    throw new Error("Firestore не инициализирован");
+    throw new Error("Firestore not initialized");
   }
 
-  // Определяем название коллекции на основе сети
   let collectionName: string;
   if (net === "public") {
     collectionName = "TransactionsForSignPublic";
   } else if (net === "testnet") {
     collectionName = "TransactionsForSignTestnet";
   } else {
-    throw new Error(`Неизвестная сеть: ${net}`);
+    throw new Error(`Unknown net: ${net}`);
   }
 
   const transactionDoc = doc(firestore, collectionName, transactionId).withConverter(transactionConverter);
@@ -49,11 +48,11 @@ async function getTransactionByID(
     if (docSnapshot.exists()) {
       return docSnapshot.data();
     } else {
-      console.log("Транзакция не найдена");
+      console.log("Not found transaction: ");
       return null;
     }
   } catch (error) {
-    console.error("Ошибка при получении транзакции: ", error);
+    console.error("Error getting transaction: ", error);
     throw error;
   }
 }

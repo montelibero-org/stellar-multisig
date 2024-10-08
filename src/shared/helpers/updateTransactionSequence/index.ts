@@ -4,18 +4,21 @@ import { Net } from '@/shared/types/store/slices/netSlice';
 import { Server, AccountResponse } from 'stellar-sdk';
 
 /**
- * Обновляет последовательный номер транзакции для указанного аккаунта Stellar.
+ * Updates the transaction sequence number for the specified Stellar account.
  *
- * @param publicKey - Публичный ключ аккаунта Stellar.
- * @param serverUrl - URL Horizon сервера (по умолчанию основной Horizon сервер).
- * @returns Обновленный последовательный номер.
- * @throws Ошибка, если не удалось загрузить аккаунт или обновить последовательный номер.
+ * @param publicKey - The public key of the Stellar account.
+ * @param net - The network type ('public' or 'testnet').
+ * @returns The updated sequence number.
+ * @throws Error if unable to load the account or update the sequence number.
  */
 async function updateTransactionSequence(
   publicKey: string,
   net: Net
 ): Promise<number> {
-  const serverUrl = net === 'public' ? 'https://horizon.stellar.org' : 'https://horizon-testnet.stellar.org';
+  const serverUrl =
+    net === 'public'
+      ? 'https://horizon.stellar.org'
+      : 'https://horizon-testnet.stellar.org';
   const server = new Server(serverUrl);
 
   try {
@@ -24,7 +27,7 @@ async function updateTransactionSequence(
     const updatedSequence: number = currentSequence + 1;
     return updatedSequence;
   } catch (error) {
-    console.error('Ошибка при обновлении последовательного номера:', error);
+    console.error('Error updating the sequence number:', error);
     throw error;
   }
 }

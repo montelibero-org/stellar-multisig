@@ -10,25 +10,24 @@ async function sendTransaction(
   xdr?: string,
 ): Promise<string> {
   if (!firestore) {
-    throw new Error("Firestore не инициализирован");
+    throw new Error("Firestore not initialized");
   }
 
   if (!transaction && !xdr) {
-    throw new Error("Отсутствует транзакция");
+    throw new Error("Absence of a signed transaction");
   }
 
   if (transaction && xdr) {
-    throw new Error("Должно быть отправлено или транзакция, или XDR");
+    throw new Error("Either a transaction or an XDR must be sent");
   }
 
-  // Определяем название коллекции на основе сети
   let collectionName: string;
   if (net === "public") {
     collectionName = "TransactionsForSignPublic";
   } else if (net === "testnet") {
     collectionName = "TransactionsForSignTestnet";
   } else {
-    throw new Error(`Неизвестная сеть: ${net}`);
+    throw new Error(`Unknown net: ${net}`);
   }
 
   const transactionsCollection = collection(firestore, collectionName);
@@ -41,10 +40,9 @@ async function sendTransaction(
 
   try {
     const docRef = await addDoc(transactionsCollection, transactionData);
-    console.log("Документ добавлен с ID: ", docRef.id);
     return docRef.id;
   } catch (error) {
-    console.error("Ошибка при добавлении документа: ", error);
+    console.error("Error sending transaction: ", error);
     throw error;
   }
 }

@@ -7,26 +7,24 @@ async function deleteTransactionByID(
   transactionId: string
 ): Promise<void> {
   if (!firestore) {
-    throw new Error("Firestore не инициализирован");
+    throw new Error("Firestore not initialized");
   }
 
-  // Определяем название коллекции на основе сети
   let collectionName: string;
   if (net === "public") {
     collectionName = "TransactionsForSignPublic";
   } else if (net === "testnet") {
     collectionName = "TransactionsForSignTestnet";
   } else {
-    throw new Error(`Неизвестная сеть: ${net}`);
+    throw new Error(`Unknown net: ${net}`);
   }
 
   const transactionRef = doc(firestore, collectionName, transactionId);
 
   try {
     await deleteDoc(transactionRef);
-    console.log(`Транзакция с ID ${transactionId} успешно удалена`);
   } catch (error) {
-    console.error("Ошибка при удалении транзакции: ", error);
+    console.error("Error deleting transaction: ", error);
     throw error;
   }
 }
