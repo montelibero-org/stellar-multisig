@@ -1,14 +1,14 @@
 "use client";
 
-import "./header.scss";
+import "@/shared/styles/dropdown/index.scss";
 import React, { FC, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useStore } from "@/features/store";
+import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import { IAccount } from "@/shared/types";
 import AccountItem from "./AccountItem";
-import { collapseAccount } from "@/pages/public/account/publicnet";
+import { collapseAccount } from "@/shared/helpers";
 
 export const Header: FC = () => {
   const {
@@ -21,16 +21,7 @@ export const Header: FC = () => {
     isOpenAddAccountModal,
     isAuth,
   } = useStore(
-    useShallow((state) => ({
-      net: state.net,
-      setNet: state.setNet,
-      setAccounts: state.setAccounts,
-      theme: state.theme,
-      accounts: state.accounts,
-      setIsOpenAddAccountModal: state.setIsOpenAddAccountModal,
-      isOpenAddAccountModal: state.isOpenAddAccountModal,
-      isAuth: state.isAuth,
-    }))
+    useShallow((state) => state)
   );
   const [isOpenNet, setIsOpenNet] = useState<boolean>(false);
   const [isOpenAccount, setIsOpenAccount] = useState<boolean>(false);
@@ -70,7 +61,7 @@ export const Header: FC = () => {
   const toggleDropdownNet = () => setIsOpenNet(!isOpenNet);
   const toggleDropdownAccount = () => setIsOpenAccount(!isOpenAccount);
 
-  const handleSelectNet = (network: string) => {
+  const handleSelectNet = (network: "public" | "testnet") => {
     setNet(network);
     localStorage.setItem("net", network);
     setIsOpenNet(false);
@@ -101,6 +92,11 @@ export const Header: FC = () => {
       setAccounts(updatedAccounts);
     }
   };
+
+  const addAccountOpen = () => {
+    setIsOpenAddAccountModal(true);
+    setIsOpenAccount(false);
+  }
 
   return (
     <div className="top-block">
@@ -268,12 +264,9 @@ export const Header: FC = () => {
                             : `dropdown-item-light selected`
                         }
                         style={{ textAlign: "center" }}
+                        onClick={addAccountOpen}
                       >
                         <span
-                          onClick={() => {
-                            setIsOpenAddAccountModal(true);
-                            setIsOpenAccount(false);
-                          }}
                         >
                           Add account
                         </span>
@@ -285,8 +278,9 @@ export const Header: FC = () => {
                             : `dropdown-item-light selected`
                         }
                         style={{ textAlign: "center" }}
+                        onClick={logout}
                       >
-                        <span onClick={logout}>Logout</span>
+                        <span>Logout</span>
                       </li>
                     </ul>
                   </div>

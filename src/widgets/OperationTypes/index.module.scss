@@ -1,0 +1,40 @@
+.section {
+  display: flex;
+}
+
+.flags {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.noMarginButton {
+  margin: 0;
+  margin-right: -1rem;
+  cursor: pointer;
+}
+
+.optional {
+  color: #717577;
+}
+
+.flagsContainer {
+  margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.disabled {
+  opacity: 0.7;
+}
+
+.sectionTitle {
+  width: 120px;
+}
+
+.selectCurrentSignerType {
+  border: 1px solid #535759;
+}

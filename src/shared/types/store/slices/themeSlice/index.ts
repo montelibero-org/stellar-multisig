@@ -1,9 +1,9 @@
 export interface ThemeState {
-  theme: string | null
+  theme: "day" | "night" | null
 }
 
 export interface ThemeActions {
-  setTheme: (theme: string) => void
+  setTheme: (theme: "day" | "night") => void
 }
 
 interface IThemeSlice extends ThemeState, ThemeActions {}

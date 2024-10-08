@@ -1,8 +1,8 @@
 import { FC } from "react";
 import Link from "next/link";
-import { useStore } from "@/features/store";
+import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
-import { collapseAccount } from "@/pages/public/account/publicnet";
+import { collapseAccount } from "@/shared/helpers";
 import { IAccount } from "@/shared/types";
 
 interface Props {

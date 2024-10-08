@@ -1,9 +1,11 @@
 export interface NetState {
-  net: string
+  net: "public" | "testnet"
 }
 
+export type Net = "public" | "testnet"
+
 export interface NetActions {
-  setNet: (net: string) => void
+  setNet: (net: "public" | "testnet") => void
 }
 
 interface INetSlice extends NetState, NetActions {}

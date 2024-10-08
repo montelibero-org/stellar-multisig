@@ -7,7 +7,7 @@ import {
 } from "@/features/hooks";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useStore } from "@/features/store";
+import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 
 const Accounts = () => {
