@@ -32,10 +32,7 @@ async function sendSignatureToTransaction(
     })
 
     const updatedDoc = await getDoc(transactionRef);
-    if (updatedDoc.exists()) {
-    } else {
-      console.log("Document does not exist");
-    }
+    if (!updatedDoc.exists()) console.log("Document does not exist");
 
     return updatedDoc.data()
   } catch (error) {
