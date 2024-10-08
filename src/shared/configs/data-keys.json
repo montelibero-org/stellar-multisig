@@ -1,13 +1,13 @@
 {
-    "links": [
-        "link",
-        "link \\d+",
-        "link_\\d+",
-        "website"
-    ],
-    "names": [
-        "name",
-        "about",
-        "MTLA:PIIStandard"
-    ]
+  "links": [
+      "link",
+      "link \\d+",
+      "link_\\d+",
+      "website"
+  ],
+  "names": [
+      "name",
+      "about",
+      "MTLA:PIIStandard"
+  ]
 }

@@ -6,7 +6,7 @@ import StellarSdk from "stellar-sdk";
 import { Server } from "stellar-sdk";
 import { StrKey } from "@stellar/stellar-sdk";
 import { useRouter } from "next/navigation";
-import { useStore } from "@/features/store";
+import { useStore } from "@/shared/store";
 import { Store } from "@/shared/types";
 import { useShallow } from "zustand/react/shallow";
 

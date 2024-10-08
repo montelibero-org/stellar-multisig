@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useState, useRef, FormEvent } from "react";
 import "./index.scss";
-import { useStore } from "@/features/store";
+import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import StellarSdk from "stellar-sdk";
 import { IAccount } from "@/shared/types";

@@ -1,4 +1,4 @@
-import Assets from "@/pages/public/assets/page";
+import Assets from "@/views/assets/page";
 import { Metadata } from "next";
 import { FC, Suspense } from "react";
 
