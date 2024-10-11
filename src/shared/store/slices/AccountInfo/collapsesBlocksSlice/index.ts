@@ -2,9 +2,9 @@ import { ICollapsesBlocksSlice, collapsesBlocks } from "@/shared/types";
 import { StateCreator } from "zustand";
 
 const initialCollapsesBlocks: collapsesBlocks = {
-  summary: false,
-  balances: false,
-  transactions: false,
+  summary: true,
+  balances: true,
+  transactions: true,
 };
 
 const collapsesBlocksSlice: StateCreator<
