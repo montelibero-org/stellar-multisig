@@ -6,7 +6,8 @@ import {
   IServerSlice,
   IThemeSlice,
   ITransactionsFromFirebaseSlice,
-} from "@/shared/types/store/slices";
+  ICollapsesBlocksSlice
+} from "./slices";
 
 interface Store
   extends INetSlice,
@@ -15,6 +16,7 @@ interface Store
     IBuildTxJSONSlice,
     IServerSlice,
     ITransactionsFromFirebaseSlice,
-    IBuildErrorsSlice {}
+    IBuildErrorsSlice,
+    ICollapsesBlocksSlice {}
 
 export default Store;

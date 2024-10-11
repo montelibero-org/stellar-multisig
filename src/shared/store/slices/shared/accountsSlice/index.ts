@@ -1,7 +1,7 @@
 import { IAccountsSlice, IAccount } from "@/shared/types";
 import { StateCreator } from "zustand";
 
-export const accountSlice: StateCreator<
+const accountSlice: StateCreator<
   IAccountsSlice,
   [["zustand/immer", never]],
   [],
@@ -36,3 +36,5 @@ export const accountSlice: StateCreator<
     setIsAuth
   };
 };
+
+export default accountSlice;

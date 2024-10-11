@@ -17,7 +17,7 @@ const Accounts = () => {
     useEffect(() => {
         const handler = async () => {
             if (filter === "") return;
-            const mainInformation = await getMainInformation(filter);
+            const mainInformation = await getMainInformation(filter, net);
             const home_domain = mainInformation.home_domain;
 
             if (!home_domain) return;
@@ -34,11 +34,11 @@ const Accounts = () => {
                     accounts = true;
                     continue;
                 }
-            
+
                 if (!accounts) {
                     continue;
                 }
-            
+
                 if (splittedInformation[i] === "" && accounts) {
                     accounts = false;
                     accountInfoArray.push({
@@ -48,13 +48,13 @@ const Accounts = () => {
                     accountInfo = {};
                     continue;
                 }
-            
+
                 const _pattern = splittedInformation[i].split("=");
                 accountInfo[_pattern[0].trim()] = _pattern[1]
                     .replace(/"/g, "")
                     .trim();
             }
-            
+
             setAccountArray(accountInfoArray);
         };
 

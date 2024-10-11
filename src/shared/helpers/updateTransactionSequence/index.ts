@@ -1,6 +1,6 @@
 // @/shared/helpers/updateTransactionSequence/index.ts
 
-import { Net } from '@/shared/types/store/slices/netSlice';
+import { Net } from '@/shared/types/store/slices/shared/netSlice';
 import { Server, AccountResponse } from 'stellar-sdk';
 
 /**

@@ -26,8 +26,8 @@ const InlineTransaction: FC<Props> = ({
 }) => {
   const { net } = useStore(useShallow((state) => state));
   return (
-    <tr>
-      <td>
+    <tr >
+      <td colSpan={2} style={{padding: "10px"}}>
         <span style={{ display: "none" }}>
           {decodedTransaction?.transaction &&
             Buffer.from(decodedTransaction?.transaction?.hash()).toString(

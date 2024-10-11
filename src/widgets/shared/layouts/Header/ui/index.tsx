@@ -80,7 +80,7 @@ export const Header: FC = () => {
 
   const logout = () => {
     const updatedAccounts = accounts.filter((account) => !account.isCurrent);
-    const newCurrentAccount = updatedAccounts[0];
+    const newCurrentAccount = updatedAccounts[0] || updatedAccounts[1];
     if (newCurrentAccount) {
       setAccounts(
         updatedAccounts.map((account) => ({

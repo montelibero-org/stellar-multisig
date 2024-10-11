@@ -22,7 +22,7 @@ import {
   TX,
 } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
 import StellarSdk from "stellar-sdk";
-import { checkSigner } from "@/shared/helpers";
+import { checkSigner, setOperationType } from "@/shared/helpers";
 
 export interface TXErrors {
   sourceAccount: string;
@@ -49,11 +49,13 @@ const BuildTransaction: FC = () => {
     buildErrors,
     setBuildErrors,
     accounts,
+    setOperations
   } = useStore(useShallow((state) => state));
 
   const searchParams = useSearchParams();
   const sourceAccountParam = searchParams.get("sourceAccount");
   const firebaseIDParam = searchParams.get("firebaseID") || "";
+  const operationTypeParam = searchParams.get("typeOperation");
 
   const [currentXDR, setCurrentXDR] = useState<string>("");
   const [successMessageXDR, setSuccessMessageXDR] = useState<string>("");
@@ -71,6 +73,10 @@ const BuildTransaction: FC = () => {
 
   const decodedXDR = useXDRDecoding(currentXDR, currentXDR);
 
+  useEffect(() => {
+    setOperationType(0, operationTypeParam === "set_options" ? "set_options" : operationTypeParam === "manage_data" ? "manage_data" : "", tx, setOperations)
+  }, [operationTypeParam]);
+
   const updateErrors = (condition: boolean, errorMessage: string) => {
     setBuildErrors((prevBuildErrors) => {
       const updatedErrors = condition
@@ -82,7 +88,6 @@ const BuildTransaction: FC = () => {
     });
   };
 
-  // Load json-with-bigint dynamically
   useEffect(() => {
     const loadJSONWithBigInt = async () => {
       const { JSONParse, JSONStringify } = await import('json-with-bigint');
@@ -92,10 +97,9 @@ const BuildTransaction: FC = () => {
     loadJSONWithBigInt();
   }, []);
 
-  // Fetch transaction data
   useEffect(() => {
     const fetchTransaction = async () => {
-      if (!jsonWithBigInt) return; // Ensure JSONParse and JSONStringify are loaded
+      if (!jsonWithBigInt) return;
 
       try {
         await __wbg_init();
@@ -133,10 +137,9 @@ const BuildTransaction: FC = () => {
     jsonWithBigInt,
   ]);
 
-  // Initialize WASM and encode transaction
   useEffect(() => {
     const initializeWasm = async () => {
-      if (!jsonWithBigInt) return; // Ensure JSONParse and JSONStringify are loaded
+      if (!jsonWithBigInt) return;
 
       await __wbg_init();
       if (!fullTransaction || !fullTransaction.tx) {
@@ -169,7 +172,6 @@ const BuildTransaction: FC = () => {
     }
   }, [fullTransaction, tx, jsonWithBigInt]);
 
-  // Validate transaction fields
   useEffect(() => {
     const updateErrorSourceAccount = () => {
       try {
@@ -281,7 +283,6 @@ const BuildTransaction: FC = () => {
     fullTransaction,
   ]);
 
-  // Handle loading state for jsonWithBigInt
   if (!jsonWithBigInt) {
     return <div>Loading...</div>;
   }

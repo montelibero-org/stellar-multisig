@@ -10,6 +10,7 @@ const MemoInput: FC = () => {
   const memoTypes = ["None", "Text", "ID", "Hash", "Return"];
 
   const [memoInput, setMemoInput] = useState<string>("");
+  const [selectedMemoType, setSelectedMemoType] = useState<string>("");
 
   useEffect(() => {
     if (tx.tx.memo && typeof tx.tx.memo !== "string") {
@@ -34,21 +35,12 @@ const MemoInput: FC = () => {
       {memoTypes.map((type) => (
         <button
           key={type}
-          className={`button ${
-            tx.tx.memo === type.toLowerCase() ? "disabled" : ""
-          }`}
-          onClick={() => handleMemoTypeChange(type)}
-          disabled={
-            (typeof tx.tx.memo === "string" &&
-              tx.tx.memo === type.toLowerCase()) ||
-            (typeof tx.tx.memo === "object" &&
-              type.toLowerCase() in tx.tx.memo) ||
-            (typeof tx.tx.memo === "object" &&
-              type.toLowerCase() in tx.tx.memo) ||
-            (typeof tx.tx.memo === "object" &&
-              type.toLowerCase() in tx.tx.memo) ||
-            (typeof tx.tx.memo === "object" && type.toLowerCase() in tx.tx.memo)
-          }
+          className={`button ${selectedMemoType === type && "disabled"}`}
+          onClick={() => {
+            handleMemoTypeChange(type);
+            setSelectedMemoType(type);
+          }}
+          disabled={selectedMemoType === type}
         >
           {type}
         </button>

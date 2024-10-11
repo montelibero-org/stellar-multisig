@@ -1,5 +1,5 @@
 import { Networks } from "stellar-sdk"
-import { Net } from ".."
+import { Net } from "../.."
 
 export type Server = "https://horizon-testnet.stellar.org" | "https://horizon.stellar.org"
 

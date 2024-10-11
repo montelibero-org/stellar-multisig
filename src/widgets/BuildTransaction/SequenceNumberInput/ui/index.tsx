@@ -12,14 +12,14 @@ type Props = {
 };
 
 const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
-  const { tx, setSeqNum } = useStore(useShallow((state) => state));
+  const { tx, setSeqNum, server } = useStore(useShallow((state) => state));
   const [error, setError] = useState<string>("");
   const [isShowUpdateSeqNum, setIsShowUpdateSeqNum] = useState<boolean>(false);
 
   const fetchSequenceNumber = async () => {
     try {
       const { data } = await axios.get<Information>(
-        `https://horizon.stellar.org/accounts/${tx.tx.source_account}`
+        `${server}/accounts/${tx.tx.source_account}`
       );
       if (data.sequence !== undefined) {
         const sequence = BigInt(data.sequence) + BigInt(1);

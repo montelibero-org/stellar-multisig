@@ -6,7 +6,7 @@ import useTransactionValidation from "@/features/hooks/signTransaction/useTransa
 import "@/shared/styles/XDRInput/index.scss";
 import __wbg_init, { decode } from "@stellar/stellar-xdr-json-web";
 import stellarSdk, { Networks, Transaction } from "stellar-sdk";
-import { Container } from "@/shared/ui";
+import { Container } from "@/shared/widgets";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import {

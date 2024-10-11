@@ -5,11 +5,11 @@ import { useStore } from "@/shared/store";
 import { SetOptions, ManageData } from "@/widgets";
 import { IOperation } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
 import { useShallow } from "zustand/react/shallow";
-import { OperationType } from "stellar-sdk";
+import { setOperationType } from "@/shared/helpers";
 
 const OperationsList: FC = () => {
   const { tx, addOperation, setOperations } = useStore(useShallow((state) => state));
-  const [isOperationsOpen, setIsOperationsOpen] = useState<boolean>(false);
+  const [isOperationsOpen, setIsOperationsOpen] = useState<boolean>(true);
 
   const handleAddOperation = () => {
     addOperation();
@@ -31,20 +31,6 @@ const OperationsList: FC = () => {
 
   const removeOperation = (index: number) => {
     setOperations(tx.tx.operations.filter((_, i) => i !== index));
-  };
-
-  const setOperationType = (index: number, type: string) => {
-    if (index >= 0 && index < tx.tx.operations.length) {
-      const updatedOperations = [...tx.tx.operations];
-      updatedOperations[index] = {
-        ...updatedOperations[index],
-        body:
-          type === "set_options"
-            ? { set_options: {} }
-            : { manage_data: { data_name: "", data_value: null } },
-      };
-      setOperations(updatedOperations);
-    }
   };
 
   const getOperationType = (operation: IOperation): string => {
@@ -108,7 +94,7 @@ const OperationsList: FC = () => {
                 className="input"
                 value={getOperationType(operation)}
                 onChange={(e) =>
-                  setOperationType(index, e.target.value as OperationType)
+                  setOperationType(index, e.target.value, tx, setOperations)
                 }
               >
                 <option value="select_operation_type">

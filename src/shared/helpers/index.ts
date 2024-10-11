@@ -11,6 +11,6 @@ export { default as isSequenceNumberOutdated } from "./isSequenceNumberOutdated"
 export { default as fetchAllTransactionsFromFirebase } from "./fetchAllTransactionsFromFirebase";
 export { default as hexToString } from "./hexToString";
 export { default as stringToHex } from "./stringToHex";
-export { setTxBuildErrorsHelper } from "./BuildTransaction";
 export *
   from "./shared";
+export * from "./BuildTransaction"

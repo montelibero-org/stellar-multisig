@@ -10,7 +10,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
   const initialTx: TX = {
     tx: {
       source_account: "",
-      fee: 0,
+      fee: 100,
       seq_num: 0,
       cond: {
         time: {
@@ -19,7 +19,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
         },
       },
       memo: "none",
-      operations: [] as IOperation[],
+      operations: [{ source_account: null, body: {} }] as IOperation[],
       ext: "v0",
     },
     signatures: [] as ISignature[],

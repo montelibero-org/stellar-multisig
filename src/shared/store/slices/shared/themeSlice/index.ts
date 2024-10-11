@@ -1,7 +1,7 @@
 import { IThemeSlice } from "@/shared/types/index";
 import { StateCreator } from "zustand";
 
-export const themeSlice: StateCreator<
+const themeSlice: StateCreator<
     IThemeSlice,
     [["zustand/immer", never]],
     [],
@@ -18,3 +18,5 @@ export const themeSlice: StateCreator<
         setTheme,
     };
 };
+
+export default themeSlice

@@ -1,9 +1,9 @@
 import { IServerSlice, Server } from "@/shared/types/index";
-import { Net } from "@/shared/types/store/slices/netSlice";
+import { Net } from "@/shared/types/store/slices/shared/netSlice";
 import { Networks } from "stellar-sdk";
 import { StateCreator } from "zustand";
 
-export const serverSlice: StateCreator<
+const serverSlice: StateCreator<
   IServerSlice,
   [["zustand/immer", never]],
   [],
@@ -11,7 +11,7 @@ export const serverSlice: StateCreator<
 > = (set/*, get*/) => {
   const server: Server = "https://horizon.stellar.org";
   const network: Networks = Networks.PUBLIC;
-  
+
   const setServer = (net: Net) => {
     set({
       server:
@@ -32,3 +32,5 @@ export const serverSlice: StateCreator<
     setNetwork,
   };
 };
+
+export default serverSlice;

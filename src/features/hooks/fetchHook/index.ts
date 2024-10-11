@@ -1,14 +1,18 @@
 "use client";
 
 import cacheConfig from "@/shared/configs/cache-config.json";
+import { Net } from "@/shared/types";
 import { Server } from "stellar-sdk";
 
-const horizonURI = "https://horizon.stellar.org";
 const apiStellarURI = "https://api.stellar.expert/explorer/directory?limit=20";
-const server = new Server(horizonURI);
 
 // Function to get and cache main account information
-export const getMainInformation = async (accountId: string) => {
+export const getMainInformation = async (accountId: string, net: Net) => {
+  const server = new Server(
+    net === "testnet"
+      ? "https://horizon-testnet.stellar.org"
+      : "https://horizon.stellar.org"
+  );
   try {
     const mainInformation = localStorage.getItem("main-" + accountId);
     const dateInformationMain = localStorage.getItem("date-" + accountId);
@@ -44,7 +48,12 @@ export const getMainInformation = async (accountId: string) => {
 };
 
 // Function to fetch account issuer information
-export const getAccountIssuerInformation = async (accountId: string) => {
+export const getAccountIssuerInformation = async (accountId: string, net: Net) => {
+  const server = new Server(
+    net === "testnet"
+      ? "https://horizon-testnet.stellar.org"
+      : "https://horizon.stellar.org"
+  );
   try {
     const issuerInformation = localStorage.getItem("issuer-" + accountId);
     const dateInformationIssuer = localStorage.getItem("date-" + accountId);
@@ -81,7 +90,9 @@ export const getAccountIssuerInformation = async (accountId: string) => {
 // Function to fetch domain information from Stellar TOML file
 export const getDomainInformation = async (domain: string) => {
   try {
-    const domainInformation: string | null = localStorage.getItem("domain-" + domain);
+    const domainInformation: string | null = localStorage.getItem(
+      "domain-" + domain
+    );
     const dateInformationDomain = localStorage.getItem("date-" + domain);
 
     if (domainInformation && dateInformationDomain) {
@@ -96,7 +107,9 @@ export const getDomainInformation = async (domain: string) => {
     const url = `https://${domain}/.well-known/stellar.toml`;
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Failed to fetch domain information: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch domain information: ${response.statusText}`
+      );
     }
     const text = await response.text();
     localStorage.setItem("domain-" + domain, text);
@@ -107,7 +120,6 @@ export const getDomainInformation = async (domain: string) => {
     return "";
   }
 };
-
 
 // Function to fetch directory information from Stellar API
 export const getDirectoryInformation = async () => {
