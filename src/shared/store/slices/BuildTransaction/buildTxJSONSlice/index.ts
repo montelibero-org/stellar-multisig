@@ -2,7 +2,6 @@ import { IBuildTxJSONSlice } from "@/shared/types/store/slices";
 import { StateCreator } from "zustand";
 import { IOperation, ISignature } from "@/shared/types/store/slices";
 import { TX } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
-import StellarSdk from "stellar-sdk";
 
 type ImmerStateCreator<T> = StateCreator<T, [["zustand/immer", never]], [], T>;
 
@@ -11,7 +10,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
     tx: {
       source_account: "",
       fee: 100,
-      seq_num: 0,
+      seq_num: "",
       cond: {
         time: {
           min_time: 0,
@@ -28,7 +27,9 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
   return {
     fullTransaction: { tx: initialTx },
     tx: initialTx,
+    selectedSetFlags: [[]],
     signatures: [] as ISignature[],
+    signerTypes: [],
     setFullTransaction: (tx: TX) => set({ fullTransaction: { tx } }),
     setTransaction: (tx: TX) => set({ tx }),
     setSourceAccount: (source_account: string) =>
@@ -70,11 +71,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
       set((state) => {
         const body: IOperation["body"] = {};
         (state.tx.tx.operations as IOperation[]).push({
-          source_account: StellarSdk.StrKey.isValidEd25519PublicKey(
-            state.tx.tx.source_account
-          )
-            ? state.tx.tx.source_account
-            : null,
+          source_account: "",
           body,
         } as IOperation);
         state.fullTransaction = { tx: state.tx };
@@ -100,5 +97,11 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
         fullTransaction: { tx: initialTx },
         signatures: [],
       })),
+    setSelectedSetFlags: (newFlags) => set({ selectedSetFlags: newFlags }),
+    setSignerTypes: (newSignerTypes) => set({ signerTypes: newSignerTypes }),
+    changeFirstSignerType: (signerType) =>
+      set((state) => {
+        state.signerTypes[0] = signerType;
+      }),
   };
 };

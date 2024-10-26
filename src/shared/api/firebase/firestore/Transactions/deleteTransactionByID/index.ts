@@ -1,8 +1,8 @@
-import { doc, deleteDoc } from "firebase/firestore";
-import firestore from "../..";
+import { doc, deleteDoc, Firestore } from "firebase/firestore";
 import { Net } from "@/shared/types/store/slices";
 
 async function deleteTransactionByID(
+  firestore: Firestore | undefined,
   net: Net,
   transactionId: string
 ): Promise<void> {

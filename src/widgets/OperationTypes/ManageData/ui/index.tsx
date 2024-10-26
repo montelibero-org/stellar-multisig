@@ -114,6 +114,7 @@ const ManageData: FC<Props> = ({ id }) => {
           onChange={(e) => handleSourceAccountChange(e, id)}
           validate={(value) => StellarSdk.StrKey.isValidEd25519PublicKey(value) || value === ""}
           errorMessage="Public key is invalid."
+          isOptional={false}
         />
       </div>
     </>

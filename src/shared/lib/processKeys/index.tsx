@@ -1,6 +1,4 @@
 import dataKeys from "@/shared/configs/data-keys.json";
-import stellarSdk from "stellar-sdk";
-import Link from "next/link";
 // Function to decode base64 strings
 export const decodeBase64 = (str: string | undefined): string => {
   if (typeof str !== "string") return "";
@@ -16,9 +14,9 @@ export const decodeBase64 = (str: string | undefined): string => {
 const processKeys = (
   key: string,
   value: string
-): { processedKey: string; processedValue: JSX.Element } => {
+): { processedKey: string; processedValue: string } => {
   const processedKey = key;
-  let processedValue: JSX.Element;
+  let processedValue: string = value;
 
   // Convert regular expression strings to RegExp objects with boundaries and case-insensitive flag
   const regexPatterns: { [type: string]: RegExp[] } = Object.entries(
@@ -28,41 +26,18 @@ const processKeys = (
     return acc;
   }, {} as { [type: string]: RegExp[] });
 
+  const isValidKey = Object.values(regexPatterns).some((patterns) =>
+    patterns.some((pattern) => pattern.test(key))
+  );
+
+  if (!isValidKey) {
+    console.log("")
+  }
+
   // Decode base64 value
   const decodedValue = decodeBase64(value);
 
-  // Check if the decoded value is a valid Stellar public key
-  if (stellarSdk.StrKey.isValidEd25519PublicKey(decodedValue)) {
-    processedValue = (
-      <Link href={`/public/account?id=${decodedValue}`} legacyBehavior>
-        <a>{decodedValue}</a>
-      </Link>
-    );
-  } else {
-    // If not a Stellar public key, process based on key type
-    let keyType = "default";
-    for (const [type, patterns] of Object.entries(regexPatterns)) {
-      if (patterns.some((pattern) => pattern.test(key))) {
-        keyType = type;
-        break;
-      }
-    }
-
-    switch (keyType) {
-      case "links":
-        processedValue = (
-          <Link href={decodedValue} legacyBehavior>
-            <a target="_blank" rel="noopener noreferrer">{decodedValue}</a>
-          </Link>
-        );
-        break;
-      case "names":
-        processedValue = <span>{decodedValue}</span>;
-        break;
-      default:
-        processedValue = <span>{decodedValue}</span>;
-    }
-  }
+  processedValue = decodedValue;
 
   return { processedKey, processedValue };
 };

@@ -1,5 +1,7 @@
+"use client";
+
 import React, { FC } from "react";
-import { InlineTransaction } from "@/entities";
+import { InlineTransaction, TransactionIcon } from "@/entities";
 import {
   DecodedTransactions,
   ISeqNumIsStale,
@@ -13,88 +15,109 @@ interface Props {
   decodedTransactions: DecodedTransactions;
   seqNumsIsStales: ISeqNumIsStale[];
   transactionsFromFirebase: TransactionData[];
+  isVisibleBuildTx: boolean;
+  ID: string;
 }
+
+export type Signer = {
+  weight: number;
+};
 
 const ShowTransactions: FC<Props> = ({
   decodedTransactions,
   seqNumsIsStales,
   transactionsFromFirebase,
+  isVisibleBuildTx,
+  ID,
 }) => {
   const { collapsesBlocks, setCollapsesBlocks } = useStore(
     useShallow((state) => state)
   );
-  
-  if (!decodedTransactions) return null;
 
-  const indices = decodedTransactions.map((_, index) => index);
-
-  indices.sort((a, b) => {
-    return (
-      transactionsFromFirebase[b].createdAt -
-      transactionsFromFirebase[a].createdAt
-    );
-  });
+  const indices = decodedTransactions?.map((_, index) => index);
+  if (indices) {
+    indices.sort((a, b) => {
+      return (
+        transactionsFromFirebase[b].createdAt -
+        transactionsFromFirebase[a].createdAt
+      );
+    });
+  }
 
   return (
     <>
-      <h2 style={{ marginBottom: "-10px", marginTop: "20px" }}>
-        Transactions to Sign
-      </h2>
       <div className="tabs space inline-right">
         <div className="tabs-body">
-          <div className="relative segment blank">
-            <table className="table exportable" style={{ width: "100%" }}>
-              <thead style={{ width: "100%" }}>
-                <tr style={{ position: "relative" }}>
-                  <th style={{ display: "none" }}>ID</th>
-                  <th>Transaction</th>
-                  <th>
-                    <IsShowedBlock
-                      condition={collapsesBlocks.transactions}
-                      onToggle={() =>
-                        setCollapsesBlocks({
-                          ...collapsesBlocks,
-                          transactions: !collapsesBlocks.transactions,
-                        })
-                      }
-                      style={{
-                        cursor: "pointer",
-                        position: "absolute",
-                        right: "10px",
-                        top: "12px",
-                      }}
-                    />
-                  </th>
-                </tr>
-              </thead>
-              <tbody style={{ width: "100%" }}>
-                {decodedTransactions !== null &&
-                decodedTransactions.length > 0 &&
-                collapsesBlocks.transactions ? (
-                  indices
-                    .filter((index) => decodedTransactions[index] !== null)
-                    .map((index) => (
-                      <InlineTransaction
-                        key={index}
-                        index={index}
-                        decodedTransaction={decodedTransactions[index]}
-                        seqNumsIsStales={seqNumsIsStales}
-                        transactionsFromFirebase={transactionsFromFirebase}
-                        isStale={seqNumsIsStales[index]?.isStale}
-                      />
-                    ))
-                ) : (
+          <div
+            style={{ position: "relative" }}
+            className="relative segment blank"
+          >
+            <h3 style={{ margin: "0" }}>Transactions to Sign</h3>
+            {decodedTransactions !== null &&
+              decodedTransactions.length > 0 &&
+              collapsesBlocks.transactions &&
+              isVisibleBuildTx && <hr className="flare"></hr>}
+            <TransactionIcon
+              ID={ID}
+              isVisible={isVisibleBuildTx}
+              typeIcon="Add"
+              style={{
+                position: "absolute",
+                right: "70px",
+                top: "22px",
+                scale: "1.1",
+              }}
+            />
+            <IsShowedBlock
+              condition={collapsesBlocks.transactions}
+              onToggle={() =>
+                setCollapsesBlocks({
+                  ...collapsesBlocks,
+                  transactions: !collapsesBlocks.transactions,
+                })
+              }
+              style={{
+                cursor: "pointer",
+                position: "absolute",
+                right: "33px",
+                top: "26px",
+                scale: "1.1",
+              }}
+              title="Transactions"
+            />
+            {decodedTransactions !== null &&
+            decodedTransactions.length > 0 &&
+            collapsesBlocks.transactions &&
+            isVisibleBuildTx ? (
+              <table
+                className="table exportable"
+                style={{ position: "relative" }}
+              >
+                <thead>
                   <tr>
-                    <td
-                      colSpan={2}
-                      style={{ textAlign: "center", padding: "10px" }}
-                    >
-                      No transactions
-                    </td>
+                    <th className="collapsing">Stale</th>
+                    <th className="collapsing">Operation type</th>
+                    <th className="collapsing">Signatures</th>
+                    <th className="collapsing">Status</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {indices &&
+                    indices
+                      .filter((index) => decodedTransactions[index] !== null)
+                      .map((index) => (
+                        <InlineTransaction
+                          key={index}
+                          index={index}
+                          decodedTransaction={decodedTransactions[index]}
+                          seqNumsIsStales={seqNumsIsStales}
+                          transactionsFromFirebase={transactionsFromFirebase}
+                          isStale={seqNumsIsStales[index]?.isStale}
+                        />
+                      ))}
+                </tbody>
+              </table>
+            ) : null}
           </div>
         </div>
       </div>

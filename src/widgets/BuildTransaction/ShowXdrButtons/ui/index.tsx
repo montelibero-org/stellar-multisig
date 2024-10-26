@@ -30,13 +30,13 @@ const ShowXdrButtons: FC<Props> = ({
   setErrorMessage,
   XDR,
 }) => {
-  const { net } = useStore(useShallow((state) => state));
+  const { net, firestore } = useStore(useShallow((state) => state));
 
   const handleSendTransactionForSign = async () => {
     if (!transaction) return;
 
     try {
-      const txHash = await sendTransactionForSign(transaction, net);
+      const txHash = await sendTransactionForSign(firestore, transaction, net);
       if (txHash) {
         setSuccessMessage(`Transaction sent with ID ${txHash}`);
         setErrorMessage("");
@@ -56,7 +56,12 @@ const ShowXdrButtons: FC<Props> = ({
     if (!transaction) return;
 
     try {
-      const txHash = await editTransaction(transaction, net, firebaseID);
+      const txHash = await editTransaction(
+        firestore,
+        transaction,
+        net,
+        firebaseID
+      );
       if (txHash) {
         setSuccessMessage(`Transaction updated with ID ${txHash.id}`);
         setErrorMessage("");
@@ -74,7 +79,7 @@ const ShowXdrButtons: FC<Props> = ({
 
   const handleDeleteTransaction = async () => {
     try {
-      await deleteTransaction(net, firebaseID);
+      await deleteTransaction(firestore, net, firebaseID);
       setSuccessMessage("Transaction deleted from Firebase.");
       setErrorMessage("");
     } catch (error: unknown) {
@@ -88,13 +93,10 @@ const ShowXdrButtons: FC<Props> = ({
     }
   };
 
-
   return (
     <>
       <Link href={`/${net}/sign-transaction?importXDR=${XDR}`}>
-        <button>
-          Sign transaction
-        </button>
+        <button>Sign transaction</button>
       </Link>
       <button onClick={handleSendTransactionForSign}>
         Send a new transaction to the Firebase

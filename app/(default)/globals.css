@@ -4713,6 +4713,7 @@ button.button-clear[disabled]:hover {
   position: relative;
   text-align: center;
   text-decoration: none;
+ 
 }
 
 @media (max-width: 992px) {
@@ -4740,6 +4741,7 @@ button.button-clear[disabled]:hover {
 .tabs .tabs-header .tabs-item + .tabs-item:before {
   border-left: 2px solid #0691b7;
   margin-left: -1px;
+  
 }
 
 .tabs .tabs-header .tabs-item.selected {

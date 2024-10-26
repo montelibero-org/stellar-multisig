@@ -22,7 +22,7 @@ import {
   TX,
 } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
 import StellarSdk from "stellar-sdk";
-import { checkSigner, setOperationType } from "@/shared/helpers";
+import { checkSigner, stringToHex } from "@/shared/helpers";
 
 export interface TXErrors {
   sourceAccount: string;
@@ -38,7 +38,6 @@ interface JSONWithBigInt {
   JSONStringify<T>(value: T): string;
 }
 
-
 const BuildTransaction: FC = () => {
   const {
     tx,
@@ -49,13 +48,29 @@ const BuildTransaction: FC = () => {
     buildErrors,
     setBuildErrors,
     accounts,
-    setOperations
+    setOperations,
+    setSelectedSetFlags,
+    selectedSetFlags,
+    firestore,
+    changeFirstSignerType,
   } = useStore(useShallow((state) => state));
 
   const searchParams = useSearchParams();
   const sourceAccountParam = searchParams.get("sourceAccount");
   const firebaseIDParam = searchParams.get("firebaseID") || "";
   const operationTypeParam = searchParams.get("typeOperation");
+  const processedKeyParam = searchParams.get("processedKey");
+  const processedValueParam = searchParams.get("processedValue");
+  const operationThresholdsParams = searchParams.get("operationThresholds");
+  const weightParam = searchParams.get("weight");
+  const sourceAccountForSetOptionsParam = searchParams.get(
+    "sourceAccountForSetOptions"
+  );
+  const homeDomainParam = searchParams.get("homeDomain");
+  const auth_clawback_enabledParam = searchParams.get("auth_clawback_enabled");
+  const auth_immutableParam = searchParams.get("auth_immutable");
+  const auth_requiredParam = searchParams.get("auth_required");
+  const auth_revocableParam = searchParams.get("auth_revocable");
 
   const [currentXDR, setCurrentXDR] = useState<string>("");
   const [successMessageXDR, setSuccessMessageXDR] = useState<string>("");
@@ -69,13 +84,109 @@ const BuildTransaction: FC = () => {
 
   const [firebaseIDParamError, setFirebaseIDParamError] = useState<string>("");
 
-  const [jsonWithBigInt, setJsonWithBigInt] = useState<JSONWithBigInt | null>(null);
+  const [jsonWithBigInt, setJsonWithBigInt] = useState<JSONWithBigInt | null>(
+    null
+  );
+
+  const [currentTab, setCurrentTab] = useState<
+    "Create Transaction" | "Import Transaction"
+  >("Create Transaction");
+
+  const [scoreOfSetFlags, setScoreOfSetFlags] = useState<number>(0);
 
   const decodedXDR = useXDRDecoding(currentXDR, currentXDR);
 
   useEffect(() => {
-    setOperationType(0, operationTypeParam === "set_options" ? "set_options" : operationTypeParam === "manage_data" ? "manage_data" : "", tx, setOperations)
-  }, [operationTypeParam]);
+    if (auth_requiredParam) {
+      setScoreOfSetFlags((prev) => prev + 1);
+      const newSelectedSetFlags = selectedSetFlags;
+      newSelectedSetFlags[0].push(0);
+      setSelectedSetFlags(newSelectedSetFlags);
+    }
+    if (auth_revocableParam) {
+      setScoreOfSetFlags((prev) => prev + 2);
+      const newSelectedSetFlags = selectedSetFlags;
+      newSelectedSetFlags[0].push(1);
+      setSelectedSetFlags(newSelectedSetFlags);
+    }
+    if (auth_immutableParam) {
+      setScoreOfSetFlags((prev) => prev + 4);
+      const newSelectedSetFlags = selectedSetFlags;
+      newSelectedSetFlags[0].push(2);
+      setSelectedSetFlags(newSelectedSetFlags);
+    }
+    if (auth_clawback_enabledParam) {
+      setScoreOfSetFlags((prev) => prev + 8);
+      const newSelectedSetFlags = selectedSetFlags;
+      newSelectedSetFlags[0].push(3);
+      setSelectedSetFlags(newSelectedSetFlags);
+    }
+  }, [
+    auth_clawback_enabledParam,
+    auth_immutableParam,
+    auth_revocableParam,
+    auth_requiredParam,
+    selectedSetFlags,
+  ]);
+
+  useEffect(() => {
+    if (operationTypeParam) {
+      if (
+        operationTypeParam === "set_options" &&
+        (sourceAccountForSetOptionsParam || weightParam)
+      ) {
+        changeFirstSignerType(1);
+      }
+      setOperations(
+        operationTypeParam === "set_options"
+          ? [
+              {
+                source_account: "",
+                body: {
+                  set_options: {
+                    low_threshold: operationThresholdsParams
+                      ? Number(operationThresholdsParams.split(",")[0])
+                      : null,
+                    med_threshold: operationThresholdsParams
+                      ? Number(operationThresholdsParams.split(",")[1])
+                      : null,
+                    high_threshold: operationThresholdsParams
+                      ? Number(operationThresholdsParams.split(",")[2])
+                      : null,
+                    home_domain: homeDomainParam ? homeDomainParam : null,
+                    set_flags: scoreOfSetFlags,
+                    signer: {
+                      key: sourceAccountForSetOptionsParam
+                        ? sourceAccountForSetOptionsParam
+                        : "",
+                      weight: weightParam ? Number(weightParam) : null,
+                    },
+                  },
+                },
+              },
+            ]
+          : operationTypeParam === "manage_data"
+          ? [
+              {
+                source_account: "",
+                body: {
+                  manage_data: {
+                    data_name: processedKeyParam ?? "",
+                    data_value: stringToHex(processedValueParam ?? "") ?? null,
+                  },
+                },
+              },
+            ]
+          : [{ source_account: "", body: {} }]
+      );
+    }
+  }, [
+    operationTypeParam,
+    processedKeyParam,
+    processedValueParam,
+    weightParam,
+    scoreOfSetFlags,
+  ]);
 
   const updateErrors = (condition: boolean, errorMessage: string) => {
     setBuildErrors((prevBuildErrors) => {
@@ -90,7 +201,7 @@ const BuildTransaction: FC = () => {
 
   useEffect(() => {
     const loadJSONWithBigInt = async () => {
-      const { JSONParse, JSONStringify } = await import('json-with-bigint');
+      const { JSONParse, JSONStringify } = await import("json-with-bigint");
       setJsonWithBigInt({ JSONParse, JSONStringify });
     };
 
@@ -104,7 +215,11 @@ const BuildTransaction: FC = () => {
       try {
         await __wbg_init();
         if (firebaseIDParam) {
-          const transaction = await getTransactionByID(net, firebaseIDParam);
+          const transaction = await getTransactionByID(
+            firestore,
+            net,
+            firebaseIDParam
+          );
           if (!transaction) {
             console.error("Transaction not found from firebase ID");
             setFirebaseIDParamError("Transaction not found from firebase ID");
@@ -235,7 +350,12 @@ const BuildTransaction: FC = () => {
 
     const updateErrorCheckSigner = () => {
       try {
-        const isValid = checkSigner(accounts, undefined, tx.tx.source_account);
+        const isValid = checkSigner(
+          accounts,
+          undefined,
+          1,
+          tx.tx.source_account
+        );
 
         if (!isValid) {
           updateErrors(true, "Not enough rights");
@@ -256,7 +376,33 @@ const BuildTransaction: FC = () => {
           }
           return true;
         });
-        updateErrors(!isValid, "Entry Name in Manage Data operation is a required field");
+        updateErrors(
+          !isValid,
+          "Entry Name in Manage Data operation is a required field"
+        );
+      } catch (error) {
+        console.error("Error in useSetTxBuildErrors:", error);
+      }
+    };
+
+    const updateErrorOperationsSourceAccount = () => {
+      try {
+        let isValid = true;
+        isValid = fullTransaction.tx?.tx.operations.every((op) => {
+          if ("source_account" in op) {
+            return (
+              op.source_account !== "" &&
+              StellarSdk.StrKey.isValidEd25519PublicKey(op.source_account)
+            );
+          }
+
+          return true;
+        });
+
+        updateErrors(
+          !isValid,
+          "Valid source account is a required field in every transaction"
+        );
       } catch (error) {
         console.error("Error in useSetTxBuildErrors:", error);
       }
@@ -270,6 +416,7 @@ const BuildTransaction: FC = () => {
       updateErrorOperationSelectType();
       updateErrorCheckSigner();
       updateErrorOperationManageDataName();
+      updateErrorOperationsSourceAccount();
     };
 
     updateAllErrors();
@@ -281,7 +428,12 @@ const BuildTransaction: FC = () => {
     tx.tx.operations,
     accounts,
     fullTransaction,
+    tx,
   ]);
+
+  useEffect(() => {
+    console.log(tx);
+  }, [tx]);
 
   if (!jsonWithBigInt) {
     return <div>Loading...</div>;
@@ -290,46 +442,91 @@ const BuildTransaction: FC = () => {
   return (
     <MainLayout>
       <div className="container">
-        <h3>{firebaseIDParam && !tx.tx.source_account && "Loading..."}</h3>
-        <h4 className="warning">{firebaseIDParamError}</h4>
-        <div className="segment blank">
-          <SourceAccountInput />
-          <SequenceNumberInput firebaseID={firebaseIDParam} />
-          <BaseFeeInput />
-          <MemoInput />
-          <TimeBoundsInput />
-          <OperationsList />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "right",
+            marginTop: "-12px",
+          }}
+        >
+          <div className="tabs">
+            <div className="tabs-header">
+              <a
+                href="#"
+                className={`tabs-item condensed false ${
+                  currentTab === "Create Transaction" && "selected"
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentTab("Create Transaction");
+                }}
+              >
+                <span className="tabs-item-text">Create Transaction</span>
+              </a>
+              <a
+                href="#"
+                className={`tabs-item condensed false ${
+                  currentTab === "Import Transaction" && "selected"
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentTab("Import Transaction");
+                }}
+              >
+                <span className="tabs-item-text">Import Transaction</span>
+              </a>
+            </div>
+          </div>
         </div>
-        {buildErrors.length > 0 ? (
-          <TransactionErrors errors={buildErrors} />
-        ) : (
-          <ShowXdr
-            title="Here is your XDR transaction:"
-            xdr={currentXDR}
-            showHash
-            showNetPassphrase
-            buttons={
-              <ShowXdrButtons
-                firebaseID={firebaseIDParam}
-                transaction={decodedXDR.transaction}
-                setSuccessMessage={setSuccessMessageXDR}
-                setErrorMessage={setErrorMessageXDR}
-                XDR={currentXDR}
+        <hr style={{ marginTop: "0" }} className="flare" />
+        {currentTab === "Create Transaction" ? (
+          <>
+            <h3>{firebaseIDParam && !tx.tx.source_account && "Loading..."}</h3>
+            <h4 className="warning">{firebaseIDParamError}</h4>
+            <div className="segment blank">
+              <SourceAccountInput />
+              <SequenceNumberInput firebaseID={firebaseIDParam} />
+              <BaseFeeInput />
+              <MemoInput />
+              <TimeBoundsInput />
+              <OperationsList />
+            </div>
+            {buildErrors.length > 0 ? (
+              <TransactionErrors errors={buildErrors} />
+            ) : (
+              <ShowXdr
+                title="Here is your XDR transaction:"
+                xdr={currentXDR}
+                showHash
+                showNetPassphrase
+                buttons={
+                  <ShowXdrButtons
+                    firebaseID={firebaseIDParam}
+                    transaction={decodedXDR.transaction}
+                    setSuccessMessage={setSuccessMessageXDR}
+                    setErrorMessage={setErrorMessageXDR}
+                    XDR={currentXDR}
+                  />
+                }
+                successMessage={successMessageXDR}
+                errorMessage={errorMessageXDR}
               />
-            }
-            successMessage={successMessageXDR}
-            errorMessage={errorMessageXDR}
-          />
+            )}
+          </>
+        ) : (
+          <>
+            <XDRInput
+              XDR={XDRInputImport}
+              setXDR={setXDRInputImport}
+              isImport={isImportXDRInput}
+              setIsImport={setIsImportXDRInput}
+              baseResult={XDRInputImportBaseResult}
+              setBaseResult={setXDRInputImportBaseResult}
+              setCurrentTab={setCurrentTab}
+            />
+          </>
         )}
       </div>
-      <XDRInput
-        XDR={XDRInputImport}
-        setXDR={setXDRInputImport}
-        isImport={isImportXDRInput}
-        setIsImport={setIsImportXDRInput}
-        baseResult={XDRInputImportBaseResult}
-        setBaseResult={setXDRInputImportBaseResult}
-      />
     </MainLayout>
   );
 };

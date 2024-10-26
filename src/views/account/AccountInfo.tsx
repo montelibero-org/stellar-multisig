@@ -29,9 +29,12 @@ import { getAllTransactions } from "@/shared/api/firebase/firestore/Transactions
 import {
   checkSigner,
   collapseAccount,
+  collectSignerWeights,
   isSequenceNumberOutdated,
 } from "@/shared/helpers";
 import { IsShowedBlock } from "@/shared/widgets";
+import { TransactionIcon } from "@/entities";
+import InlineThresholds from "@/features/AccountInfo/Summary/InlineThresholds/ui";
 
 export enum TransactionStatuses {
   signing = "Signing",
@@ -45,11 +48,16 @@ interface Props {
 }
 
 const AccountInfo: FC<Props> = ({ ID }) => {
-  const { net, accounts, network, collapsesBlocks, setCollapsesBlocks } =
-    useStore(useShallow((state) => state));
-  const [information, setInformation] = useState<Information>(
-    {} as Information
-  );
+  const {
+    net,
+    accounts,
+    network,
+    collapsesBlocks,
+    setCollapsesBlocks,
+    setInformation,
+    information,
+    firestore,
+  } = useStore(useShallow((state) => state));
   const [secondInformation, setSecondInformation] = useState<Information>();
   const [seqNumsIsStales, setSeqNumsIsStales] = useState<ISeqNumIsStale[]>([]);
   const [decodedTransactions, setDecodedTransactions] =
@@ -60,14 +68,15 @@ const AccountInfo: FC<Props> = ({ ID }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isVisibleHomeDomainInfo, setIsVisibleHomeDomainInfo] =
     useState<boolean>(true);
-  const [isVisibleBuildTx, setIsVisibleBuildTx] = useState<boolean>(false);
+  const [isVisibleTx, setIsVisibleTx] = useState<boolean>(false);
   const [transactionsFromFirebase, setTransactionsFromFirebase] = useState<
     TransactionData[]
   >([]);
+  const [signerWeights, setSignerWeights] = useState<number>(0);
 
   useEffect(() => {
     if (
-      information.signers &&
+      information?.signers &&
       information.signers.length > 0 &&
       (decodedTransactions === null || decodedTransactions.length > 0)
     ) {
@@ -149,19 +158,25 @@ const AccountInfo: FC<Props> = ({ ID }) => {
   }, [net, ID]);
 
   useEffect(() => {
-    setIsVisibleBuildTx(checkSigner(accounts, information.signers));
+    if (Array.isArray(information?.signers) && information.signers.length > 0) {
+      setIsVisibleTx(checkSigner(accounts, information.signers));
+    }
   }, [accounts, information.signers]);
 
   useEffect(() => {
-    setIsVisibleBuildTx(false);
-  }, [ID]);
+    console.log(information.signers);
+  }, [information.signers]);
+
+  useEffect(() => {
+    setIsVisibleTx(false);
+  }, [ID, accounts]);
 
   useEffect(() => {
     const handler = async () => {
       if (ID != "") {
-        const horizonInfo = await getMainInformation(ID as string, net);
+        const horizonInfo = await getMainInformation(ID.toString(), net);
         const accountIssuer = await getAccountIssuerInformation(
-          ID as string,
+          ID.toString(),
           net
         );
 
@@ -195,6 +210,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
             .replace(/"/g, "")
             .trim();
         }
+
         setInformation({
           home_domain: horizonInfo.home_domain,
           created_at: horizonInfo.last_modified_time,
@@ -203,17 +219,17 @@ const AccountInfo: FC<Props> = ({ ID }) => {
           signers: horizonInfo.signers,
           entries: horizonInfo.data_attr,
           balances: horizonInfo.balances,
-          meta_data: documentInfo,
           issuers: accountIssuer.records,
+          meta_data: documentInfo,
           tomlInfo: tomlInformation,
         });
       }
     };
     handler();
-  }, [ID]);
+  }, [ID, setInformation]);
 
   useEffect(() => {
-    if (information.tomlInfo) {
+    if (information?.tomlInfo) {
       const accountsMatch = information.tomlInfo.match(
         /ACCOUNTS\s*=\s*\[([\s\S]*?)\]/
       );
@@ -240,12 +256,12 @@ const AccountInfo: FC<Props> = ({ ID }) => {
     } else {
       setIsVisibleHomeDomainInfo(false);
     }
-  }, [information.tomlInfo, ID]);
+  }, [information?.tomlInfo, ID]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const transactions = await getAllTransactions(net);
+        const transactions = await getAllTransactions(firestore, net);
         setTransactionsFromFirebase(transactions);
 
         const decodedList: DecodedTransactions = [];
@@ -295,6 +311,27 @@ const AccountInfo: FC<Props> = ({ ID }) => {
     }
   }, [decodedTransactions, secondInformation]);
 
+  useEffect(() => {
+    if (information?.signers) {
+      collectSignerWeights(information, setSignerWeights);
+    }
+  }, [information]);
+
+  const sortedSigners = React.useMemo(() => {
+    if (information?.signers) {
+      return [...information.signers]
+        .sort((a, b) => (a.key < b.key ? 1 : -1))
+        .sort((a, b) => b.weight - a.weight);
+    }
+    return [];
+  }, [information?.signers]);
+
+  useEffect(() => {
+    console.log("collapsesBlocks.transactions", collapsesBlocks.transactions);
+    console.log("isVisibleTx", isVisibleTx);
+    console.log("decodedTransactions", decodedTransactions);
+  }, [decodedTransactions, isVisibleTx, collapsesBlocks.transactions]);
+
   return (
     <MainLayout>
       <div className="container">
@@ -305,7 +342,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
             <>
               <h2 className="word-break relative condensed">
                 <span className="dimmed">
-                  {information.signers?.length === 1 ? (
+                  {information?.signers?.length === 1 ? (
                     <span>Personal</span>
                   ) : (
                     <span>Corporate</span>
@@ -355,6 +392,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           top: "5px",
                           cursor: "pointer",
                         }}
+                        title="Summary"
                       />
                     </span>
                     {collapsesBlocks.summary && <hr className="flare"></hr>}
@@ -363,11 +401,18 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                         <dl>
                           {information?.home_domain !== undefined &&
                           isVisibleHomeDomainInfo &&
-                          information.home_domain &&
+                          information?.home_domain &&
                           !ignoredHomeDomains.includes(
                             information.home_domain
                           ) ? (
                             <>
+                              <TransactionIcon
+                                ID={ID}
+                                isVisible={isVisibleTx}
+                                typeIcon="Change"
+                                typeOp="set_options"
+                                homeDomain={information?.home_domain}
+                              />
                               <dt>Home domain:</dt>
                               <dd>
                                 <a
@@ -411,190 +456,16 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                       </div>
                                     </div>
                                   </div>{" "}
-                                  {isVisibleBuildTx && (
-                                    <Link
-                                      href={`/${net}/build-transaction?sourceAccount=${ID}&typeOperation=set_options`}
-                                    >
-                                      <i
-                                        title="Change"
-                                        className="fas fa-edit"
-                                      ></i>
-                                    </Link>
-                                  )}
                                 </i>
                               </dd>
                             </>
                           ) : null}
-                          <dt>Account lock status:</dt>
-                          <dd>
-                            unlocked
-                            <i className="trigger icon info-tooltip small icon-help">
-                              <div
-                                className="tooltip-wrapper"
-                                style={{
-                                  maxWidth: "20em",
-                                  left: "-193px",
-                                  top: "-105px",
-                                }}
-                              >
-                                <div className="tooltip top">
-                                  <div className="tooltip-content">
-                                    The account is unlocked, all operations are
-                                    permitted, including payments, trades,
-                                    settings changes, and assets issuing.
-                                    <a
-                                      href="https://developers.stellar.org/docs/learn/encyclopedia/security/signatures-multisig#thresholds"
-                                      className="info-tooltip-link"
-                                      target="_blank"
-                                    >
-                                      Read more…
-                                    </a>
-                                  </div>
-                                </div>
-                              </div>{" "}
-                              {isVisibleBuildTx && (
-                                <Link
-                                  href={`/${net}/build-transaction?sourceAccount=${ID}&typeOperation=set_options`}
-                                >
-                                  <i title="Change" className="fas fa-edit"></i>
-                                </Link>
-                              )}
-                            </i>
-                          </dd>
-                          <dt>Operation thresholds:</dt>
-                          <dd>
-                            <span title="Low threshold">
-                              {information?.thresholds?.low_threshold}
-                            </span>{" "}
-                            /
-                            <span title="Medium threshold">
-                              {" "}
-                              {information?.thresholds?.med_threshold}
-                            </span>{" "}
-                            /
-                            <span title="High threshold">
-                              {" "}
-                              {information?.thresholds?.high_threshold}
-                            </span>
-                            <i className="trigger icon info-tooltip small icon-help">
-                              <div
-                                className="tooltip-wrapper"
-                                style={{
-                                  maxWidth: "20em",
-                                  left: "-193px",
-                                  top: "-86px",
-                                }}
-                              >
-                                <div className="tooltip top">
-                                  <div className="tooltip-content">
-                                    This field specifies thresholds for low-,
-                                    medium-, and high-access level operations.
-                                    <a
-                                      href="https://developers.stellar.org/docs/learn/encyclopedia/security/signatures-multisig#thresholds"
-                                      className="info-tooltip-link"
-                                      target="_blank"
-                                    >
-                                      Read more…
-                                    </a>
-                                  </div>
-                                </div>
-                              </div>{" "}
-                              {isVisibleBuildTx && (
-                                <Link
-                                  href={`/${net}/build-transaction?sourceAccount=${ID}&typeOperation=set_options`}
-                                >
-                                  <i title="Change" className="fas fa-edit"></i>
-                                </Link>
-                              )}
-                            </i>
-                          </dd>
-                          <dt>Asset authorization flags:</dt>
-                          <dd>
-                            {information?.flags?.auth_required == true
-                              ? "required, "
-                              : ""}
-                            {information?.flags?.auth_revocable == true
-                              ? "revocable, "
-                              : ""}
-                            {information?.flags?.auth_clawback_enabled == true
-                              ? "clawback_enabled, "
-                              : ""}
-                            {information?.flags?.auth_immutable == true
-                              ? "immutable, "
-                              : ""}
-                            {information?.flags?.auth_required == false &&
-                            information?.flags?.auth_revocable == false &&
-                            information?.flags?.auth_clawback_enabled ==
-                              false &&
-                            information?.flags?.auth_immutable == false
-                              ? "none"
-                              : ""}
-
-                            <i className="trigger icon info-tooltip small icon-help">
-                              <div
-                                className="tooltip-wrapper"
-                                style={{
-                                  maxWidth: "20em",
-                                  left: "-193px",
-                                  top: "-256px",
-                                }}
-                              >
-                                <div className="tooltip top">
-                                  <div className="tooltip-content">
-                                    <ul>
-                                      <li>
-                                        <code>AUTH_REQUIRED</code> Requires the
-                                        issuing account to give other accounts
-                                        permission before they can hold the
-                                        issuing account’s credit.
-                                      </li>
-                                      <li>
-                                        <code>AUTH_REVOCABLE</code> Allows the
-                                        issuing account to revoke its credit
-                                        held by other accounts.
-                                      </li>
-                                      <li>
-                                        <code>AUTH_CLAWBACK_ENABLED</code>{" "}
-                                        Allows the issuing account to clawback
-                                        tokens without the account consent in
-                                        case of service terms violation.
-                                      </li>
-                                      <li>
-                                        <code>AUTH_IMMUTABLE</code> If set then
-                                        none of the authorization flags can be
-                                        set and the account can never be
-                                        deleted.
-                                      </li>
-                                    </ul>
-                                    <a
-                                      href="https://developers.stellar.org/docs/learn/glossary#flags"
-                                      className="info-tooltip-link"
-                                      target="_blank"
-                                    >
-                                      Read more…
-                                    </a>
-                                  </div>
-                                </div>
-                              </div>{" "}
-                              {isVisibleBuildTx && (
-                                <Link
-                                  href={`/${net}/build-transaction?sourceAccount=${ID}&typeOperation=set_options`}
-                                >
-                                  <i title="Change" className="fas fa-edit"></i>
-                                </Link>
-                              )}
-                            </i>
-                          </dd>
                         </dl>
                         {information?.issuers?.length &&
                         information?.issuers?.length > 0 ? (
                           <div className="account-issued-assets">
-                            <h4
-                              style={{
-                                marginBottom: "0px",
-                              }}
-                            >
-                              Issued Assets
+                            <h4 style={{ marginBottom: "0px" }}>
+                              🪙 Issued Assets
                               <i className="trigger icon info-tooltip small icon-help">
                                 <div
                                   className="tooltip-wrapper"
@@ -621,6 +492,87 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                 </div>
                               </i>
                             </h4>
+                            <dl>
+                              <TransactionIcon
+                                ID={ID}
+                                isVisible={isVisibleTx}
+                                typeIcon="Change"
+                                typeOp="set_options"
+                                flags={information?.flags}
+                              />
+                              <dt>Asset authorization flags:</dt>
+                              <dd>
+                                {(() => {
+                                  const flags = [
+                                    information?.flags?.auth_required
+                                      ? "required"
+                                      : "",
+                                    information?.flags?.auth_revocable
+                                      ? "revocable"
+                                      : "",
+                                    information?.flags?.auth_clawback_enabled
+                                      ? "clawback_enabled"
+                                      : "",
+                                    information?.flags?.auth_immutable
+                                      ? "immutable"
+                                      : "",
+                                  ].filter(Boolean); // фильтрация пустых строк
+
+                                  return flags.length > 0
+                                    ? flags.join(", ")
+                                    : "none"; // проверка и вывод "none", если флаги пусты
+                                })()}
+
+                                <i className="trigger icon info-tooltip small icon-help">
+                                  <div
+                                    className="tooltip-wrapper"
+                                    style={{
+                                      maxWidth: "20em",
+                                      left: "-193px",
+                                      top: "-256px",
+                                    }}
+                                  >
+                                    <div className="tooltip top">
+                                      <div className="tooltip-content">
+                                        <ul>
+                                          <li>
+                                            <code>AUTH_REQUIRED</code> Requires
+                                            the issuing account to give other
+                                            accounts permission before they can
+                                            hold the issuing account’s credit.
+                                          </li>
+                                          <li>
+                                            <code>AUTH_REVOCABLE</code> Allows
+                                            the issuing account to revoke its
+                                            credit held by other accounts.
+                                          </li>
+                                          <li>
+                                            <code>AUTH_CLAWBACK_ENABLED</code>{" "}
+                                            Allows the issuing account to
+                                            clawback tokens without the account
+                                            consent in case of service terms
+                                            violation.
+                                          </li>
+                                          <li>
+                                            <code>AUTH_IMMUTABLE</code> If set
+                                            then none of the authorization flags
+                                            can be set and the account can never
+                                            be deleted.
+                                          </li>
+                                        </ul>
+                                        <a
+                                          href="https://developers.stellar.org/docs/learn/glossary#flags"
+                                          className="info-tooltip-link"
+                                          target="_blank"
+                                        >
+                                          Read more…
+                                        </a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </i>
+                              </dd>
+                            </dl>
                             <div className="text-small">
                               <ul>
                                 {Array.isArray(information?.issuers) &&
@@ -649,7 +601,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                         )}
 
                         <h4 style={{ marginBottom: "0px" }}>
-                          Signers
+                          ✍️ Signers
                           <i className="trigger icon info-tooltip small icon-help">
                             <div
                               className="tooltip-wrapper"
@@ -675,41 +627,49 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                 </div>
                               </div>
                             </div>
-                          </i>
+                          </i>{" "}
+                          <TransactionIcon
+                            ID={ID}
+                            isVisible={isVisibleTx}
+                            typeIcon="Add"
+                          />
                         </h4>
+                        <dl>
+                          <InlineThresholds
+                            ID={ID}
+                            isVisibleTx={isVisibleTx}
+                            signerWeights={signerWeights}
+                          />
+                        </dl>
                         <ul className="text-small condensed">
-                          {information?.signers?.map(
-                            (item: Signer, index: number) => {
-                              return (
-                                <li key={index}>
-                                  <Link
-                                    href={`/${net}/account?id=${item.key}`}
-                                    legacyBehavior
+                          {sortedSigners.map((item: Signer, index: number) => {
+                            return (
+                              <li key={index}>
+                                <TransactionIcon
+                                  ID={ID}
+                                  isVisible={isVisibleTx}
+                                  typeIcon="Change"
+                                  typeOp="set_options"
+                                  sourceAccount={item.key}
+                                  weight={item.weight}
+                                />
+                                <Link
+                                  href={`/${net}/account?id=${item.key}`}
+                                  legacyBehavior
+                                >
+                                  <a
+                                    title={item.key}
+                                    aria-label={item.key}
+                                    className="account-address word-break"
                                   >
-                                    <a
-                                      title={item.key}
-                                      aria-label={item.key}
-                                      className="account-address word-break"
-                                    >
-                                      <span>{collapseAccount(item.key)} </span>
-                                    </a>
-                                  </Link>
-                                  (w:
-                                  <b>{item.weight}</b>){" "}
-                                  {isVisibleBuildTx && (
-                                    <Link
-                                      href={`/${net}/build-transaction?sourceAccount=${item.key}&typeOperation=set_options`}
-                                    >
-                                      <i
-                                        title="Change"
-                                        className="fas fa-edit"
-                                      ></i>
-                                    </Link>
-                                  )}
-                                </li>
-                              );
-                            }
-                          )}
+                                    <span>{collapseAccount(item.key)} </span>
+                                  </a>
+                                </Link>
+                                (w:
+                                <b>{item.weight}</b>){" "}
+                              </li>
+                            );
+                          })}
                         </ul>
                         {information?.entries &&
                         Object.keys(information?.entries).length ? (
@@ -719,7 +679,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                 marginBottom: "0px",
                               }}
                             >
-                              Data Entries
+                              📄 Data Entries
                               <i className="trigger icon info-tooltip small icon-help">
                                 <div
                                   className="tooltip-wrapper"
@@ -746,32 +706,70 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                   </div>
                                 </div>
                               </i>{" "}
-                              {isVisibleBuildTx && (
-                                <i title="Add" className="fa-solid fa-plus"></i>
-                              )}
+                              <TransactionIcon
+                                ID={ID}
+                                isVisible={isVisibleTx}
+                                typeIcon="Change"
+                                typeOp="set_options"
+                                flags={information?.flags}
+                              />
                             </h4>
                             <ul className="text-small condensed">
                               {information?.entries &&
-                                Object.keys(information?.entries).map(
+                                Object.keys(information.entries).map(
                                   (entry: string, key: number) => {
                                     const { processedKey, processedValue } =
                                       processKeys(
                                         entry,
                                         information.entries[entry]
                                       );
+
+                                    let renderedValue: JSX.Element | string =
+                                      processedValue;
+
+                                    if (
+                                      StellarSdk.StrKey.isValidEd25519PublicKey(
+                                        processedValue
+                                      )
+                                    ) {
+                                      renderedValue = (
+                                        <Link
+                                          href={`/public/account?id=${processedValue}`}
+                                          legacyBehavior
+                                        >
+                                          <a>{processedValue}</a>
+                                        </Link>
+                                      );
+                                    } else if (
+                                      processedValue.startsWith("http://") ||
+                                      processedValue.startsWith("https://")
+                                    ) {
+                                      renderedValue = (
+                                        <Link
+                                          href={processedValue}
+                                          legacyBehavior
+                                        >
+                                          <a
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            {processedValue}
+                                          </a>
+                                        </Link>
+                                      );
+                                    }
+
                                     return (
                                       <li className="word-break" key={key}>
-                                        {processedKey}: {processedValue}{" "}
-                                        {isVisibleBuildTx && (
-                                          <Link
-                                            href={`/${net}/build-transaction?sourceAccount=${ID}&typeOperation=manage_data`}
-                                          >
-                                            <i
-                                              title="Change"
-                                              className="fas fa-edit"
-                                            ></i>
-                                          </Link>
-                                        )}
+                                        <TransactionIcon
+                                          ID={ID}
+                                          isVisible={isVisibleTx}
+                                          typeIcon="Change"
+                                          typeOp="manage_data"
+                                          processedKey={processedKey}
+                                          processedValue={processedValue}
+                                        />
+                                        {processedKey}: {renderedValue}{" "}
                                       </li>
                                     );
                                   }
@@ -780,13 +778,6 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           </>
                         ) : (
                           <></>
-                        )}
-                        {isVisibleBuildTx && (
-                          <Link
-                            href={`/${net}/build-transaction?sourceAccount=${ID}`}
-                          >
-                            Build transaction
-                          </Link>
                         )}
                       </div>
                     ) : (
@@ -815,6 +806,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           top: "5px",
                           cursor: "pointer",
                         }}
+                        title="balances"
                       />
                     </span>
                     {collapsesBlocks.balances && <hr className="flare"></hr>}
@@ -826,7 +818,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                             style={{ width: "100%" }}
                           >
                             <tbody>
-                              {information.balances &&
+                              {information?.balances &&
                                 information.balances.map(
                                   (item: Balance, index: number) => {
                                     const totalInfo = item.balance.split(".");
@@ -847,7 +839,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                     }
                                   }
                                 )}
-                              {information.balances &&
+                              {information?.balances &&
                                 information.balances.map(
                                   (item: Balance, index: number) => {
                                     const totalInfo = item.balance.split(".");
@@ -915,6 +907,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                         </div>
                       </div>
                       <hr className="flare"></hr>
+
                       <div className="tabs-body">
                         {tabIndex == 1 ? (
                           <div className="segment blank">
@@ -988,7 +981,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                       information?.meta_data["ORG_DESCRIPTION"]}
                                   </span>
                                 </dd>
-                                {information.meta_data[
+                                {information?.meta_data[
                                   "ORG_PHYSICAL_ADDRESS"
                                 ] !== undefined && (
                                   <>
@@ -1003,7 +996,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                           display: "inline",
                                         }}
                                       >
-                                        {information.meta_data &&
+                                        {information?.meta_data &&
                                           information?.meta_data[
                                             "ORG_PHYSICAL_ADDRESS"
                                           ]}
@@ -1011,8 +1004,9 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                     </dd>
                                   </>
                                 )}
-                                {information.meta_data["ORG_OFFICIAL_EMAIL"] !==
-                                  undefined && (
+                                {information?.meta_data[
+                                  "ORG_OFFICIAL_EMAIL"
+                                ] !== undefined && (
                                   <>
                                     <dt>Org official email:</dt>
                                     <dd>
@@ -1108,9 +1102,11 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                   </div>
                 )}
               <ShowTransactions
+                ID={ID}
                 decodedTransactions={decodedTransactions}
                 seqNumsIsStales={seqNumsIsStales}
                 transactionsFromFirebase={transactionsFromFirebase}
+                isVisibleBuildTx={isVisibleTx}
               />
             </>
           ) : (

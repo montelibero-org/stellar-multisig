@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState, useEffect, useMemo } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { MainLayout, ShowXdr } from "@/widgets";
 import { useSearchParams } from "next/navigation";
 import {
@@ -15,10 +15,13 @@ import { useStore } from "@/shared/store";
 import ShowXDRButtons from "@/widgets/SignTransaction/ShowXDRButtons";
 import { getAllTransactions } from "@/shared/api/firebase/firestore/Transactions";
 import { hrefToXDR } from "@/shared/helpers";
+import { useShallow } from "zustand/react/shallow";
 
 export type localSignature = string[];
 
 const SignTransaction: FC = () => {
+  const { firestore } = useStore(useShallow((state) => state));
+
   const href = window.location.href;
 
   const params = useSearchParams();
@@ -31,8 +34,7 @@ const SignTransaction: FC = () => {
   const networkPassphrase =
     net === "testnet" ? Networks.TESTNET : Networks.PUBLIC;
 
-  const [transactionEnvelope, setTransactionEnvelope] =
-    useState<string>("");
+  const [transactionEnvelope, setTransactionEnvelope] = useState<string>("");
   const [resultXdr, setResultXdr] = useState<string>("");
   const [localSignatures, setLocalSignatures] = useState<localSignature>([""]);
   const [errorMessageFirebase, setErrorMessageFirebase] = useState<string>("");
@@ -57,7 +59,7 @@ const SignTransaction: FC = () => {
     transaction,
   } = useXDRDecoding(importXDRParam, transactionEnvelope);
 
-  const currentTransaction = useMemo(() => {
+  const currentTransaction = React.useMemo(() => {
     if (!resultXdr) return null;
     try {
       return TransactionBuilder.fromXDR(resultXdr, networkPassphrase);
@@ -70,7 +72,7 @@ const SignTransaction: FC = () => {
   useEffect(() => {
     const fetchAllTransactions = async () => {
       try {
-        const data = await getAllTransactions(net);
+        const data = await getAllTransactions(firestore, net);
         const matchingDoc = data.find((doc) => doc.xdr === transactionEnvelope);
         if (matchingDoc) {
           setCurrentFirebaseId(matchingDoc.id);
@@ -90,7 +92,7 @@ const SignTransaction: FC = () => {
 
   useEffect(() => {
     if (importXDRParam && window) {
-      setTransactionEnvelope(hrefToXDR(href))
+      setTransactionEnvelope(hrefToXDR(href));
     }
   }, [window, importXDRParam, href]);
 
@@ -121,8 +123,9 @@ const SignTransaction: FC = () => {
           {resultXdr && (
             <ShowXdr
               title="Transaction signed!"
-              upperDescription={`${signaturesAdded} signature(s) added; ${currentTransaction?.signatures.length || 0
-                } signature(s) total`}
+              upperDescription={`${signaturesAdded} signature(s) added; ${
+                currentTransaction?.signatures.length || 0
+              } signature(s) total`}
               xdr={resultXdr}
               lowerDescription="Now that this transaction is signed, you can submit it to the network. Horizon provides an endpoint called Post Transaction that will relay your transaction to the network and inform you of the result."
               buttons={

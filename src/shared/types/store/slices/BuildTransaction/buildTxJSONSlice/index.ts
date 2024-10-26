@@ -1,10 +1,12 @@
 import { AuthFlag } from "stellar-sdk";
 
-export type Sequence = number | bigint | null | undefined;
+export type Sequence = number | bigint | null | undefined | string;
 
 export interface IBuildTxJSONState {
   fullTransaction: FullTransaction;
   tx: TX;
+  selectedSetFlags: number[][];
+  signerTypes: number[]
 }
 
 export interface FullTransaction {
@@ -15,7 +17,7 @@ export interface TX {
   tx: {
     source_account: string;
     fee: number;
-    seq_num: number | bigint;
+    seq_num: number | bigint | string;
     cond: {
       time: {
         min_time: number;
@@ -54,6 +56,9 @@ export interface IBuildTxJSONActions {
   removeSignature: (index: number) => void;
   resetTx: () => void;
   setOperations: (operations: IOperation[]) => void;
+  setSelectedSetFlags: (flags: number[][]) => void;
+  setSignerTypes: (signerTypes: number[]) => void;
+  changeFirstSignerType: (signerType: number) => void;
 }
 
 export interface ISignature {

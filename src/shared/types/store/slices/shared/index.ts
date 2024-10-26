@@ -6,4 +6,5 @@ export type {default as IThemeSlice} from "./themeSlice";
 export type * from "./themeSlice";
 export type {default as IServerSlice} from "./serverSlice";
 export type * from "./serverSlice";
-
+export type {default as IModalsSlice} from "./modalsSlice";
+export type * from "./modalsSlice";

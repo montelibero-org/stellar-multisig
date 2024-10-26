@@ -1,7 +1,7 @@
-import { doc, updateDoc, getDoc, DocumentData } from "firebase/firestore";
-import firestore from "../..";
+import { doc, updateDoc, getDoc, DocumentData, Firestore } from "firebase/firestore";
 
 async function sendSignatureToTransaction(
+  firestore: Firestore | undefined,
   transactionId: string,
   signedXDR: string,
   net: "public" | "testnet"

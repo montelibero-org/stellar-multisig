@@ -14,3 +14,4 @@ export { default as stringToHex } from "./stringToHex";
 export *
   from "./shared";
 export * from "./BuildTransaction"
+export * from "./AccountInfo"

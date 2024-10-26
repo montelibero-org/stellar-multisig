@@ -32,19 +32,31 @@ const MemoInput: FC = () => {
   return (
     <div>
       <h4>Memo</h4>
-      {memoTypes.map((type) => (
-        <button
-          key={type}
-          className={`button ${selectedMemoType === type && "disabled"}`}
-          onClick={() => {
-            handleMemoTypeChange(type);
-            setSelectedMemoType(type);
-          }}
-          disabled={selectedMemoType === type}
-        >
-          {type}
-        </button>
-      ))}
+      <div className="tabs  "  style={{ display: "flex", justifyContent: "start", width: "100%" }}>
+        <div className="tabs-header">
+          
+          {memoTypes.map((type) => (
+            <a
+              className={`line tabs-item condensed ${
+                selectedMemoType === type && "selected"
+              }`}
+              href="#"
+              key={type}
+              onClick={(event) => {
+                event.preventDefault();
+                handleMemoTypeChange(type);
+                setSelectedMemoType(type);
+              }}
+              style={{ width: "50px" }}
+            >
+              <span className="tabs-item-text">{type}</span>
+            </a>
+          ))}
+          
+        </div>
+       
+      </div>
+      <hr className="flare" style={{ marginTop: 0 }}/>
       {tx.tx.memo !== "none" && (
         <input
           placeholder={

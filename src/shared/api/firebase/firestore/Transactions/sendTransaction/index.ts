@@ -1,10 +1,10 @@
-import { collection, addDoc } from "firebase/firestore";
-import firestore from "../..";
+import { collection, addDoc, Firestore } from "firebase/firestore";
 import { Transaction } from "stellar-sdk";
 import { TransactionData } from "@/shared/types";
 import { Net } from "@/shared/types/store/slices";
 
 async function sendTransaction(
+  firestore: Firestore | undefined,
   net: Net,
   transaction?: Transaction | null,
   xdr?: string,

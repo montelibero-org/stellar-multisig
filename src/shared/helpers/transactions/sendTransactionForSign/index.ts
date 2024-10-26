@@ -1,6 +1,7 @@
 import { Transaction } from 'stellar-sdk';
 import { sendTransaction } from '@/shared/api/firebase/firestore/Transactions';
 import { Net } from '@/shared/types/store/slices';
+import { Firestore } from 'firebase/firestore';
 
 /**
  * Sends a Stellar transaction for signing via the Stellar network.
@@ -10,13 +11,14 @@ import { Net } from '@/shared/types/store/slices';
  * @throws Will throw an error if the transaction fails to send.
  */
 const sendTransactionForSign = async (
+  firestore: Firestore | undefined,
   transaction: Transaction,
-  net: Net
+  net: Net,
 ): Promise<string | undefined> => {
   if (!transaction) return;
 
   try {
-    const txHash = await sendTransaction(net, transaction);;
+    const txHash = await sendTransaction(firestore, net, transaction);;
     console.log(txHash);
     return txHash;
   } catch (error) {

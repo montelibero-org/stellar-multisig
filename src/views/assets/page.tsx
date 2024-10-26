@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, FC, FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { MainLayout } from "@/widgets";
 import AssetsListItem, { AssetsItem } from "./AssetsListItem";
-import trustedMtlAssets from "@/shared/configs/trusted-mtl-assets.json";
+import assets from "@/shared/configs/assets.json";
 import Link from "next/link";
 
 const ITEMS_PER_PAGE = 20;
@@ -20,7 +20,7 @@ const Assets: FC = () => {
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const filtredItems = trustedMtlAssets.filter(
+    const filtredItems = assets.filter(
       (item) =>
         item.code.toLowerCase().includes(filter.toLowerCase()) ||
         item.issuer.toLowerCase().includes(filter.toLowerCase())
@@ -79,7 +79,7 @@ const Assets: FC = () => {
         <h2>Trusted MTL Assets</h2>
         <div className="text-right mobile-left" style={{ marginTop: "-2.2em" }}>
           <a
-            href="https://github.com/montelibero-org/stellar-multisig/blob/main/src/shared/configs/trusted-mtl-assets.json"
+            href="https://github.com/montelibero-org/stellar-multisig/blob/main/src/shared/configs/assets.json"
             className="icon icon-github"
             title="Log in with Github"
             style={{ fontSize: "1.4em" }}

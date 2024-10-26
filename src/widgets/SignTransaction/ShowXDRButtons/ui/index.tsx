@@ -23,11 +23,12 @@ const ShowXDRButtons: FC<Props> = ({
   setSuccessMessageFirebase,
   setErrorMessageFirebase,
 }) => {
-  const { net } = useStore(useShallow((state) => state));
+  const { net, firestore } = useStore(useShallow((state) => state));
 
   const sendSignatureToTransaction = async () => {
     try {
       const txHash = await sendSignatureToTransactionFirebase(
+        firestore,
         currentFirebaseId,
         XDR,
         net
@@ -44,10 +45,13 @@ const ShowXDRButtons: FC<Props> = ({
       const transaction = stellarSdk.TransactionBuilder.fromXDR(XDR, net);
 
       if (transaction instanceof stellarSdk.Transaction) {
-        const txHash = await sendTransactionFirebase(net, transaction);
+        const txHash = await sendTransactionFirebase(
+          firestore,
+          net,
+          transaction
+        );
         return txHash;
       } else if (transaction instanceof stellarSdk.FeeBumpTransaction) {
-        // Handle FeeBumpTransaction if necessary
         throw new Error("FeeBumpTransaction is not supported in this context.");
       } else {
         throw new Error("Invalid transaction type.");

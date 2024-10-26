@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useStore } from "@/shared/store";
 import { SetOptions, ManageData } from "@/widgets";
 import { IOperation } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
@@ -8,14 +8,30 @@ import { useShallow } from "zustand/react/shallow";
 import { setOperationType } from "@/shared/helpers";
 
 const OperationsList: FC = () => {
-  const { tx, addOperation, setOperations } = useStore(useShallow((state) => state));
+  const { tx, setOperations, addOperation } = useStore(
+    useShallow((state) => state)
+  );
   const [isOperationsOpen, setIsOperationsOpen] = useState<boolean>(true);
 
-  const handleAddOperation = () => {
-    addOperation();
-    setIsOperationsOpen(true);
-  };
-
+  useEffect(() => {
+    if (tx.tx.operations.length > 0) {
+      const updatedOperations = tx.tx.operations.map((operation) => {
+        if (!operation.body?.set_options && !operation.body?.manage_data) {
+          return {
+            ...operation,
+            body: {
+              manage_data: {
+                data_name: "",
+                data_value: null,
+              },
+            },
+          };
+        }
+        return operation;
+      });
+      setOperations(updatedOperations);
+    }
+  }, []);
   const duplicateOperation = (index: number) => {
     const operationToDuplicate = tx.tx.operations[index];
     if (operationToDuplicate) {
@@ -78,9 +94,7 @@ const OperationsList: FC = () => {
                 Duplicate
               </button>
               {tx.tx.operations.length > 1 && (
-                <button onClick={() => removeOperation(index)}>
-                  Remove
-                </button>
+                <button onClick={() => removeOperation(index)}>Remove</button>
               )}
             </div>
             <div
@@ -115,7 +129,7 @@ const OperationsList: FC = () => {
             </div>
           </div>
         ))}
-        <button onClick={handleAddOperation}>Add New Operation</button>
+      <button onClick={() => addOperation()}>Add New Operation</button>
     </>
   );
 };

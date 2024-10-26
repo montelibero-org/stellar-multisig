@@ -1,8 +1,6 @@
-import React, { FC } from 'react'
-import BuildTransaction from "@/views/BuildTransaction/page"
+import React, { FC } from "react";
+import BuildTransaction from "@/views/BuildTransaction/page";
 
-const Page: FC = () => {
-  return <BuildTransaction />
-}
+const Page: FC = () => <BuildTransaction />;
 
-export default Page
+export default Page;

@@ -3,12 +3,8 @@
 }
 
 .flags {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  grid-column-gap: 0px;
-  grid-row-gap: 0px;
-  gap: 0.5rem;
+  display: flex;
+  gap: 10px;
   margin-bottom: 0.5rem;
 }
 .noMarginButton {
@@ -19,6 +15,12 @@
 
 .optional {
   color: #717577;
+}
+
+.tabs .tabsheader .tabsitem + .tabsitem:before {
+  border-left: 0px solid #0691b7;
+  margin-left: -1px;
+  border: none;
 }
 
 .flagsContainer {

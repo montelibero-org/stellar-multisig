@@ -20,9 +20,9 @@ export const Header: FC = () => {
     setIsOpenAddAccountModal,
     isOpenAddAccountModal,
     isAuth,
-  } = useStore(
-    useShallow((state) => state)
-  );
+    setIsOpenFirebaseSettingsModal,
+    isOpenFirebaseSettingsModal
+  } = useStore(useShallow((state) => state));
   const [isOpenNet, setIsOpenNet] = useState<boolean>(false);
   const [isOpenAccount, setIsOpenAccount] = useState<boolean>(false);
   const dropdownRefNet = useRef<HTMLDivElement>(null);
@@ -93,10 +93,16 @@ export const Header: FC = () => {
     }
   };
 
-  const addAccountOpen = () => {
-    setIsOpenAddAccountModal(true);
+  const openModal = (modalName: string) => {
+    if (modalName === "addAccount") {
+      setIsOpenAddAccountModal(!isOpenAddAccountModal);
+    } else if (modalName === "firebaseSettings") {
+      setIsOpenFirebaseSettingsModal(!isOpenFirebaseSettingsModal);
+    }
     setIsOpenAccount(false);
-  }
+  };
+
+
 
   return (
     <div className="top-block">
@@ -122,6 +128,16 @@ export const Header: FC = () => {
                 </span>
               ) : (
                 <span style={{ marginTop: "-6px" }}> Assets</span>
+              )}
+            </Link>
+            <Link href={"/" + net + "/features"}>
+              {theme === "day" ? (
+                <span style={{ marginTop: "-6px", color: "#333" }}>
+                  {" "}
+                  Features
+                </span>
+              ) : (
+                <span style={{ marginTop: "-6px" }}> Features</span>
               )}
             </Link>
           </div>
@@ -264,12 +280,20 @@ export const Header: FC = () => {
                             : `dropdown-item-light selected`
                         }
                         style={{ textAlign: "center" }}
-                        onClick={addAccountOpen}
+                        onClick={() => openModal("addAccount")}
                       >
-                        <span
-                        >
-                          Add account
-                        </span>
+                        <span>Add account</span>
+                      </li>
+                      <li
+                        className={
+                          theme === "night"
+                            ? `dropdown-item selected`
+                            : `dropdown-item-light selected`
+                        }
+                        style={{ textAlign: "center" }}
+                        onClick={() => openModal("firebaseSettings")}
+                      >
+                        <span>Settings</span>
                       </li>
                       <li
                         className={

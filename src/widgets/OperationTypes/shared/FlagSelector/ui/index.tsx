@@ -32,20 +32,42 @@ const FlagSelector: FC<FlagSelectorProps> = ({
       <h4 className={s.sectionTitle}>
         {title} <span className={s.optional}>(optional)</span>
       </h4>
-      <div className={s.flagsContainer}>
-        <div className={s.flags}>
-          {flags.map((flag) => (
-            <button
-              key={flag.id}
-              onClick={() => onToggle(flag.id)}
-              className={`${s.noMarginButton} ${
-                isSelected(flag.id) ? s.disabled : ""
-              }`}
-              style={{ cursor: "pointer" }}
-            >
-              {flag.name}
-            </button>
-          ))}
+      <div className={`tabs ${s.tabs}`}>
+        <div className={`tabs-header ${s.tabsheader}`}>
+          <div className={s.flagsContainer}>
+            <div className={s.flags}>
+              {flags.map((flag) => (
+                <a
+                  key={flag.id}
+                  onClick={() => {
+                    onToggle(flag.id);
+                  }}
+                  className={`tabs-item ${s.tabsitem} condensed  ${
+                    isSelected(flag.id) && "selected"
+                  }
+                  
+                    
+                  `}
+                  style={{
+                    cursor: "pointer",
+                    width: "140px",
+                    height: "90%",
+                   
+                    textDecoration: "none",
+                    flexWrap: "nowrap",
+                  }}
+                  href="#"
+                >
+                  <span
+                    className="tabs-item-text  "
+                    style={{ fontSize: "100%", border: "none" }}
+                  >
+                    {flag.name}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
         {selectedFlags.length > 0 && (
           <p>

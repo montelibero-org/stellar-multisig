@@ -10,9 +10,12 @@ import {
   serverSlice,
   transactionsFromFirebaseSlice,
   buildErrorsSlice,
-  collapsesBlocksSlice
+  collapsesBlocksSlice,
+  informationSlice,
+  modalsSlice,
 } from "./slices";
 import { Store } from "@/shared/types";
+import { firebaseSettingsSlice } from "./slices/firebase/firebaseSettingsSlice";
 
 export const useStore = create<Store>()(
   devtools(
@@ -26,6 +29,9 @@ export const useStore = create<Store>()(
         ...transactionsFromFirebaseSlice(...a),
         ...buildErrorsSlice(...a),
         ...collapsesBlocksSlice(...a),
+        ...informationSlice(...a),
+        ...modalsSlice(...a),
+        ...firebaseSettingsSlice(...a),
       }))
     )
   )

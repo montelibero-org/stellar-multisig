@@ -16,13 +16,13 @@ const SourceAccountInput: FC = () => {
     setIsValid(isValidKey);
     if (!isValidKey) {
       setError("Invalid source account");
-    } else if (!checkSigner(accounts, undefined, tx.tx.source_account)) {
+    } else if (!checkSigner(accounts, undefined, 1, tx.tx.source_account)) {
       setError("Not enough rights");
     } else {
       setError("");
     }
   }, [tx.tx.source_account, accounts]);
-  
+
   return (
     <div>
       <h4>Source Account</h4>
@@ -32,7 +32,7 @@ const SourceAccountInput: FC = () => {
         onChange={(e) => setSourceAccount(e.target.value)}
       />
       {error && <p className="error">{error}</p>}
-      {!isValid && <p className="error">Invalid source account</p>}
+      {!isValid && <></>}
     </div>
   );
 };

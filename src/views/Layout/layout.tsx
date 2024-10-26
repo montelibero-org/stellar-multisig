@@ -4,8 +4,11 @@ import { FC, useEffect, useState } from "react";
 import { useStore } from "@/shared/store";
 import { Footer, Header } from "@/widgets";
 import { useShallow } from "zustand/react/shallow";
-import AddAccountModal from "@/widgets/shared/layouts/Header/ui/AddAccountModal";
 import { usePathname } from "next/navigation";
+import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
+import axios from "axios";
+import { cacheConfig } from "@/shared/configs";
+import Modals from "@/widgets/Layout/Modals";
 
 type Props = {
   children: React.ReactNode;
@@ -13,7 +16,13 @@ type Props = {
 
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
+
+  const [commitHash, setCommitHash] = useState(
+    process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
+  );
   const pathname = usePathname();
+  const [showPopup, setShowPopup] = useState(false);
+  const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
     setTheme,
@@ -25,6 +34,7 @@ const PageLayout: FC<Props> = ({ children }) => {
     net,
     setServer,
     setNetwork,
+    initializeFirebase,
   } = useStore(useShallow((state) => state));
 
   useEffect(() => {
@@ -73,6 +83,101 @@ const PageLayout: FC<Props> = ({ children }) => {
     setNetwork(net);
   }, [net]);
 
+  useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const fetchLatestCommitHash = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.github.com/repos/Monobladegg/stellar-multisig-stanging/commits",
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+            },
+          }
+        );
+        const latestHash = response.data[0].sha.substring(0, 7);
+        setCommitHash(latestHash);
+
+        if (lastFetchedHash && latestHash !== lastFetchedHash) {
+          console.log("Version changed");
+          if (timeoutId) clearTimeout(timeoutId);
+
+          timeoutId = setTimeout(() => {
+            setShowPopup(true);
+          }, 60000);
+        }
+        setLastFetchedHash(latestHash); // Обновляем хэш версии
+      } catch (error) {
+        console.error("Error fetching commit hash:", error);
+      }
+    };
+
+    const startPolling = () => {
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(
+        fetchLatestCommitHash,
+        cacheConfig.checkOfCurrentVersionDurationMs
+      );
+    };
+
+    const stopPolling = () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchLatestCommitHash();
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    fetchLatestCommitHash();
+    startPolling();
+
+    return () => {
+      stopPolling();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [lastFetchedHash]);
+
+  useEffect(() => {
+    if (
+      window.localStorage.getItem("Firebase-currentFirebase") === "Default" ||
+      !window.localStorage.getItem("Firebase-currentFirebase")
+    ) {
+      initializeFirebase({
+        apiKey: process.env.NEXT_PUBLIC_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+        projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+        storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
+        messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
+        appId: process.env.NEXT_PUBLIC_APP_ID,
+        measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
+      });
+    } else {
+      initializeFirebase({
+        apiKey: window.localStorage.getItem("Firebase-apiKey")!,
+        authDomain: window.localStorage.getItem("Firebase-authDomain")!,
+        projectId: window.localStorage.getItem("Firebase-projectId")!,
+        storageBucket: window.localStorage.getItem("Firebase-storageBucket")!,
+        messagingSenderId: window.localStorage.getItem(
+          "Firebase-messagingSenderId"
+        )!,
+        appId: window.localStorage.getItem("Firebase-appId")!,
+        measurementId: window.localStorage.getItem("Firebase-measurementId")!,
+      });
+    }
+  }, []);
+
   if (!isWindowDefined) {
     return (
       <html>
@@ -92,10 +197,7 @@ const PageLayout: FC<Props> = ({ children }) => {
     <html lang="en" data-theme={!theme || themeLS}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-          name="commit-hash"
-          content={process.env.NEXT_PUBLIC_COMMIT_HASH || ""}
-        />
+        <meta name="commit-hash" content={commitHash} />
         <title>MTL Stellar Multisig</title>
         <link
           rel="stylesheet"
@@ -113,7 +215,8 @@ const PageLayout: FC<Props> = ({ children }) => {
           {children}
           <Footer />
         </main>
-        {isOpenAddAccountModal && <AddAccountModal />}
+        {showPopup && <PopupVersionTheSite />}
+        <Modals />
       </body>
     </html>
   );

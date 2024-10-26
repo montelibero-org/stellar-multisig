@@ -5,8 +5,8 @@ import {
   FirestoreDataConverter,
   DocumentData,
   QueryDocumentSnapshot,
+  Firestore,
 } from "firebase/firestore";
-import firestore from "../..";
 import { TransactionData } from "@/shared/types";
 
 const transactionConverter: FirestoreDataConverter<TransactionData> = {
@@ -29,6 +29,7 @@ const transactionConverter: FirestoreDataConverter<TransactionData> = {
 };
 
 async function updateTransactionByID(
+  firestore: Firestore | undefined,
   net: "public" | "testnet",
   transactionId: string,
   updatedData: Partial<TransactionData>

@@ -137,9 +137,14 @@ const AddAccountModal: FC = () => {
                       `tabs-item condensed ` +
                       (accountType === type ? "selected " : "")
                     }
-                    style={{marginInline: "10px"}}
+                    style={{ marginInline: "10px" }}
                   >
-                    <span className="tabs-item-text" style={{ paddingInline: "4px" }}>{type}</span>
+                    <span
+                      className="tabs-item-text"
+                      style={{ paddingInline: "4px" }}
+                    >
+                      {type}
+                    </span>
                   </Link>
                 ))}
               </div>
