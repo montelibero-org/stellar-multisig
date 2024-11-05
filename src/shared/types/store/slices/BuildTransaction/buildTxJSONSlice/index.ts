@@ -16,8 +16,9 @@ export interface FullTransaction {
 export interface TX {
   tx: {
     source_account: string;
-    fee: number;
+    fee: number | null;
     seq_num: number | bigint | string;
+
     cond: {
       time: {
         min_time: number;
@@ -42,7 +43,7 @@ export interface IBuildTxJSONActions {
   setTransaction: (tx: TX) => void;
   setFullTransaction: (tx: TX) => void;
   setSourceAccount: (source_account: string) => void;
-  setFee: (fee: number) => void;
+  setFee: (fee: number | null) => void;
   setSeqNum: (seq_num: number | string | bigint) => void;
   setTimeCondition: (min_time: number, max_time: number) => void;
   setMemo: (
@@ -50,6 +51,8 @@ export interface IBuildTxJSONActions {
       | string
       | { text?: string; id?: string; hash?: string; return?: string }
   ) => void;
+  selectedMemoType: string; // Добавляем свойство
+  setSelectedMemoType: (type: string) => void;
   addOperation: () => void;
   removeOperation: (index: number) => void;
   addSignature: (signature: ISignature) => void;
@@ -73,7 +76,8 @@ export interface IOperation {
       inflation_dest?: string | null;
       clear_flags?: AuthFlag | null | number;
       set_flags?: AuthFlag | null | number;
-      master_weight?: number | null;
+      master_weight?: number | string | null;
+      base_free?: number | null;
       low_threshold?: number | null;
       med_threshold?: number | null;
       high_threshold?: number | null;
@@ -81,7 +85,7 @@ export interface IOperation {
       signer?:
         | {
             key?: string | null;
-            weight?: number | null;
+            weight?: number | string | null;
           }
         | undefined
         | null;

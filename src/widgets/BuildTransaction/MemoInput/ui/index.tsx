@@ -4,59 +4,81 @@ import { FC, useState, useEffect } from "react";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 
+
 const MemoInput: FC = () => {
-  const { tx, setMemo } = useStore(useShallow((state) => state));
+  const { tx, setMemo, selectedMemoType, setSelectedMemoType } = useStore(useShallow((state) => ({
+    tx: state.tx,
+    setMemo: state.setMemo,
+    selectedMemoType: state.selectedMemoType,
+    setSelectedMemoType: state.setSelectedMemoType, 
+  })));
 
   const memoTypes = ["None", "Text", "ID", "Hash", "Return"];
-
   const [memoInput, setMemoInput] = useState<string>("");
-  const [selectedMemoType, setSelectedMemoType] = useState<string>("");
 
   useEffect(() => {
-    if (tx.tx.memo && typeof tx.tx.memo !== "string") {
-      const memoValue = Object.values(tx.tx.memo)[0];
+    
+    if (!tx.tx.memo) {
+      setMemo("none");
+      setSelectedMemoType("None");
+    } else if (typeof tx.tx.memo !== "string") {
+      const memoValue = Object.values(tx.tx.memo)[0] as string;
       setMemoInput(memoValue);
-    } else {
-      setMemoInput("");
     }
   }, [tx.tx.memo]);
 
   const handleMemoTypeChange = (type: string) => {
+    setSelectedMemoType(type);
     if (type === "None") {
-      setMemo("none");
+      setMemo("none"); 
+      setMemoInput("");
     } else {
-      setMemo({ [type.toLowerCase()]: memoInput });
+      const memoValue = {
+        [type.toLowerCase()]: memoInput,
+      }; 
+      setMemo(memoValue); 
     }
   };
 
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("selectedMemoType", selectedMemoType.toString());
+    window.history.replaceState({}, "", `?${params.toString()}`);
+  }, [selectedMemoType]);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (typeof tx.tx.memo === "object") {
+      const memoValue = Object.values(tx.tx.memo)[0];
+      params.set("memoText", memoValue || "");
+    } else {
+      params.set("memoText", tx.tx.memo.toString());
+    }
+    window.history.replaceState({}, "", `?${params.toString()}`);
+  }, [tx.tx.memo]);
   return (
     <div>
       <h4>Memo</h4>
-      <div className="tabs  "  style={{ display: "flex", justifyContent: "start", width: "100%" }}>
+      <div className="tabs" style={{ display: "flex", justifyContent: "start", width: "100%" }}>
         <div className="tabs-header">
-          
           {memoTypes.map((type) => (
             <a
-              className={`line tabs-item condensed ${
-                selectedMemoType === type && "selected"
-              }`}
+              className={`line tabs-item condensed ${selectedMemoType === type ? "selected" : ""}`}
               href="#"
               key={type}
               onClick={(event) => {
                 event.preventDefault();
                 handleMemoTypeChange(type);
-                setSelectedMemoType(type);
               }}
               style={{ width: "50px" }}
             >
               <span className="tabs-item-text">{type}</span>
             </a>
           ))}
-          
         </div>
-       
       </div>
-      <hr className="flare" style={{ marginTop: 0 }}/>
+
+      
       {tx.tx.memo !== "none" && (
         <input
           placeholder={
@@ -69,7 +91,8 @@ const MemoInput: FC = () => {
           value={memoInput}
           onChange={(e) => {
             setMemoInput(e.target.value);
-            setMemo({ [Object.keys(tx.tx.memo)[0]]: e.target.value });
+            const memoKey = Object.keys(tx.tx.memo)[0];
+            setMemo({ [memoKey]: e.target.value });
           }}
         />
       )}

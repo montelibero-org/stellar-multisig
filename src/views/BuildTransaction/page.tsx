@@ -22,7 +22,9 @@ import {
   TX,
 } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
 import StellarSdk from "stellar-sdk";
-import { checkSigner, stringToHex } from "@/shared/helpers";
+import { stringToHex } from "@/shared/helpers";
+import axios from "axios";
+import { Information } from "@/shared/types";
 
 export interface TXErrors {
   sourceAccount: string;
@@ -53,16 +55,21 @@ const BuildTransaction: FC = () => {
     selectedSetFlags,
     firestore,
     changeFirstSignerType,
+    server,
+    setSeqNum,
   } = useStore(useShallow((state) => state));
 
   const searchParams = useSearchParams();
   const sourceAccountParam = searchParams.get("sourceAccount");
+
+  const baseFeeParam = searchParams.get("baseFee");
   const firebaseIDParam = searchParams.get("firebaseID") || "";
   const operationTypeParam = searchParams.get("typeOperation");
   const processedKeyParam = searchParams.get("processedKey");
   const processedValueParam = searchParams.get("processedValue");
   const operationThresholdsParams = searchParams.get("operationThresholds");
   const weightParam = searchParams.get("weight");
+  const masterWeightParam = searchParams.get("masterWeight");
   const sourceAccountForSetOptionsParam = searchParams.get(
     "sourceAccountForSetOptions"
   );
@@ -95,6 +102,31 @@ const BuildTransaction: FC = () => {
   const [scoreOfSetFlags, setScoreOfSetFlags] = useState<number>(0);
 
   const decodedXDR = useXDRDecoding(currentXDR, currentXDR);
+
+  useEffect(() => {
+    const updSeqNumWhenSourceAccountIsSet = async () => {
+      if (StellarSdk.StrKey.isValidEd25519PublicKey(tx.tx.source_account)) {
+        try {
+          const { data } = await axios.get<Information>(
+            `${server}/accounts/${tx.tx.source_account}`
+          );
+          if (data.sequence !== undefined) {
+            const sequence = BigInt(data.sequence) + BigInt(1);
+            setSeqNum(sequence);
+          } else {
+            console.error("Sequence number is undefined.");
+          }
+        } catch (error) {
+          console.error(error);
+          if (axios.isAxiosError(error) && error.response?.status === 404) {
+            console.error("Account not found or not funded.");
+          }
+        }
+      }
+    };
+
+    updSeqNumWhenSourceAccountIsSet();
+  }, [tx.tx.source_account]);
 
   useEffect(() => {
     if (auth_requiredParam) {
@@ -155,6 +187,13 @@ const BuildTransaction: FC = () => {
                       : null,
                     home_domain: homeDomainParam ? homeDomainParam : null,
                     set_flags: scoreOfSetFlags,
+                    master_weight:
+                      masterWeightParam !== null &&
+                      masterWeightParam !== undefined &&
+                      masterWeightParam !== "undefined"
+                        ? Number(masterWeightParam)
+                        : "",
+                    base_free: Number(baseFeeParam),
                     signer: {
                       key: sourceAccountForSetOptionsParam
                         ? sourceAccountForSetOptionsParam
@@ -249,6 +288,7 @@ const BuildTransaction: FC = () => {
     setTransaction,
     setSourceAccount,
     sourceAccountParam,
+
     jsonWithBigInt,
   ]);
 
@@ -348,25 +388,6 @@ const BuildTransaction: FC = () => {
       }
     };
 
-    const updateErrorCheckSigner = () => {
-      try {
-        const isValid = checkSigner(
-          accounts,
-          undefined,
-          1,
-          tx.tx.source_account
-        );
-
-        if (!isValid) {
-          updateErrors(true, "Not enough rights");
-        } else {
-          updateErrors(false, "Not enough rights");
-        }
-      } catch (error) {
-        console.error("Error in useSetTxBuildErrors:", error);
-      }
-    };
-
     const updateErrorOperationManageDataName = () => {
       try {
         let isValid = true;
@@ -381,32 +402,33 @@ const BuildTransaction: FC = () => {
           "Entry Name in Manage Data operation is a required field"
         );
       } catch (error) {
+        // need to bag fix
         console.error("Error in useSetTxBuildErrors:", error);
       }
     };
 
-    const updateErrorOperationsSourceAccount = () => {
-      try {
-        let isValid = true;
-        isValid = fullTransaction.tx?.tx.operations.every((op) => {
-          if ("source_account" in op) {
-            return (
-              op.source_account !== "" &&
-              StellarSdk.StrKey.isValidEd25519PublicKey(op.source_account)
-            );
-          }
+    // const updateErrorOperationsSourceAccount = () => {
+    //   try {
+    //     let isValid = true;
+    //     isValid = fullTransaction.tx?.tx.operations.every((op) => {
+    //       if ("source_account" in op) {
+    //         return (
+    //           op.source_account !== "" &&
+    //           StellarSdk.StrKey.isValidEd25519PublicKey(op.source_account)
+    //         );
+    //       }
 
-          return true;
-        });
+    //       return true;
+    //     });
 
-        updateErrors(
-          !isValid,
-          "Valid source account is a required field in every transaction"
-        );
-      } catch (error) {
-        console.error("Error in useSetTxBuildErrors:", error);
-      }
-    };
+    //     updateErrors(
+    //       !isValid,
+    //       "Valid source account is a required field in every operation"
+    //     );
+    //   } catch (error) {
+    //     console.error("Error in useSetTxBuildErrors:", error);
+    //   }
+    // };
 
     const updateAllErrors = () => {
       updateErrorSourceAccount();
@@ -414,9 +436,8 @@ const BuildTransaction: FC = () => {
       updateErrorBaseFee();
       updateErrorOperations();
       updateErrorOperationSelectType();
-      updateErrorCheckSigner();
       updateErrorOperationManageDataName();
-      updateErrorOperationsSourceAccount();
+      // updateErrorOperationsSourceAccount();
     };
 
     updateAllErrors();
@@ -434,6 +455,35 @@ const BuildTransaction: FC = () => {
   useEffect(() => {
     console.log(tx);
   }, [tx]);
+
+  const clearParams = () => {
+    // Create a deep copy of tx
+    const newTx = {
+      ...tx,
+      tx: {
+        ...tx.tx,
+        cond: {
+          ...tx.tx.cond,
+          time: { ...tx.tx.cond.time },
+        },
+      },
+    };
+
+    // Modify the properties on the new object
+    newTx.tx.source_account = "";
+    newTx.tx.seq_num = "";
+    newTx.tx.fee = 100;
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("baseFee", "100");
+
+    window.history.replaceState({}, "", `?${params.toString()}`);
+    newTx.tx.memo = "none";
+    newTx.tx.cond.time.min_time = 0;
+    newTx.tx.cond.time.max_time = 0;
+
+    // Update the state with the new object
+    setTransaction(newTx);
+  };
 
   if (!jsonWithBigInt) {
     return <div>Loading...</div>;
@@ -485,12 +535,21 @@ const BuildTransaction: FC = () => {
             <h4 className="warning">{firebaseIDParamError}</h4>
             <div className="segment blank">
               <SourceAccountInput />
+              <hr className="flare" />
               <SequenceNumberInput firebaseID={firebaseIDParam} />
+              <hr className="flare" />
               <BaseFeeInput />
+              <hr className="flare" />
               <MemoInput />
+              <hr className="flare" />
               <TimeBoundsInput />
-              <OperationsList />
+              <button onClick={clearParams}>
+                <i className="fa fa-refresh" aria-hidden="true"></i> Clear
+                params
+              </button>
             </div>
+            <hr className="flare" />
+            <OperationsList />
             {buildErrors.length > 0 ? (
               <TransactionErrors errors={buildErrors} />
             ) : (

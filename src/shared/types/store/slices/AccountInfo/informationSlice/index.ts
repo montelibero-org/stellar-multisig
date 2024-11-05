@@ -2,6 +2,7 @@ import { Information } from "@/shared/types/information";
 
 export interface InformationState {
   information: Information;
+  
 }
 
 export interface InformationActions {

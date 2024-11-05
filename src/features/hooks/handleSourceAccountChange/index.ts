@@ -26,7 +26,7 @@ export function useHandleSourceAccountChange() {
   const handleSourceAccountChange = (event: ChangeEvent<HTMLInputElement>, id: number) => {
     updateOperations({
       updatedOperation: {
-        source_account: event.target.value,
+        source_account: event.target.value === "" ? null : event.target.value,
       },
       id
     });

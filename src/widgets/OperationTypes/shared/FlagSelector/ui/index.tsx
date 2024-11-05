@@ -39,20 +39,21 @@ const FlagSelector: FC<FlagSelectorProps> = ({
               {flags.map((flag) => (
                 <a
                   key={flag.id}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     onToggle(flag.id);
                   }}
                   className={`tabs-item ${s.tabsitem} condensed  ${
                     isSelected(flag.id) && "selected"
                   }
-                  
-                    
+
+
                   `}
                   style={{
                     cursor: "pointer",
                     width: "140px",
                     height: "90%",
-                   
+
                     textDecoration: "none",
                     flexWrap: "nowrap",
                   }}

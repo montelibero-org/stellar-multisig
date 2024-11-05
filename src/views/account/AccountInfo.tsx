@@ -72,7 +72,14 @@ const AccountInfo: FC<Props> = ({ ID }) => {
   const [transactionsFromFirebase, setTransactionsFromFirebase] = useState<
     TransactionData[]
   >([]);
+  const { tx } = useStore(useShallow((state) => state));
   const [signerWeights, setSignerWeights] = useState<number>(0);
+  const { selectedMemoType, setSelectedMemoType } = useStore(
+    useShallow((state) => ({
+      selectedMemoType: state.selectedMemoType,
+      setSelectedMemoType: state.setSelectedMemoType,
+    }))
+  );
 
   useEffect(() => {
     if (
@@ -320,7 +327,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
   const sortedSigners = React.useMemo(() => {
     if (information?.signers) {
       return [...information.signers]
-        .sort((a, b) => (a.key < b.key ? 1 : -1))
+        .sort((a, b) => (a.key < b.key ? -1 : 1))
         .sort((a, b) => b.weight - a.weight);
     }
     return [];
@@ -407,6 +414,16 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           ) ? (
                             <>
                               <TransactionIcon
+                               masterWeight={information.signers?.find((signer) => signer.key === ID)?.weight || 0}
+                                memoText={tx.tx.memo.toString()}
+                                selectedMemoType={selectedMemoType}
+                                setSelectedMemoType={setSelectedMemoType}
+                                TransactionSequenceNumber={
+                                  Number(tx.tx.seq_num) || 0
+                                }
+                                baseFee={tx.tx.fee || 100}
+                                lowerTime={tx.tx.cond.time.max_time}
+                                upperTime={tx.tx.cond.time.min_time}
                                 ID={ID}
                                 isVisible={isVisibleTx}
                                 typeIcon="Change"
@@ -464,7 +481,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                         {information?.issuers?.length &&
                         information?.issuers?.length > 0 ? (
                           <div className="account-issued-assets">
-                            <h4 style={{ marginBottom: "0px" }}>
+                            <h4 style={{ marginBottom: "5px" }}>
                               🪙 Issued Assets
                               <i className="trigger icon info-tooltip small icon-help">
                                 <div
@@ -494,6 +511,16 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                             </h4>
                             <dl>
                               <TransactionIcon
+                               masterWeight={1}
+                                memoText={tx.tx.memo.toString()}
+                                selectedMemoType={selectedMemoType}
+                                setSelectedMemoType={setSelectedMemoType}
+                                TransactionSequenceNumber={
+                                  Number(tx.tx.seq_num) || 0
+                                }
+                                baseFee={tx.tx.fee || 100}
+                                lowerTime={tx.tx.cond.time.max_time}
+                                upperTime={tx.tx.cond.time.min_time}
                                 ID={ID}
                                 isVisible={isVisibleTx}
                                 typeIcon="Change"
@@ -516,11 +543,11 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                     information?.flags?.auth_immutable
                                       ? "immutable"
                                       : "",
-                                  ].filter(Boolean); // фильтрация пустых строк
+                                  ].filter(Boolean);
 
                                   return flags.length > 0
                                     ? flags.join(", ")
-                                    : "none"; // проверка и вывод "none", если флаги пусты
+                                    : "none";
                                 })()}
 
                                 <i className="trigger icon info-tooltip small icon-help">
@@ -600,7 +627,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           <></>
                         )}
 
-                        <h4 style={{ marginBottom: "0px" }}>
+                        <h4 style={{ marginBottom: "10px" }}>
                           ✍️ Signers
                           <i className="trigger icon info-tooltip small icon-help">
                             <div
@@ -628,11 +655,23 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                               </div>
                             </div>
                           </i>{" "}
-                          <TransactionIcon
-                            ID={ID}
-                            isVisible={isVisibleTx}
-                            typeIcon="Add"
-                          />
+                          {isVisibleTx && (
+                            <TransactionIcon
+                           masterWeight={1}
+                              memoText={tx.tx.memo.toString()}
+                              selectedMemoType={selectedMemoType}
+                              setSelectedMemoType={setSelectedMemoType}
+                              TransactionSequenceNumber={
+                                Number(tx.tx.seq_num) || 0
+                              }
+                              baseFee={tx.tx.fee || 100}
+                              lowerTime={tx.tx.cond.time.max_time}
+                              upperTime={tx.tx.cond.time.min_time}
+                              ID={ID}
+                              isVisible={true}
+                              typeIcon="Add"
+                            />
+                          )}
                         </h4>
                         <dl>
                           <InlineThresholds
@@ -642,21 +681,31 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           />
                         </dl>
                         <ul className="text-small condensed">
-                          {sortedSigners.map((item: Signer, index: number) => {
-                            return (
-                              <li key={index}>
+                          {sortedSigners
+                            .sort((a) => (a.key === ID ? -1 : 1))
+                            .map((item: Signer) => (
+                              <li key={item.key}>
                                 <TransactionIcon
+
+                                  memoText={tx.tx.memo.toString()}
+                                  selectedMemoType={selectedMemoType}
+                                  setSelectedMemoType={setSelectedMemoType}
                                   ID={ID}
+                                  lowerTime={tx.tx.cond.time.max_time}
+                                  upperTime={tx.tx.cond.time.min_time}
+                                  baseFee={tx.tx.fee || 100}
                                   isVisible={isVisibleTx}
                                   typeIcon="Change"
                                   typeOp="set_options"
-                                  sourceAccount={item.key}
-                                  weight={item.weight}
+                                  masterWeight={
+                                    item.key === ID ? item.weight : null
+                                  }
+                                  weight={item.key !== ID ? item.weight : null}
+                                  sourceAccount={
+                                    item.key !== ID ? item.key : null
+                                  }
                                 />
-                                <Link
-                                  href={`/${net}/account?id=${item.key}`}
-                                  legacyBehavior
-                                >
+                                 <Link href={`/editor?weight=${item.weight}`} legacyBehavior>
                                   <a
                                     title={item.key}
                                     aria-label={item.key}
@@ -665,11 +714,9 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                     <span>{collapseAccount(item.key)} </span>
                                   </a>
                                 </Link>
-                                (w:
-                                <b>{item.weight}</b>){" "}
+                                (w: <b>{item.weight}</b>)
                               </li>
-                            );
-                          })}
+                            ))}
                         </ul>
                         {information?.entries &&
                         Object.keys(information?.entries).length ? (
@@ -706,11 +753,21 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                   </div>
                                 </div>
                               </i>{" "}
+
                               <TransactionIcon
+                                masterWeight={1}
+                                memoText={tx.tx.memo.toString()}
+                                selectedMemoType={selectedMemoType}
+                                setSelectedMemoType={setSelectedMemoType}
+                                TransactionSequenceNumber={
+                                  Number(tx.tx.seq_num) || 0
+                                }
+                                baseFee={tx.tx.fee || 100}
+                                lowerTime={tx.tx.cond.time.max_time}
+                                upperTime={tx.tx.cond.time.min_time}
                                 ID={ID}
                                 isVisible={isVisibleTx}
-                                typeIcon="Change"
-                                typeOp="set_options"
+                                typeIcon="Add"
                                 flags={information?.flags}
                               />
                             </h4>
@@ -762,6 +819,18 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                     return (
                                       <li className="word-break" key={key}>
                                         <TransactionIcon
+                                         masterWeight={1}
+                                          memoText={tx.tx.memo.toString()}
+                                          selectedMemoType={selectedMemoType}
+                                          setSelectedMemoType={
+                                            setSelectedMemoType
+                                          }
+                                          TransactionSequenceNumber={
+                                            Number(tx.tx.seq_num) || 0
+                                          }
+                                          baseFee={tx.tx.fee || 100}
+                                          lowerTime={tx.tx.cond.time.max_time}
+                                          upperTime={tx.tx.cond.time.min_time}
                                           ID={ID}
                                           isVisible={isVisibleTx}
                                           typeIcon="Change"

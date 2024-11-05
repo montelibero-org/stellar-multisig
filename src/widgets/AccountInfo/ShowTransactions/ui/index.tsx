@@ -45,7 +45,7 @@ const ShowTransactions: FC<Props> = ({
   }
 
   return (
-    <>
+    isVisibleBuildTx && (
       <div className="tabs space inline-right">
         <div className="tabs-body">
           <div
@@ -121,7 +121,7 @@ const ShowTransactions: FC<Props> = ({
           </div>
         </div>
       </div>
-    </>
+    )
   );
 };
 

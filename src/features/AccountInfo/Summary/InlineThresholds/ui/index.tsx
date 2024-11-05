@@ -48,18 +48,17 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
           <React.Fragment key={threshold.label}>
             {index > 0 && " / "}
             <span title={threshold.title}>
-              {threshold.label}{" "}
               {signerWeights > threshold.value && signerWeights !== 0 ? (
                 <span
                   title={`${threshold.label} threshold is unlocked, operations are permitted`}
                 >
-                  🟢
+                  {threshold.label}{" "}🟢{" "}
                 </span>
               ) : (
                 <span
                   title={`${threshold.label} threshold is locked, operations are prohibited`}
                 >
-                  🔴
+                  {threshold.label}{" "}🔴{" "}
                 </span>
               )}
               <span

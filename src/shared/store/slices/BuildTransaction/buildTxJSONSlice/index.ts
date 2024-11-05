@@ -9,6 +9,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
   const initialTx: TX = {
     tx: {
       source_account: "",
+
       fee: 100,
       seq_num: "",
       cond: {
@@ -22,6 +23,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
       ext: "v0",
     },
     signatures: [] as ISignature[],
+    
   };
 
   return {
@@ -29,7 +31,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
     tx: initialTx,
     selectedSetFlags: [[]],
     signatures: [] as ISignature[],
-    signerTypes: [],
+    signerTypes: [0],
     setFullTransaction: (tx: TX) => set({ fullTransaction: { tx } }),
     setTransaction: (tx: TX) => set({ tx }),
     setSourceAccount: (source_account: string) =>
@@ -37,22 +39,37 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
         state.tx.tx.source_account = source_account;
         state.fullTransaction = { tx: state.tx };
       }),
-    setFee: (fee: number) =>
+    setFee: (fee: number | null) =>
       set((state) => {
         state.tx.tx.fee = fee;
         state.fullTransaction = { tx: state.tx };
       }),
-    setSeqNum: (seq_num: string | number | bigint) =>
-      set((state) => {
-        state.tx.tx.seq_num = BigInt(seq_num);
-        state.fullTransaction = { tx: state.tx };
-      }),
+      setSeqNum: (seq_num: string | number | bigint) =>
+        set((state) => {
+          
+          state.tx.tx.seq_num = BigInt(seq_num).toString(); 
+          state.fullTransaction = { tx: state.tx }; 
+        }),
     setTimeCondition: (min_time: number, max_time: number) =>
       set((state) => {
         state.tx.tx.cond.time.min_time = min_time;
         state.tx.tx.cond.time.max_time = max_time;
         state.fullTransaction = { tx: state.tx };
       }),
+
+      selectedMemoType: "None", 
+      setSelectedMemoType: (type: string) =>
+        set((state) => {
+          state.selectedMemoType = type;
+          
+          if (type === "None") {
+            state.tx.tx.memo = "none";
+          } else {
+            
+            state.tx.tx.memo = { [type.toLowerCase()]: "" };
+          }
+          state.fullTransaction = { tx: state.tx };
+        }),
     setMemo: (
       memo:
         | "none"

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React, { FC } from "react";
 
 interface Props {
@@ -12,16 +11,16 @@ const IsShowedBlock: FC<Props> = ({ onToggle, condition, style, title }) => {
   const className = condition
     ? "fa-solid fa-angles-up"
     : "fa-solid fa-angles-down";
-    title = condition ? "Collapse" : "Expand";
+  title = condition ? "Collapse" : "Expand";
   return (
-    <Link href="#">
+    <a href="#" onClick={(e) => e.preventDefault()}>
       <i
         className={className}
         style={style}
         title={title}
         onClick={onToggle}
       ></i>
-    </Link>
+    </a>
   );
 };
 

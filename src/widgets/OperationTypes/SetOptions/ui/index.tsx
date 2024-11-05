@@ -11,6 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 import { IFlag } from "../../shared/FlagSelector";
 import { useHandleSourceAccountChange } from "@/features/hooks";
 import { IOperation } from "@/shared/types";
+import { useSearchParams } from "next/navigation";
 
 export const signerOptions: string[] = [
   "Select signer type",
@@ -25,6 +26,22 @@ export interface Props {
 
 const SetOptions: FC<Props> = ({ id }) => {
   const handleSourceAccountChange = useHandleSourceAccountChange();
+  const searchParams = useSearchParams();
+  const [inputMasterWeight, setInputMasterWeight] = useState(0);
+
+  
+  useEffect(() => {
+    const weightParam = searchParams.get('weight');
+    if (weightParam) {
+      const weight = parseInt(weightParam, 10);
+      setInputMasterWeight(!isNaN(weight) ? weight : 0);
+    }
+  }, [searchParams]);
+
+  const handleInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setInputMasterWeight(isNaN(value) ? 0 : value);
+  };
   const {
     fullTransaction,
     tx,
@@ -55,11 +72,11 @@ const SetOptions: FC<Props> = ({ id }) => {
   };
 
   const operation = tx.tx.operations[id] || defaultOperation;
-  const inflationDestination = operation.body.set_options?.inflation_dest || "";
-  const masterWeight = operation.body.set_options?.master_weight || 0;
-  const lowThreshold = operation.body.set_options?.low_threshold || 0;
-  const mediumThreshold = operation.body.set_options?.med_threshold || 0;
-  const highThreshold = operation.body.set_options?.high_threshold || 0;
+  
+  // const masterWeight = operation.body.set_options?.master_weight;
+  const lowThreshold = operation.body.set_options?.low_threshold;
+  const mediumThreshold = operation.body.set_options?.med_threshold;
+  const highThreshold = operation.body.set_options?.high_threshold;
   const homeDomain = operation.body.set_options?.home_domain || "";
   const sourceAccount = operation.source_account;
 
@@ -166,7 +183,10 @@ const SetOptions: FC<Props> = ({ id }) => {
   const handleInputChange =
     (field: string, isNumber = true) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (isNaN(Number(e.target.value)) && isNumber) return;
+      const { value } = e.target;
+
+      if (isNumber && value !== "" && isNaN(Number(value))) return;
+
       const newOperations = [...fullTransaction.tx.tx.operations];
       if (newOperations[id]) {
         newOperations[id] = {
@@ -175,7 +195,11 @@ const SetOptions: FC<Props> = ({ id }) => {
             ...newOperations[id].body,
             set_options: {
               ...newOperations[id].body.set_options,
-              [field]: isNumber ? Number(e.target.value) : e.target.value,
+              [field]: isNumber
+                ? value === ""
+                  ? undefined
+                  : Number(value)
+                : value,
             },
           },
         };
@@ -197,7 +221,9 @@ const SetOptions: FC<Props> = ({ id }) => {
               signer: {
                 ...newOperations[id].body.set_options?.signer,
                 [field]:
-                  field === "weight" ? Number(e.target.value) : e.target.value,
+                  field === "weight" && isNaN(Number(e.target.value))
+                    ? undefined
+                    : e.target.value,
               },
             },
           },
@@ -211,17 +237,6 @@ const SetOptions: FC<Props> = ({ id }) => {
       <p>Sets various configuration options for an account.</p>
       <hr />
       <div className={s.main}>
-        <InputField
-          title="Inflation Destination"
-          placeholder="Example: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6"
-          value={inflationDestination}
-          onChange={handleInputChange("inflation_dest", false)}
-          validate={(value) =>
-            StellarSdk.StrKey.isValidEd25519PublicKey(value) || value === ""
-          }
-          errorMessage="Public key is invalid."
-        />
-
         <FlagSelector
           title="Set Flags"
           flags={setFlagsData}
@@ -239,8 +254,9 @@ const SetOptions: FC<Props> = ({ id }) => {
         <InputField
           title="Master Weight"
           placeholder="0-255"
-          value={masterWeight !== 0 ? masterWeight.toString() : ""}
-          onChange={handleInputChange("master_weight")}
+          value={inputMasterWeight.toString()}
+
+          onChange={handleInputChange2}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
           warningMessage="This can result in a permanently locked account. Are you sure you know what you're doing?"
@@ -249,7 +265,11 @@ const SetOptions: FC<Props> = ({ id }) => {
         <InputField
           title="Low Threshold"
           placeholder="0-255"
-          value={lowThreshold !== 0 ? lowThreshold.toString() : ""}
+          value={
+            lowThreshold !== null && lowThreshold !== undefined
+              ? lowThreshold.toString()
+              : ""
+          }
           onChange={handleInputChange("low_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
@@ -258,7 +278,11 @@ const SetOptions: FC<Props> = ({ id }) => {
         <InputField
           title="Medium Threshold"
           placeholder="0-255"
-          value={mediumThreshold !== 0 ? mediumThreshold.toString() : ""}
+          value={
+            mediumThreshold !== null && mediumThreshold !== undefined
+              ? mediumThreshold.toString()
+              : ""
+          }
           onChange={handleInputChange("med_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
@@ -268,7 +292,11 @@ const SetOptions: FC<Props> = ({ id }) => {
         <InputField
           title="High Threshold"
           placeholder="0-255"
-          value={highThreshold !== 0 ? highThreshold.toString() : ""}
+          value={
+            highThreshold !== null && highThreshold !== undefined
+              ? highThreshold.toString()
+              : ""
+          }
           onChange={handleInputChange("high_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
@@ -336,9 +364,13 @@ const SetOptions: FC<Props> = ({ id }) => {
                       : "Accepts a 32-byte hash in hexadecimal format (64 characters)"
                   }
                   value={
-                    fullTransaction.tx.tx.operations[
-                      id
-                    ].body.set_options?.signer?.key?.toString() ?? ""
+                    fullTransaction.tx.tx.operations[id].body.set_options
+                      ?.signer?.key !== null &&
+                    fullTransaction.tx.tx.operations[id].body.set_options
+                      ?.signer?.key !== undefined
+                      ? fullTransaction.tx.tx.operations[id].body.set_options
+                          ?.signer?.key
+                      : ""
                   }
                   onChange={handleSignerChange("key")}
                   validate={(value) =>
