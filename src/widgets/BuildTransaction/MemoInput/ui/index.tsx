@@ -41,21 +41,21 @@ const MemoInput: FC = () => {
   };
 
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    params.set("selectedMemoType", selectedMemoType.toString());
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [selectedMemoType]);
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (typeof tx.tx.memo === "object") {
-      const memoValue = Object.values(tx.tx.memo)[0];
-      params.set("memoText", memoValue || "");
-    } else {
-      params.set("memoText", tx.tx.memo.toString());
-    }
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [tx.tx.memo]);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(window.location.search);
+  //   params.set("selectedMemoType", selectedMemoType.toString());
+  //   window.history.replaceState({}, "", `?${params.toString()}`);
+  // }, [selectedMemoType]);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(window.location.search);
+  //   if (typeof tx.tx.memo === "object") {
+  //     const memoValue = Object.values(tx.tx.memo)[0];
+  //     params.set("memoText", memoValue || "");
+  //   } else {
+  //     params.set("memoText", tx.tx.memo.toString());
+  //   }
+  //   window.history.replaceState({}, "", `?${params.toString()}`);
+  // }, [tx.tx.memo]);
   return (
     <div>
       <h4>Memo</h4>

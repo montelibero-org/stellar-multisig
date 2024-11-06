@@ -382,7 +382,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                   className="column column-50"
                   style={{ height: collapsesBlocks.summary ? "auto" : "65px" }}
                 >
-                  <div className="segment blank">
+                  <div className="segment blank" style={{ marginBottom: "20px" }}>
                     <span className="flex" style={{ position: "relative" }}>
                       <h3 style={{ margin: "0" }}>Summary</h3>
                       <IsShowedBlock
@@ -414,7 +414,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           ) ? (
                             <>
                               <TransactionIcon
-                               masterWeight={information.signers?.find((signer) => signer.key === ID)?.weight || 0}
+                               
                                 memoText={tx.tx.memo.toString()}
                                 selectedMemoType={selectedMemoType}
                                 setSelectedMemoType={setSelectedMemoType}
@@ -511,7 +511,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                             </h4>
                             <dl>
                               <TransactionIcon
-                               masterWeight={1}
+                               
                                 memoText={tx.tx.memo.toString()}
                                 selectedMemoType={selectedMemoType}
                                 setSelectedMemoType={setSelectedMemoType}
@@ -657,7 +657,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           </i>{" "}
                           {isVisibleTx && (
                             <TransactionIcon
-                           masterWeight={1}
+                           
                               memoText={tx.tx.memo.toString()}
                               selectedMemoType={selectedMemoType}
                               setSelectedMemoType={setSelectedMemoType}
@@ -687,9 +687,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                               <li key={item.key}>
                                 <TransactionIcon
 
-                                  memoText={tx.tx.memo.toString()}
-                                  selectedMemoType={selectedMemoType}
-                                  setSelectedMemoType={setSelectedMemoType}
+                                 
                                   ID={ID}
                                   lowerTime={tx.tx.cond.time.max_time}
                                   upperTime={tx.tx.cond.time.min_time}
@@ -705,7 +703,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                     item.key !== ID ? item.key : null
                                   }
                                 />
-                                 <Link href={`/editor?weight=${item.weight}`} legacyBehavior>
+                                 <Link href={`/${net}/account?id=${item.key}`} legacyBehavior>
                                   <a
                                     title={item.key}
                                     aria-label={item.key}
@@ -755,10 +753,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                               </i>{" "}
 
                               <TransactionIcon
-                                masterWeight={1}
-                                memoText={tx.tx.memo.toString()}
-                                selectedMemoType={selectedMemoType}
-                                setSelectedMemoType={setSelectedMemoType}
+                               
                                 TransactionSequenceNumber={
                                   Number(tx.tx.seq_num) || 0
                                 }
@@ -819,7 +814,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                     return (
                                       <li className="word-break" key={key}>
                                         <TransactionIcon
-                                         masterWeight={1}
+                                         
                                           memoText={tx.tx.memo.toString()}
                                           selectedMemoType={selectedMemoType}
                                           setSelectedMemoType={

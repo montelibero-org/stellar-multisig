@@ -7,7 +7,7 @@ interface InputFieldProps {
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   validate?: (value: string) => boolean;
-  warningMessage?: string;
+  warningMessage?: string | JSX.Element;
   errorMessage?: string;
   isOptional?: boolean;
 }

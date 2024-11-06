@@ -11,7 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 import { IFlag } from "../../shared/FlagSelector";
 import { useHandleSourceAccountChange } from "@/features/hooks";
 import { IOperation } from "@/shared/types";
-import { useSearchParams } from "next/navigation";
+
 
 export const signerOptions: string[] = [
   "Select signer type",
@@ -26,22 +26,8 @@ export interface Props {
 
 const SetOptions: FC<Props> = ({ id }) => {
   const handleSourceAccountChange = useHandleSourceAccountChange();
-  const searchParams = useSearchParams();
-  const [inputMasterWeight, setInputMasterWeight] = useState(0);
 
-  
-  useEffect(() => {
-    const weightParam = searchParams.get('weight');
-    if (weightParam) {
-      const weight = parseInt(weightParam, 10);
-      setInputMasterWeight(!isNaN(weight) ? weight : 0);
-    }
-  }, [searchParams]);
 
-  const handleInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value, 10);
-    setInputMasterWeight(isNaN(value) ? 0 : value);
-  };
   const {
     fullTransaction,
     tx,
@@ -72,8 +58,8 @@ const SetOptions: FC<Props> = ({ id }) => {
   };
 
   const operation = tx.tx.operations[id] || defaultOperation;
-  
-  // const masterWeight = operation.body.set_options?.master_weight;
+
+  const masterWeight = operation.body.set_options?.master_weight;
   const lowThreshold = operation.body.set_options?.low_threshold;
   const mediumThreshold = operation.body.set_options?.med_threshold;
   const highThreshold = operation.body.set_options?.high_threshold;
@@ -254,9 +240,12 @@ const SetOptions: FC<Props> = ({ id }) => {
         <InputField
           title="Master Weight"
           placeholder="0-255"
-          value={inputMasterWeight.toString()}
-
-          onChange={handleInputChange2}
+          value={
+            masterWeight !== null && masterWeight !== undefined
+              ? masterWeight.toString()
+              : ""
+          }
+          onChange={handleInputChange("master_weight")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
           warningMessage="This can result in a permanently locked account. Are you sure you know what you're doing?"
@@ -358,11 +347,7 @@ const SetOptions: FC<Props> = ({ id }) => {
               <>
                 <InputField
                   title="Key"
-                  placeholder={
-                    currentSignerType === signerOptions[1]
-                      ? "Ex: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6Q4UG"
-                      : "Accepts a 32-byte hash in hexadecimal format (64 characters)"
-                  }
+                  placeholder="Ex: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6Q4UG"
                   value={
                     fullTransaction.tx.tx.operations[id].body.set_options
                       ?.signer?.key !== null &&
@@ -394,6 +379,14 @@ const SetOptions: FC<Props> = ({ id }) => {
                   onChange={handleSignerChange("weight")}
                   validate={validateRange}
                   errorMessage="Expected an integer between 0 and 255 (inclusive)."
+                  warningMessage={
+                    <>
+                      Signer will be removed from account if this weight is 0.
+                      <br />
+                      Used to add/remove or adjust weight of an additional
+                      signer on the account.
+                    </>
+                  }
                 />
               </>
             )}
@@ -402,14 +395,14 @@ const SetOptions: FC<Props> = ({ id }) => {
 
         <InputField
           title="Home Domain"
-          placeholder="Example: example.com"
+          placeholder="Ex: example.com"
           value={homeDomain}
           onChange={handleInputChange("home_domain", false)}
         />
 
         <InputField
           title="Source Account"
-          placeholder="Example: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6"
+          placeholder="Ex: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6Q4UG"
           value={sourceAccount === null ? "" : sourceAccount}
           onChange={(e) => handleSourceAccountChange(e, id)}
           validate={(value) =>

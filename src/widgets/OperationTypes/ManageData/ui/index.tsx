@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { FC, ChangeEvent, useEffect } from "react";
 import s from "@/widgets/OperationTypes/index.module.scss";
@@ -8,7 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 import StellarSdk from "stellar-sdk";
 import { IOperation } from "@/shared/types/store/slices";
 import { hexToString, stringToHex } from "@/shared/helpers";
-import {useHandleSourceAccountChange} from "@/features/hooks";
+import { useHandleSourceAccountChange } from "@/features/hooks";
 
 interface Props {
   id: number;
@@ -77,7 +77,6 @@ const ManageData: FC<Props> = ({ id }) => {
     });
   };
 
-
   useEffect(() => {
     if (!tx.tx.operations[id]) {
       setOperations([...tx.tx.operations, defaultOperation]);
@@ -91,7 +90,7 @@ const ManageData: FC<Props> = ({ id }) => {
       <div className={s.main}>
         <InputField
           title="Entry Name"
-          placeholder="Enter entry name"
+          placeholder=""
           value={tx.tx.operations[id].body?.manage_data?.data_name ?? ""}
           onChange={handleEntryNameChange}
           validate={validateSymbols}
@@ -100,19 +99,32 @@ const ManageData: FC<Props> = ({ id }) => {
         />
         <InputField
           title="Entry Value"
-          placeholder="Enter optional entry value"
-          value={hexToString(tx.tx.operations[id].body.manage_data?.data_value || "") ?? ""}
+          placeholder=""
+          value={
+            hexToString(
+              tx.tx.operations[id].body.manage_data?.data_value || ""
+            ) ?? ""
+          }
           onChange={handleEntryValueChange}
           validate={validateSymbols}
-          warningMessage="If empty, this will delete the data entry named in this operation. Note: The Lab only supports strings."
-          errorMessage={`Entry value can only contain a maximum of 64 characters. ${typeof entryValue === "string" ? entryValue.length : 0} characters.`}
+          warningMessage={
+            <>
+              If empty, this will delete the data entry named in this operation.{" "}
+              <br /> Note: The Lab only supports strings.
+            </>
+          }
+          errorMessage={`Entry value can only contain a maximum of 64 characters. ${
+            typeof entryValue === "string" ? entryValue.length : 0
+          } characters.`}
         />
         <InputField
           title="Source Account"
-          placeholder="Example: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6"
+          placeholder="Ex: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6Q4UG"
           value={sourceAccount === null ? "" : sourceAccount}
           onChange={(e) => handleSourceAccountChange(e, id)}
-          validate={(value) => StellarSdk.StrKey.isValidEd25519PublicKey(value) || value === ""}
+          validate={(value) =>
+            StellarSdk.StrKey.isValidEd25519PublicKey(value) || value === ""
+          }
           errorMessage="Public key is invalid."
           isOptional={false}
         />

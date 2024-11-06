@@ -27,15 +27,13 @@ interface Props {
   flags?: Information["flags"];
   masterWeight?: number | null;
   memoType?: string;
-  selectedMemoType?: string;
-  setSelectedMemoType?: (type: string) => void;
-  memoText?: string | { text?: string; id?: string; hash?: string; return?: string };
+  selectedMemoType?: string; 
+  setSelectedMemoType?: (type: string) => void; 
+  memoText?: string | { text?: string; id?: string; hash?: string; return?: string }; 
 }
 
 const TransactionIcon: FC<Props> = ({
-  selectedMemoType,
 
-  memoText,
   isVisible,
   typeIcon,
   ID,
@@ -78,6 +76,7 @@ const TransactionIcon: FC<Props> = ({
       }),
       ...(sourceAccount && { sourceAccountForSetOptions: sourceAccount }),
       ...(weight != null && { weight: weight.toString() }),
+      ...(masterWeight != null && { masterWeight: masterWeight.toString() }),
       ...(operationThresholds && {
         operationThresholds: [
           operationThresholds.low_threshold != null ? operationThresholds.low_threshold.toString() : "",
@@ -91,35 +90,26 @@ const TransactionIcon: FC<Props> = ({
       ...(flags?.auth_required && { auth_required: "true" }),
       ...(flags?.auth_revocable && { auth_revocable: "true" }),
     };
-
-    if (selectedMemoType) {
-      params.selectedMemoType = selectedMemoType;
-    }
-    if (typeof memoText === "string") {
-      params.memoText = memoText;
-    } else if (memoText) {
-      params.memoText = JSON.stringify(memoText);
-    }
+   
+   
     if (baseFee !== previousBaseFee.current) {
       params.baseFee = baseFee?.toString() || "";
     }
-    if (masterWeight) {
-      params.masterWeight = masterWeight.toString();
-    }
-
+    
+ 
     if (lowerTime !== undefined && lowerTime !== previousLowerTime.current) {
       params.lowerTime = lowerTime.toString();
     }
-
+  
     if (upperTime !== undefined && upperTime !== previousUpperTime.current) {
       params.upperTime = upperTime.toString();
     }
 
-
+  
     if (TransactionSequenceNumber != null) {
       params.TransactionSequenceNumber = TransactionSequenceNumber.toString();
     }
-
+    
     return `/${net}/build-transaction?${new URLSearchParams(params).toString()}`;
   };
 

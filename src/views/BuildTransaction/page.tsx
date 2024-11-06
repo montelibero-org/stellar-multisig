@@ -104,12 +104,22 @@ const BuildTransaction: FC = () => {
   const decodedXDR = useXDRDecoding(currentXDR, currentXDR);
 
   useEffect(() => {
+    const loadJSONWithBigInt = async () => {
+      const { JSONParse, JSONStringify } = await import("json-with-bigint");
+      setJsonWithBigInt({ JSONParse, JSONStringify });
+    };
+
+    loadJSONWithBigInt();
+  }, []);
+
+  useEffect(() => {
     const updSeqNumWhenSourceAccountIsSet = async () => {
       if (StellarSdk.StrKey.isValidEd25519PublicKey(tx.tx.source_account)) {
         try {
           const { data } = await axios.get<Information>(
             `${server}/accounts/${tx.tx.source_account}`
           );
+          console.log(123123, data);
           if (data.sequence !== undefined) {
             const sequence = BigInt(data.sequence) + BigInt(1);
             setSeqNum(sequence);
@@ -237,15 +247,6 @@ const BuildTransaction: FC = () => {
       return updatedErrors;
     });
   };
-
-  useEffect(() => {
-    const loadJSONWithBigInt = async () => {
-      const { JSONParse, JSONStringify } = await import("json-with-bigint");
-      setJsonWithBigInt({ JSONParse, JSONStringify });
-    };
-
-    loadJSONWithBigInt();
-  }, []);
 
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -407,29 +408,6 @@ const BuildTransaction: FC = () => {
       }
     };
 
-    // const updateErrorOperationsSourceAccount = () => {
-    //   try {
-    //     let isValid = true;
-    //     isValid = fullTransaction.tx?.tx.operations.every((op) => {
-    //       if ("source_account" in op) {
-    //         return (
-    //           op.source_account !== "" &&
-    //           StellarSdk.StrKey.isValidEd25519PublicKey(op.source_account)
-    //         );
-    //       }
-
-    //       return true;
-    //     });
-
-    //     updateErrors(
-    //       !isValid,
-    //       "Valid source account is a required field in every operation"
-    //     );
-    //   } catch (error) {
-    //     console.error("Error in useSetTxBuildErrors:", error);
-    //   }
-    // };
-
     const updateAllErrors = () => {
       updateErrorSourceAccount();
       updateErrorSequence();
@@ -437,7 +415,6 @@ const BuildTransaction: FC = () => {
       updateErrorOperations();
       updateErrorOperationSelectType();
       updateErrorOperationManageDataName();
-      // updateErrorOperationsSourceAccount();
     };
 
     updateAllErrors();
@@ -457,7 +434,6 @@ const BuildTransaction: FC = () => {
   }, [tx]);
 
   const clearParams = () => {
-    // Create a deep copy of tx
     const newTx = {
       ...tx,
       tx: {
@@ -469,7 +445,6 @@ const BuildTransaction: FC = () => {
       },
     };
 
-    // Modify the properties on the new object
     newTx.tx.source_account = "";
     newTx.tx.seq_num = "";
     newTx.tx.fee = 100;
@@ -481,7 +456,6 @@ const BuildTransaction: FC = () => {
     newTx.tx.cond.time.min_time = 0;
     newTx.tx.cond.time.max_time = 0;
 
-    // Update the state with the new object
     setTransaction(newTx);
   };
 
@@ -550,7 +524,7 @@ const BuildTransaction: FC = () => {
             </div>
             <hr className="flare" />
             <OperationsList />
-            {buildErrors.length > 0 ? (
+            {(buildErrors.length > 0) ? (
               <TransactionErrors errors={buildErrors} />
             ) : (
               <ShowXdr

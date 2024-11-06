@@ -50,8 +50,9 @@ const SourceAccountInput: FC = () => {
   }, [tx.tx.source_account, accounts, server]);
 
   useEffect(() => {
-    const params = new URLSearchParams(tx.tx.source_account.toString());
-    params.set("sourceAccount", tx.tx.source_account.toString());
+    // Сохранение существующих параметров URL
+    const params = new URLSearchParams(window.location.search);
+    params.set("sourceAccount", tx.tx.source_account);
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [tx.tx.source_account]);

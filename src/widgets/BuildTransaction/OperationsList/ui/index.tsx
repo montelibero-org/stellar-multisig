@@ -10,7 +10,7 @@ import { IsShowedBlock } from "@/shared/widgets";
 
 const OperationsList: FC = () => {
   const { tx, setOperations } = useStore(useShallow((state) => state));
-
+  const [showTooltip, setShowTooltip] = useState(false);
   const [isShowOperation, setIsShowOperation] = useState<
     { isShow: boolean; index: number }[]
   >([
@@ -143,7 +143,13 @@ const OperationsList: FC = () => {
     }));
     setIsShowOperation(updatedIsShow);
   };
-
+  const handleCopy = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setShowTooltip(true);
+    setTimeout(() => {
+      setShowTooltip(false);
+    }, 2000); // Подсказка исчезнет через 2 секунды
+  };
   const handleClearOperations = () => {
     setOperations([]);
     setOperationIds([]);
@@ -260,13 +266,29 @@ const OperationsList: FC = () => {
           >
             <i className="fa fa-plus" aria-hidden="true"></i> Add operation
           </button>
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
-            }}
-          >
-            <i className="fa-solid fa-share"></i>
-          </button>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+      <button onClick={handleCopy}>
+        <i className="fa-solid fa-arrow-up-from-bracket"></i>
+      </button>
+      {showTooltip && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          marginTop: '5px',
+          backgroundColor: '#333',
+          color: '#fff',
+          padding: '5px 10px',
+          borderRadius: '4px',
+          whiteSpace: 'nowrap',
+          fontSize: '12px',
+          zIndex: 1
+        }}>
+          Copied shareable URL
+        </div>
+      )}
+    </div>
         </div>
         <button onClick={() => handleClearOperations()}>
           <i className="fa fa-trash" aria-hidden="true"></i> Clear operations

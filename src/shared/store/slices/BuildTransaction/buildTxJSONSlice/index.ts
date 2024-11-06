@@ -23,7 +23,6 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
       ext: "v0",
     },
     signatures: [] as ISignature[],
-    
   };
 
   return {
@@ -47,7 +46,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
       setSeqNum: (seq_num: string | number | bigint) =>
         set((state) => {
           
-          state.tx.tx.seq_num = BigInt(seq_num).toString(); 
+          state.tx.tx.seq_num = BigInt(seq_num)
           state.fullTransaction = { tx: state.tx }; 
         }),
     setTimeCondition: (min_time: number, max_time: number) =>
@@ -57,19 +56,18 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
         state.fullTransaction = { tx: state.tx };
       }),
 
-      selectedMemoType: "None", 
-      setSelectedMemoType: (type: string) =>
-        set((state) => {
-          state.selectedMemoType = type;
-          
-          if (type === "None") {
-            state.tx.tx.memo = "none";
-          } else {
-            
-            state.tx.tx.memo = { [type.toLowerCase()]: "" };
-          }
-          state.fullTransaction = { tx: state.tx };
-        }),
+    selectedMemoType: "None",
+    setSelectedMemoType: (type: string) =>
+      set((state) => {
+        state.selectedMemoType = type;
+
+        if (type === "None") {
+          state.tx.tx.memo = "none";
+        } else {
+          state.tx.tx.memo = { [type.toLowerCase()]: "" };
+        }
+        state.fullTransaction = { tx: state.tx };
+      }),
     setMemo: (
       memo:
         | "none"
