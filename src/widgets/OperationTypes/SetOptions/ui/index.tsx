@@ -38,7 +38,7 @@ const SetOptions: FC<Props> = ({ id }) => {
   } = useStore(useShallow((state) => state));
 
   const defaultOperation: IOperation = {
-    source_account: "",
+    source_account: null,
     body: {
       set_options: {
         inflation_dest: "",

@@ -30,6 +30,14 @@ export function useHandleSourceAccountChange() {
       },
       id
     });
+    if (fullTransaction.tx.tx.operations[id].source_account === "") {
+      updateOperations({
+        updatedOperation: {
+          source_account: null,
+        },
+        id
+      });
+    }
   };
 
   return handleSourceAccountChange;

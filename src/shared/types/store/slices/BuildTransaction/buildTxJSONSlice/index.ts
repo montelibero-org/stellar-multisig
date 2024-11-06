@@ -76,8 +76,7 @@ export interface IOperation {
       inflation_dest?: string | null;
       clear_flags?: AuthFlag | null | number;
       set_flags?: AuthFlag | null | number;
-      master_weight?: number | string | null;
-      base_free?: number | null;
+      master_weight?: number | null;
       low_threshold?: number | null;
       med_threshold?: number | null;
       high_threshold?: number | null;

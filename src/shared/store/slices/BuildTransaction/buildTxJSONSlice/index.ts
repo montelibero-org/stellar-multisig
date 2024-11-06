@@ -45,9 +45,9 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
       }),
       setSeqNum: (seq_num: string | number | bigint) =>
         set((state) => {
-          
+
           state.tx.tx.seq_num = BigInt(seq_num)
-          state.fullTransaction = { tx: state.tx }; 
+          state.fullTransaction = { tx: state.tx };
         }),
     setTimeCondition: (min_time: number, max_time: number) =>
       set((state) => {
@@ -86,7 +86,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
       set((state) => {
         const body: IOperation["body"] = {};
         (state.tx.tx.operations as IOperation[]).push({
-          source_account: "",
+          source_account: null,
           body,
         } as IOperation);
         state.fullTransaction = { tx: state.tx };

@@ -62,7 +62,7 @@ const BuildTransaction: FC = () => {
   const searchParams = useSearchParams();
   const sourceAccountParam = searchParams.get("sourceAccount");
 
-  const baseFeeParam = searchParams.get("baseFee");
+  // const baseFeeParam = searchParams.get("baseFee");
   const firebaseIDParam = searchParams.get("firebaseID") || "";
   const operationTypeParam = searchParams.get("typeOperation");
   const processedKeyParam = searchParams.get("processedKey");
@@ -183,7 +183,7 @@ const BuildTransaction: FC = () => {
         operationTypeParam === "set_options"
           ? [
               {
-                source_account: "",
+                source_account: null,
                 body: {
                   set_options: {
                     low_threshold: operationThresholdsParams
@@ -202,8 +202,7 @@ const BuildTransaction: FC = () => {
                       masterWeightParam !== undefined &&
                       masterWeightParam !== "undefined"
                         ? Number(masterWeightParam)
-                        : "",
-                    base_free: Number(baseFeeParam),
+                        : null,
                     signer: {
                       key: sourceAccountForSetOptionsParam
                         ? sourceAccountForSetOptionsParam
@@ -433,6 +432,10 @@ const BuildTransaction: FC = () => {
     console.log(tx);
   }, [tx]);
 
+  useEffect(() => {
+    console.log("XDR:",currentXDR);
+  }, [currentXDR]);
+
   const clearParams = () => {
     const newTx = {
       ...tx,
@@ -524,12 +527,12 @@ const BuildTransaction: FC = () => {
             </div>
             <hr className="flare" />
             <OperationsList />
-            {(buildErrors.length > 0) ? (
+            {buildErrors.length > 0 || currentXDR === "" ? (
               <TransactionErrors errors={buildErrors} />
             ) : (
               <ShowXdr
                 title="Here is your XDR transaction:"
-                xdr={currentXDR}
+                xdr={currentXDR !== "" ? currentXDR : null}
                 showHash
                 showNetPassphrase
                 buttons={
