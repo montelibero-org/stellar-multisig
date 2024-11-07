@@ -9,31 +9,55 @@ const BaseFeeInput: FC = () => {
   const { tx, setFee } = useStore(useShallow((state) => state));
   const searchParams = useSearchParams();
 
-  const initialBaseFee = Number(searchParams.get("baseFee")) || tx.tx.fee || "";
-  const [feeState, setfeeState] = useState(initialBaseFee);
+  const initialBaseFee = (() => {
+    const feeFromParams = parseFloat(searchParams.get("baseFee") || "");
+    if (!isNaN(feeFromParams) && isFinite(feeFromParams) && feeFromParams > 0) {
+      return feeFromParams;
+    } else if (tx.tx.fee) {
+      return tx.tx.fee;
+    } else {
+      return 100;
+    }
+  })();
+
+  const [feeState, setfeeState] = useState<number>(initialBaseFee);
 
   useEffect(() => {
-    if (typeof feeState === "number" && feeState) {
+    if (!isNaN(feeState) && isFinite(feeState)) {
       setFee(feeState);
     }
   }, [feeState]);
+
   useEffect(() => {
-    setfeeState(tx.tx.fee!);
+    if (feeState !== tx.tx.fee) {
+      setfeeState(tx.tx.fee!);
+    }
   }, [tx.tx.fee]);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("baseFee", feeState.toString());
-
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [feeState]);
+
   return (
     <div>
       <h4>Base Fee</h4>
       <input
         placeholder="Amount in stroops"
-        value={feeState === 0 ? "" : feeState}
-        onChange={(e) => setfeeState(Number(e.target.value))}
+        value={feeState || ""}
+        onChange={(e) => {
+          if (e && e.target) {
+            const inputValue = e.target.value;
+            const parsedValue = parseFloat(inputValue);
+            if (!isNaN(parsedValue) && isFinite(parsedValue)) {
+              setfeeState(parsedValue);
+            } else {
+              // Optionally handle invalid input
+              setfeeState(0);
+            }
+          }
+        }}
       />
       <p>
         The base inclusion fee is currently set to 100 stroops (0.00001 lumens).

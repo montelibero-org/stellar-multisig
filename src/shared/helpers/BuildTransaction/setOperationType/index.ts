@@ -12,7 +12,7 @@ const setOperationType = (
       ...updatedOperations[index],
       body:
         type === "set_options"
-          ? { set_options: {} }
+          ? { set_options: { signer: null } }
           : type === "manage_data"
           ? { manage_data: { data_name: "", data_value: null } }
           : {},

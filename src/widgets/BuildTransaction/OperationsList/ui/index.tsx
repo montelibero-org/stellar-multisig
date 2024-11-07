@@ -267,7 +267,8 @@ const OperationsList: FC = () => {
             <i className="fa fa-plus" aria-hidden="true"></i> Add operation
           </button>
           <div style={{ position: 'relative', display: 'inline-block' }}>
-      <button onClick={handleCopy}>
+      <button onClick={handleCopy} title="Share">
+            
         <i className="fa-solid fa-arrow-up-from-bracket"></i>
       </button>
       {showTooltip && (

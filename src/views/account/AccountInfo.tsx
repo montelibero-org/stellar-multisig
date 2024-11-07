@@ -417,11 +417,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           ) ? (
                             <>
                               <TransactionIcon
-                                masterWeight={
-                                  information.signers?.find(
-                                    (signer) => signer.key === ID
-                                  )?.weight || 0
-                                }
+                                masterWeight={Number("none")}
                                 memoText={tx.tx.memo.toString()}
                                 selectedMemoType={selectedMemoType}
                                 setSelectedMemoType={setSelectedMemoType}
@@ -518,7 +514,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                             </h4>
                             <dl>
                               <TransactionIcon
-                                masterWeight={1}
+                                masterWeight={Number("none")}
                                 memoText={tx.tx.memo.toString()}
                                 selectedMemoType={selectedMemoType}
                                 setSelectedMemoType={setSelectedMemoType}
@@ -664,7 +660,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                           </i>{" "}
                           {isVisibleTx && (
                             <TransactionIcon
-                              masterWeight={1}
+                              masterWeight={Number("none")}
                               memoText={tx.tx.memo.toString()}
                               selectedMemoType={selectedMemoType}
                               setSelectedMemoType={setSelectedMemoType}
@@ -763,7 +759,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                 </div>
                               </i>{" "}
                               <TransactionIcon
-                                masterWeight={1}
+                                masterWeight={Number("none")}
                                 memoText={tx.tx.memo.toString()}
                                 selectedMemoType={selectedMemoType}
                                 setSelectedMemoType={setSelectedMemoType}
@@ -827,7 +823,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                     return (
                                       <li className="word-break" key={key}>
                                         <TransactionIcon
-                                          masterWeight={1}
+                                          masterWeight={Number("none")}
                                           memoText={tx.tx.memo.toString()}
                                           selectedMemoType={selectedMemoType}
                                           setSelectedMemoType={

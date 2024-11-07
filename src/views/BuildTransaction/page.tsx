@@ -1,14 +1,11 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
-import { MainLayout, ShowXdr, XDRInput, ShowXdrButtons } from "@/widgets";
-import { useStore } from "@/shared/store";
-import { useShallow } from "zustand/react/shallow";
-import __wbg_init, { decode, encode } from "@stellar/stellar-xdr-json-web";
-import { useSearchParams } from "next/navigation";
-import { useXDRDecoding } from "@/features/hooks";
-import { getTransactionByID } from "@/shared/api/firebase";
 import {
+  MainLayout,
+  ShowXdr,
+  XDRInput,
+  ShowXdrButtons,
   SourceAccountInput,
   SequenceNumberInput,
   BaseFeeInput,
@@ -17,10 +14,13 @@ import {
   OperationsList,
   TransactionErrors,
 } from "@/widgets";
-import {
-  FullTransaction,
-  TX,
-} from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
+import { useStore } from "@/shared/store";
+import { useShallow } from "zustand/react/shallow";
+import __wbg_init, { decode, encode } from "@stellar/stellar-xdr-json-web";
+import { useSearchParams } from "next/navigation";
+import { useXDRDecoding } from "@/features/hooks";
+import { getTransactionByID } from "@/shared/api/firebase";
+import { FullTransaction, IOperation, TX } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
 import StellarSdk from "stellar-sdk";
 import { stringToHex } from "@/shared/helpers";
 import axios from "axios";
@@ -52,7 +52,6 @@ const BuildTransaction: FC = () => {
     accounts,
     setOperations,
     setSelectedSetFlags,
-    selectedSetFlags,
     firestore,
     changeFirstSignerType,
     server,
@@ -62,7 +61,6 @@ const BuildTransaction: FC = () => {
   const searchParams = useSearchParams();
   const sourceAccountParam = searchParams.get("sourceAccount");
 
-  // const baseFeeParam = searchParams.get("baseFee");
   const firebaseIDParam = searchParams.get("firebaseID") || "";
   const operationTypeParam = searchParams.get("typeOperation");
   const processedKeyParam = searchParams.get("processedKey");
@@ -70,9 +68,7 @@ const BuildTransaction: FC = () => {
   const operationThresholdsParams = searchParams.get("operationThresholds");
   const weightParam = searchParams.get("weight");
   const masterWeightParam = searchParams.get("masterWeight");
-  const sourceAccountForSetOptionsParam = searchParams.get(
-    "sourceAccountForSetOptions"
-  );
+  const sourceAccountForSetOptionsParam = searchParams.get("sourceAccountForSetOptions");
   const homeDomainParam = searchParams.get("homeDomain");
   const auth_clawback_enabledParam = searchParams.get("auth_clawback_enabled");
   const auth_immutableParam = searchParams.get("auth_immutable");
@@ -84,20 +80,14 @@ const BuildTransaction: FC = () => {
   const [errorMessageXDR, setErrorMessageXDR] = useState<string>("");
 
   const [XDRInputImport, setXDRInputImport] = useState<string>("");
-  const [XDRInputImportBaseResult, setXDRInputImportBaseResult] = useState<TX>(
-    {} as TX
-  );
+  const [XDRInputImportBaseResult, setXDRInputImportBaseResult] = useState<TX>({} as TX);
   const [isImportXDRInput, setIsImportXDRInput] = useState<boolean>(false);
 
   const [firebaseIDParamError, setFirebaseIDParamError] = useState<string>("");
 
-  const [jsonWithBigInt, setJsonWithBigInt] = useState<JSONWithBigInt | null>(
-    null
-  );
+  const [jsonWithBigInt, setJsonWithBigInt] = useState<JSONWithBigInt | null>(null);
 
-  const [currentTab, setCurrentTab] = useState<
-    "Create Transaction" | "Import Transaction"
-  >("Create Transaction");
+  const [currentTab, setCurrentTab] = useState<"Create Transaction" | "Import Transaction">("Create Transaction");
 
   const [scoreOfSetFlags, setScoreOfSetFlags] = useState<number>(0);
 
@@ -113,16 +103,13 @@ const BuildTransaction: FC = () => {
   }, []);
 
   useEffect(() => {
-    const updSeqNumWhenSourceAccountIsSet = async () => {
+    const updateSequenceNumber = async () => {
       if (StellarSdk.StrKey.isValidEd25519PublicKey(tx.tx.source_account)) {
         try {
-          const { data } = await axios.get<Information>(
-            `${server}/accounts/${tx.tx.source_account}`
-          );
-          console.log(123123, data);
+          const { data } = await axios.get<Information>(`${server}/accounts/${tx.tx.source_account}`);
           if (data.sequence !== undefined) {
             const sequence = BigInt(data.sequence) + BigInt(1);
-            setSeqNum(sequence);
+            setSeqNum(sequence.toString());
           } else {
             console.error("Sequence number is undefined.");
           }
@@ -135,40 +122,38 @@ const BuildTransaction: FC = () => {
       }
     };
 
-    updSeqNumWhenSourceAccountIsSet();
-  }, [tx.tx.source_account]);
+    updateSequenceNumber();
+  }, [tx.tx.source_account, server, setSeqNum]);
 
   useEffect(() => {
+    let newScore = 0;
+    const newSelectedSetFlags: number[][] = [[]];
+
     if (auth_requiredParam) {
-      setScoreOfSetFlags((prev) => prev + 1);
-      const newSelectedSetFlags = selectedSetFlags;
+      newScore += 1;
       newSelectedSetFlags[0].push(0);
-      setSelectedSetFlags(newSelectedSetFlags);
     }
     if (auth_revocableParam) {
-      setScoreOfSetFlags((prev) => prev + 2);
-      const newSelectedSetFlags = selectedSetFlags;
+      newScore += 2;
       newSelectedSetFlags[0].push(1);
-      setSelectedSetFlags(newSelectedSetFlags);
     }
     if (auth_immutableParam) {
-      setScoreOfSetFlags((prev) => prev + 4);
-      const newSelectedSetFlags = selectedSetFlags;
+      newScore += 4;
       newSelectedSetFlags[0].push(2);
-      setSelectedSetFlags(newSelectedSetFlags);
     }
     if (auth_clawback_enabledParam) {
-      setScoreOfSetFlags((prev) => prev + 8);
-      const newSelectedSetFlags = selectedSetFlags;
+      newScore += 8;
       newSelectedSetFlags[0].push(3);
-      setSelectedSetFlags(newSelectedSetFlags);
     }
+
+    setScoreOfSetFlags(newScore);
+    setSelectedSetFlags(newSelectedSetFlags);
   }, [
     auth_clawback_enabledParam,
     auth_immutableParam,
     auth_revocableParam,
     auth_requiredParam,
-    selectedSetFlags,
+    setSelectedSetFlags,
   ]);
 
   useEffect(() => {
@@ -200,7 +185,7 @@ const BuildTransaction: FC = () => {
                     master_weight:
                       masterWeightParam !== null &&
                       masterWeightParam !== undefined &&
-                      masterWeightParam !== "undefined"
+                      !isNaN(Number(masterWeightParam))
                         ? Number(masterWeightParam)
                         : null,
                     signer: {
@@ -234,6 +219,11 @@ const BuildTransaction: FC = () => {
     processedValueParam,
     weightParam,
     scoreOfSetFlags,
+    setOperations,
+    sourceAccountForSetOptionsParam,
+    operationThresholdsParams,
+    homeDomainParam,
+    masterWeightParam,
   ]);
 
   const updateErrors = (condition: boolean, errorMessage: string) => {
@@ -254,11 +244,7 @@ const BuildTransaction: FC = () => {
       try {
         await __wbg_init();
         if (firebaseIDParam) {
-          const transaction = await getTransactionByID(
-            firestore,
-            net,
-            firebaseIDParam
-          );
+          const transaction = await getTransactionByID(firestore, net, firebaseIDParam);
           if (!transaction) {
             console.error("Transaction not found from firebase ID");
             setFirebaseIDParamError("Transaction not found from firebase ID");
@@ -288,13 +274,17 @@ const BuildTransaction: FC = () => {
     setTransaction,
     setSourceAccount,
     sourceAccountParam,
-
+    firestore,
     jsonWithBigInt,
   ]);
 
   useEffect(() => {
     const initializeWasm = async () => {
       if (!jsonWithBigInt) return;
+      if (buildErrors.length > 0) {
+        setCurrentXDR("");
+        return;
+      }
 
       await __wbg_init();
       if (!fullTransaction || !fullTransaction.tx) {
@@ -303,29 +293,35 @@ const BuildTransaction: FC = () => {
       }
 
       const seqNum = tx.tx.seq_num;
+      const sourceAccount = tx.tx.source_account;
 
-      if (seqNum !== undefined) {
-        const transactionEnvelope = {
-          tx: {
-            ...fullTransaction.tx,
-            seq_num: BigInt(seqNum),
-          },
-        };
+      if (seqNum && sourceAccount) {
+        try {
+          const transactionEnvelope = {
+            tx: {
+              ...fullTransaction.tx,
+              seq_num: BigInt(seqNum),
+              source_account: sourceAccount,
+            },
+          };
 
-        const xdrEncoded = encode(
-          "TransactionEnvelope",
-          jsonWithBigInt.JSONStringify(transactionEnvelope)
-        );
-        setCurrentXDR(xdrEncoded);
+          const xdrEncoded = encode(
+            "TransactionEnvelope",
+            jsonWithBigInt.JSONStringify(transactionEnvelope)
+          );
+          setCurrentXDR(xdrEncoded);
+        } catch (error) {
+          console.error("Error encoding XDR:", error);
+        }
       } else {
-        console.error("Invalid transaction structure: seq_num is undefined");
+        console.error("Invalid transaction structure: seq_num or source_account is missing");
       }
     };
 
     if (fullTransaction) {
       initializeWasm();
     }
-  }, [fullTransaction, tx, jsonWithBigInt]);
+  }, [fullTransaction, tx, jsonWithBigInt, buildErrors]);
 
   useEffect(() => {
     const updateErrorSourceAccount = () => {
@@ -336,9 +332,7 @@ const BuildTransaction: FC = () => {
         } else {
           updateErrors(false, "Source Account is a required field");
         }
-        const isValid = StellarSdk.StrKey.isValidEd25519PublicKey(
-          tx.tx.source_account
-        );
+        const isValid = StellarSdk.StrKey.isValidEd25519PublicKey(tx.tx.source_account);
         updateErrors(!isValid, "Invalid Source Account");
       } catch (error) {
         console.error("Error in useSetTxBuildErrors:", error);
@@ -402,7 +396,24 @@ const BuildTransaction: FC = () => {
           "Entry Name in Manage Data operation is a required field"
         );
       } catch (error) {
-        // need to bag fix
+        console.error("Error in useSetTxBuildErrors:", error);
+      }
+    };
+
+    const updateErrorOperationSetOptionsSigners = () => {
+      try {
+        let isValid = true;
+        isValid = fullTransaction.tx?.tx.operations.every((op: IOperation) => {
+          if ("set_options" in op.body) {
+            return (
+              op?.body?.set_options?.signer?.weight !== null &&
+              op.body.set_options?.signer?.key !== ""
+            );
+          }
+          return true;
+        });
+        updateErrors(!isValid, "Fill out all required fields");
+      } catch (error) {
         console.error("Error in useSetTxBuildErrors:", error);
       }
     };
@@ -414,6 +425,7 @@ const BuildTransaction: FC = () => {
       updateErrorOperations();
       updateErrorOperationSelectType();
       updateErrorOperationManageDataName();
+      updateErrorOperationSetOptionsSigners();
     };
 
     updateAllErrors();
@@ -427,14 +439,6 @@ const BuildTransaction: FC = () => {
     fullTransaction,
     tx,
   ]);
-
-  useEffect(() => {
-    console.log(tx);
-  }, [tx]);
-
-  useEffect(() => {
-    console.log("XDR:",currentXDR);
-  }, [currentXDR]);
 
   const clearParams = () => {
     const newTx = {
@@ -550,17 +554,15 @@ const BuildTransaction: FC = () => {
             )}
           </>
         ) : (
-          <>
-            <XDRInput
-              XDR={XDRInputImport}
-              setXDR={setXDRInputImport}
-              isImport={isImportXDRInput}
-              setIsImport={setIsImportXDRInput}
-              baseResult={XDRInputImportBaseResult}
-              setBaseResult={setXDRInputImportBaseResult}
-              setCurrentTab={setCurrentTab}
-            />
-          </>
+          <XDRInput
+            XDR={XDRInputImport}
+            setXDR={setXDRInputImport}
+            isImport={isImportXDRInput}
+            setIsImport={setIsImportXDRInput}
+            baseResult={XDRInputImportBaseResult}
+            setBaseResult={setXDRInputImportBaseResult}
+            setCurrentTab={setCurrentTab}
+          />
         )}
       </div>
     </MainLayout>

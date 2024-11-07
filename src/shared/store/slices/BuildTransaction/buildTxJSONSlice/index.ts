@@ -9,7 +9,6 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
   const initialTx: TX = {
     tx: {
       source_account: "",
-
       fee: 100,
       seq_num: "",
       cond: {
@@ -19,7 +18,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
         },
       },
       memo: "none",
-      operations: [{ source_account: null, body: {} }] as IOperation[],
+      operations: [{ source_account: null, body: {} }],
       ext: "v0",
     },
     signatures: [] as ISignature[],
@@ -31,6 +30,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
     selectedSetFlags: [[]],
     signatures: [] as ISignature[],
     signerTypes: [0],
+    selectedMemoType: "None",
     setFullTransaction: (tx: TX) => set({ fullTransaction: { tx } }),
     setTransaction: (tx: TX) => set({ tx }),
     setSourceAccount: (source_account: string) =>
@@ -43,20 +43,17 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
         state.tx.tx.fee = fee;
         state.fullTransaction = { tx: state.tx };
       }),
-      setSeqNum: (seq_num: string | number | bigint) =>
-        set((state) => {
-
-          state.tx.tx.seq_num = BigInt(seq_num)
-          state.fullTransaction = { tx: state.tx };
-        }),
+    setSeqNum: (seq_num: string | number | bigint) =>
+      set((state) => {
+        state.tx.tx.seq_num = BigInt(seq_num)
+        state.fullTransaction = { tx: state.tx };
+      }),
     setTimeCondition: (min_time: number, max_time: number) =>
       set((state) => {
         state.tx.tx.cond.time.min_time = min_time;
         state.tx.tx.cond.time.max_time = max_time;
         state.fullTransaction = { tx: state.tx };
       }),
-
-    selectedMemoType: "None",
     setSelectedMemoType: (type: string) =>
       set((state) => {
         state.selectedMemoType = type;

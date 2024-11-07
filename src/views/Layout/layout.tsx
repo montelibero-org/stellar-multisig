@@ -90,7 +90,7 @@ const PageLayout: FC<Props> = ({ children }) => {
     const fetchLatestCommitHash = async () => {
       try {
         const response = await axios.get(
-          "https://api.github.com/repos/Monobladegg/stellar-multisig-stanging/commits",
+          "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
           {
             headers: {
               Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
