@@ -11,3 +11,4 @@
   - `names` - Names and titles.
 - [`/src/shared/configs/ignored-home-domains.json`](/src/shared/configs/ignored-home-domains.json) - Home domains in accounts that are ignored when loading `stellar.toml` files.
 - [`/src/shared/configs/cache-config.json`](/src/shared/configs/cache-config.json) - Parameters for caching data received from Stellar Network.
+- [`/src/shared/configs/settings.json`](/src/shared/configs/settings.json) - Settings of the application.

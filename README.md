@@ -17,6 +17,7 @@ The repository is a part of the [Montelibero Organization](https://github.com/mo
 - [TypeScript](https://www.typescriptlang.org) - A typed superset of JavaScript that compiles to plain JavaScript.
 - [Eslint](https://eslint.org) - A static and automatic code checker for your JavaScript projects.
 - [Font Awesome](https://fontawesome.com) - The Internet's icon library and toolkit, used by millions of designers, developers, and content creators.
+- [Firebase](https://firebase.google.com) - A backend-as-a-service platform that lets you develop and grow apps faster.
 
 ## Contributing
 

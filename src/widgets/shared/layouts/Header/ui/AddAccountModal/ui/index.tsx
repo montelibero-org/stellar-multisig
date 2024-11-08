@@ -2,11 +2,12 @@
 
 import { FC, useEffect, useState, useRef, FormEvent } from "react";
 import "./index.scss";
-import { useStore } from "@/features/store";
+import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import StellarSdk from "stellar-sdk";
 import { IAccount } from "@/shared/types";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type AccountType = "Personal" | "Corporate";
 
@@ -17,19 +18,23 @@ const AddAccountModal: FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const { setIsOpenAddAccountModal, net, accounts, setAccounts, setIsAuth, theme } =
-    useStore(useShallow((state) => state));
+  const {
+    setIsOpenAddAccountModal,
+    net,
+    accounts,
+    setAccounts,
+    setIsAuth,
+    theme,
+  } = useStore(useShallow((state) => state));
 
   const handleAccountTypeChange = (type: AccountType) => {
     setAccountType(type);
   };
-  
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Проверяем валидность публичного ключа
     if (StellarSdk.StrKey.isValidEd25519PublicKey(accountIdInput)) {
-      // Проверка на наличие аккаунта в текущей сети
       const accountExistsInCurrentNet = accounts
         .filter((account) => account.net === net)
         .map((account) => account.accountID)
@@ -41,12 +46,10 @@ const AddAccountModal: FC = () => {
         return;
       }
 
-      // Убираем статус isCurrent только для аккаунтов в текущей сети
       const updatedAccounts = accounts.map((account) =>
         account.net === net ? { ...account, isCurrent: false } : account
       );
 
-      // Создаем новый аккаунт
       const newAccount: IAccount = {
         id: (accounts.length + 1).toString(),
         accountID: accountIdInput,
@@ -55,18 +58,14 @@ const AddAccountModal: FC = () => {
         isCurrent: true,
       };
 
-      // Обновляем список аккаунтов и добавляем новый
       setAccounts([...updatedAccounts, newAccount]);
 
-      // Очищаем ошибки и закрываем модалку
       setError("");
       setIsOpenAddAccountModal(false);
 
-      // Устанавливаем статус авторизованного пользователя
       setIsAuth(true);
 
       router.push(`/${net}/account?id=${accountIdInput}`);
-
     } else {
       setError("Invalid account ID");
     }
@@ -83,35 +82,73 @@ const AddAccountModal: FC = () => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setIsOpenAddAccountModal]);
 
   return (
-    <div className={theme === "night" ? "add-account-container" : "add-account-container-light"}>
-      <div className={theme === "night" ? "add-account-container-content" : "add-account-container-content-light"} ref={modalRef}>
+    <div
+      className={
+        theme === "night"
+          ? "add-account-container"
+          : "add-account-container-light"
+      }
+    >
+      <div
+        className={
+          theme === "night"
+            ? "add-account-container-content"
+            : "add-account-container-content-light"
+        }
+        ref={modalRef}
+      >
         <form onSubmit={handleSubmit}>
           <span
             onClick={() => setIsOpenAddAccountModal(false)}
-            className={theme === "night" ? "add-account-container-content-close" : "add-account-container-content-close-light"}
+            className={
+              theme === "night"
+                ? "add-account-container-content-close"
+                : "add-account-container-content-close-light"
+            }
             aria-label="Close"
           >
             <i
               className="fa-regular fa-circle-xmark"
-              style={{ fontSize: "2rem", color: theme === "night" ? "#08b5e5" : "#666" }}
+              style={{
+                fontSize: "2rem",
+                color: theme === "night" ? "#08b5e5" : "#666",
+              }}
             />
           </span>
-          <div className={theme === "night" ? "add-account-container-content-title" : "add-account-container-content-title-light"}>
-            {["Personal", "Corporate"].map((type) => (
-              <button
-                key={type}
-                type="button"
-                className={accountType === type ? "button disabled add-account-container-content-button-disabled" : "button"}
-                onClick={() => handleAccountTypeChange(type as AccountType)}
-              >
-                {type}
-              </button>
-            ))}
+          <div
+            className={
+              theme === "night"
+                ? "add-account-container-content-title"
+                : "add-account-container-content-title-light"
+            }
+          >
+            <div className="tabs">
+              <div className="tabs-header">
+                {["Personal", "Corporate"].map((type) => (
+                  <Link
+                    key={type}
+                    onClick={() => handleAccountTypeChange(type as AccountType)}
+                    href="#"
+                    className={
+                      `tabs-item condensed ` +
+                      (accountType === type ? "selected " : "")
+                    }
+                    style={{ marginInline: "10px" }}
+                  >
+                    <span
+                      className="tabs-item-text"
+                      style={{ paddingInline: "4px" }}
+                    >
+                      {type}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
           <div>
             <input

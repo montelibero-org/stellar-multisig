@@ -1,4 +1,5 @@
 {
     "stellarDataCacheDurationMs": 60000,
-    "stellarTomlCacheDurationMs": 600000
+    "stellarTomlCacheDurationMs": 600000,
+    "checkOfCurrentVersionDurationMs": 60000
 }

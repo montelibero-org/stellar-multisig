@@ -1,6 +1,7 @@
 export type Information = {
   home_domain?: string;
   last_modified_time?: string;
+  sequence?: string;
   thresholds?: {
       low_threshold: number;
       med_threshold: number;

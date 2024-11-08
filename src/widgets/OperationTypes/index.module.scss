@@ -1,0 +1,42 @@
+.section {
+  display: flex;
+}
+
+.flags {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+}
+.noMarginButton {
+  margin: 0;
+  margin-right: -1rem;
+  cursor: pointer;
+}
+
+.optional {
+  color: #717577;
+}
+
+.tabs .tabsheader .tabsitem + .tabsitem:before {
+  border-left: 0px solid #0691b7;
+  margin-left: -1px;
+  border: none;
+}
+
+.flagsContainer {
+  margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.disabled {
+  opacity: 0.7;
+}
+
+.sectionTitle {
+  width: 120px;
+}
+
+.selectCurrentSignerType {
+  border: 1px solid #535759;
+}

@@ -1,7 +1,7 @@
 
 import React, { FC } from "react";
-import Layout from "@/pages/Layout/layout"
-import "./globals.css";
+import Layout from "@/views/Layout/layout"
+import "./(default)/globals.css";
 
 interface Props {
   children: React.ReactNode;
