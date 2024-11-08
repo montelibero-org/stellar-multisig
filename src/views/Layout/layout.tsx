@@ -113,7 +113,7 @@ const PageLayout: FC<Props> = ({ children }) => {
         setLastFetchedHash(latestHash);
 
       } catch (error) {
-        console.error("Error fetching commit hash:", error);
+        console.warn("Error fetching commit hash:", error);
       }
     };
 

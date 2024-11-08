@@ -32,7 +32,8 @@ async function getAllTransactions(
   net: "public" | "testnet"
 ): Promise<TransactionData[]> {
   if (!firestore) {
-    throw new Error("Firestore not initialized");
+    console.warn("Firestore not initialized");
+    return [];
   }
 
   let collectionName: string;
