@@ -30,36 +30,41 @@ In case you need to update dependencies:
 npm update
 ```
 
-## Configure .env.local
+## Website
 
-- Copy file .env.dist to .env.
-- Set correct values in .env file for your environment.
+### For local environment
 
-## Configure .env.local in github repository
+- Copy file `.env.dist` to `.env`.
+- Set correct values in `.env` file for your environment.
 
-For adding a new repository secret:
+### For github repository
 
-1. Go to needed repository.
-2. Click `Settings` in the top right corner of the repository.
-3. Next, go to the tab `Secrets and variables` > `Actions`.
-4. Add a new repository secret called `NEXT_PUBLIC_`... with the value you need.
+#### For adding a new repository secret
 
-For adding a github token:
+1. Go to your GitHub repository.
+2. Go to "Settings > Secrets and variables > Actions > Secrets > Repository secrets".
+3. Add a new repository secret called `NEXT_PUBLIC_...` with the value you need.
 
-1. Click `Settings` in the tabs of your github profile
-2. In the bottom left corner of the Settings tabs, click `Developer Settings`.
-3. In the bottom left corner of the Developer Settings tabs, click `Personal access tokens` > `Tokens (classic)`.
-4. Click `Generate new token` > `Generate new token (classic)`.
-5. Enter your password.
-6. Enter note, select the `repo` scope and in `Expiration` select `No expiration`.
-7. Click `Generate token` at the bottom.
-8. Copy and paste the generated token into the repository secrets.
+#### For adding GitHub token (optional, checks for application version updates are used)
 
-For adding firebase settings
+1. Go to GitHub user menu under your avatar.
+1. Go to "Settings > Developer Settings > Personal access tokens > Tokens (classic)".
+4. Click "Generate new token > Generate new token (classic)".
+5. In `Expiration` select `No expiration`.
+6. Select the `repo` scope.
+7. Generate token.
+8. Copy and paste the generated token into the repository secret using name `NEXT_PUBLIC_GITHUB_TOKEN`.
 
-1. Create a project in `https://console.firebase.google.com/u/0/`.
-2. Name the project.
-3. Disable google analytics.
-4. Wait for the project to be created.
-5. Click the `Web` icon for the registration application.
-6. Copy and paste the generated data from firebase config into the secrets repository.
+#### For adding Firebase settings (optional, used for online storage of transactions and signatures)
+
+1. Go to `https://console.firebase.google.com`.
+2. Create new project.
+3. Disable Google Analytics.
+4. Create `Web` app in your project.
+5. Copy and paste the generated data from firebase config into repository secrets using names:
+  - "apiKey > NEXT_PUBLIC_FIREBASE_API_KEY"
+  - "authDomain > NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"
+  - "projectId > NEXT_PUBLIC_FIREBASE_PROJECT_ID"
+  - "storageBucket > NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"
+  - "messagingSenderId > NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"
+  - "appId > NEXT_PUBLIC_FIREBASE_APP_ID"

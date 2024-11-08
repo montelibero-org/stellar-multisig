@@ -41,11 +41,19 @@ When contributing to this repository, please first discuss the change you wish t
 
 ## Cloud AI Code Helpers
 
+- https://codetoflow.com
 - https://chatgpt.com
 - https://gemini.google.com
 - https://claude.ai
 - https://chat.reka.ai
-- https://www.perplexity.ai
+- https://perplexity.ai
+- https://devv.ai
+- https://phind.com
+- https://replit.com
+- https://venice.ai
+- https://x.ai/grok
+- https://gru.ai
+- https://all-hands.dev
 
 ## Style Guides
 
@@ -70,6 +78,7 @@ Recommended IDE:
   - [VS Code](https://code.visualstudio.com)
     - [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
   - [Cursor](https://cursor.sh)
+  - [Zed](https://zed.dev/ai)
   - [Project IDX](https://idx.google.com)
   - [PhpStorm](https://www.jetbrains.com/phpstorm/)
   - [Eclipse](https://www.eclipse.org)
