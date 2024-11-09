@@ -45,7 +45,7 @@ export const buildTxJSONSlice: ImmerStateCreator<IBuildTxJSONSlice> = (set) => {
       }),
     setSeqNum: (seq_num: string | number | bigint) =>
       set((state) => {
-        state.tx.tx.seq_num = BigInt(seq_num).toString();
+        state.tx.tx.seq_num = BigInt(seq_num)
         state.fullTransaction = { tx: state.tx };
       }),
     setTimeCondition: (min_time: number, max_time: number) =>
