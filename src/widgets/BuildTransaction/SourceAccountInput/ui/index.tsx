@@ -60,7 +60,7 @@ const SourceAccountInput: FC = () => {
     <div>
       <div className="flex items-center ">
         <h4>Source Account</h4>
-        <h5 className="ml-4">(optional)</h5>
+        
       </div>
       <input
         placeholder="Example: GCEXAMPLE..."
