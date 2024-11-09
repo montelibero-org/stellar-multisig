@@ -57,6 +57,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
     setInformation,
     information,
     firestore,
+    firebaseApp,
   } = useStore(useShallow((state) => state));
   const [secondInformation, setSecondInformation] = useState<Information>();
   const [seqNumsIsStales, setSeqNumsIsStales] = useState<ISeqNumIsStale[]>([]);
@@ -83,13 +84,20 @@ const AccountInfo: FC<Props> = ({ ID }) => {
 
   useEffect(() => {
     if (
-      information?.signers &&
-      information.signers.length > 0 &&
-      (decodedTransactions === null || decodedTransactions.length > 0)
+      (information?.signers &&
+        information.signers.length > 0 &&
+        (decodedTransactions === null ||
+          (decodedTransactions.length > 0 && firestore && firebaseApp))) ||
+      (Array.isArray(decodedTransactions) &&
+        decodedTransactions.length === 0 &&
+        !firestore &&
+        !firebaseApp)
     ) {
       setIsLoading(false);
+    } else {
+      setIsLoading(true);
     }
-  }, [information, decodedTransactions]);
+  }, [information, decodedTransactions, firestore, firebaseApp]);
 
   useEffect(() => {
     const newCollapsesBlocks = { ...collapsesBlocks };
@@ -169,10 +177,6 @@ const AccountInfo: FC<Props> = ({ ID }) => {
       setIsVisibleTx(checkSigner(accounts, information.signers));
     }
   }, [accounts, information.signers]);
-
-  useEffect(() => {
-    console.log(information.signers);
-  }, [information.signers]);
 
   useEffect(() => {
     setIsVisibleTx(false);
@@ -267,31 +271,23 @@ const AccountInfo: FC<Props> = ({ ID }) => {
 
   useEffect(() => {
     const fetchTransactions = async () => {
-      try {
-        const transactions = await getAllTransactions(firestore, net);
-        setTransactionsFromFirebase(transactions);
+      const transactions = await getAllTransactions(firestore, net);
+      setTransactionsFromFirebase(transactions);
 
-        const decodedList: DecodedTransactions = [];
+      const decodedList: DecodedTransactions = [];
 
-        transactions.forEach(({ xdr }, index) => {
-          try {
-            const transaction = TransactionBuilder.fromXDR(
-              xdr,
-              network
-            ) as Transaction;
+      transactions.forEach(({ xdr }, index) => {
+        const transaction = TransactionBuilder.fromXDR(
+          xdr,
+          network
+        ) as Transaction;
 
-            if (transaction.source === ID) {
-              decodedList.push({ index, transaction });
-            }
-          } catch (error) {
-            console.error("Ошибка при декодировании транзакции:", error);
-          }
-        });
+        if (transaction.source === ID) {
+          decodedList.push({ index, transaction });
+        }
+      });
 
-        setDecodedTransactions(decodedList.length > 0 ? decodedList : null);
-      } catch (error) {
-        console.error("Ошибка при получении транзакций:", error);
-      }
+      setDecodedTransactions(decodedList.length > 0 ? decodedList : null);
     };
 
     if (net && ID) {
@@ -332,12 +328,6 @@ const AccountInfo: FC<Props> = ({ ID }) => {
     }
     return [];
   }, [information?.signers]);
-
-  useEffect(() => {
-    console.log("collapsesBlocks.transactions", collapsesBlocks.transactions);
-    console.log("isVisibleTx", isVisibleTx);
-    console.log("decodedTransactions", decodedTransactions);
-  }, [decodedTransactions, isVisibleTx, collapsesBlocks.transactions]);
 
   return (
     <MainLayout>

@@ -19,20 +19,12 @@ const processKeys = (
   let processedValue: string = value;
 
   // Convert regular expression strings to RegExp objects with boundaries and case-insensitive flag
-  const regexPatterns: { [type: string]: RegExp[] } = Object.entries(
+  Object.entries(
     dataKeys
   ).reduce((acc, [type, patterns]) => {
     acc[type] = patterns.map((pattern) => new RegExp(`^${pattern}$`, "i"));
     return acc;
   }, {} as { [type: string]: RegExp[] });
-
-  const isValidKey = Object.values(regexPatterns).some((patterns) =>
-    patterns.some((pattern) => pattern.test(key))
-  );
-
-  if (!isValidKey) {
-    console.log("")
-  }
 
   // Decode base64 value
   const decodedValue = decodeBase64(value);
