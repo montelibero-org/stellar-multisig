@@ -13,6 +13,12 @@ import Modals from "@/widgets/Layout/Modals";
 type Props = {
   children: React.ReactNode;
 };
+const allowedDomains = [{ domain: "stellar-multisig.montelibero.org" }];
+
+const isDomainAllowed = () => {
+  const currentDomain = window.location.hostname;
+  return allowedDomains.some((entry) => entry.domain === currentDomain);
+};
 
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
@@ -88,22 +94,13 @@ const PageLayout: FC<Props> = ({ children }) => {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     const fetchLatestCommitHash = async () => {
-      try {
+      if (!isDomainAllowed()) {
+        console.error("Unauthorized domain. Skipping commit hash fetch.");
+        return;
+      }
 
-        const response = await axios.get('/api/settings'); 
-    
-        const allowedDomains = response.data; 
-        const currentDomain = window.location.hostname;
-    
- 
-        const domainConfig = allowedDomains.find((domainObj: { domain: string }) => domainObj.domain === currentDomain);
-    
-        if (!domainConfig) {
-          throw new Error("Доступ к репозиторию ограничен на этом домене");
-        }
-    
-   
-        const repoResponse = await axios.get(
+      try {
+        const response = await axios.get(
           "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
           {
             headers: {
@@ -111,7 +108,7 @@ const PageLayout: FC<Props> = ({ children }) => {
             },
           }
         );
-        const latestHash = repoResponse.data[0].sha.substring(0, 7);
+        const latestHash = response.data[0].sha.substring(0, 7);
         setCommitHash(latestHash);
 
         if (lastFetchedHash && latestHash !== lastFetchedHash) {
@@ -125,9 +122,8 @@ const PageLayout: FC<Props> = ({ children }) => {
           }, 60000);
         }
         setLastFetchedHash(latestHash);
-
       } catch (error) {
-        console.error("Error fetching commit hash:", error);
+        console.warn("Error fetching commit hash:", error);
       }
     };
 

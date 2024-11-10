@@ -126,7 +126,7 @@ const ManageData: FC<Props> = ({ id }) => {
             StellarSdk.StrKey.isValidEd25519PublicKey(value) || value === ""
           }
           errorMessage="Public key is invalid."
-          isOptional={true }
+          isOptional={true}
         />
       </div>
     </>
