@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import StellarSdk from "stellar-sdk";
@@ -12,7 +12,7 @@ const SourceAccountInput: FC = () => {
   const { tx, setSourceAccount, accounts, server } = useStore(
     useShallow((state) => state)
   );
-  const [error, setError] = useState<string>("");
+
 
   useEffect(() => {
     const validateSourceAccount = async () => {
@@ -21,7 +21,7 @@ const SourceAccountInput: FC = () => {
         StellarSdk.StrKey.isValidEd25519PublicKey(sourceAccountKey);
 
       if (!isValidKey) {
-        setError("Invalid source account");
+       
         return;
       }
 
@@ -36,13 +36,13 @@ const SourceAccountInput: FC = () => {
 
         if (Array.isArray(eligibleSigners) && eligibleSigners.length > 0) {
           const validSignerExists = checkSigner(accounts, eligibleSigners);
-          setError(validSignerExists ? "" : "Not enough rights");
+          
         } else {
-          setError("No eligible signers found");
+         
         }
       } catch (fetchError) {
         console.error("Error fetching signers:", fetchError);
-        setError("Failed to fetch signer information");
+        
       }
     };
 
