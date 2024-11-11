@@ -12,3 +12,5 @@ const RootLayout: FC<Props> = ({ children }) => {
 };
 
 export default RootLayout;
+
+// delete it
