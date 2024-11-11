@@ -7,8 +7,11 @@ export interface FirebaseAppState {
 }
 
 export interface FirebaseAppActions {
-  initializeFirebase: (config: FirebaseOptions) => FirebaseApp;
-  setFirestore: (firestore: Firestore) => void;
+  initializeFirebase: (
+    config: FirebaseOptions,
+    appName?: string
+  ) => FirebaseApp | undefined;
+  setFirestore: (firestore: Firestore | undefined) => void;
 }
 
 interface IFirebaseSettingsSlice extends FirebaseAppState, FirebaseAppActions {}

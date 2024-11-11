@@ -31,7 +31,6 @@ const FirebaseSettingsModal: FC = () => {
     storageBucket: "",
     messagingSenderId: "",
     appId: "",
-    measurementId: "",
   });
 
   const changeFormValue = (key: keyof FirebaseOptions, value: string) => {
@@ -58,8 +57,6 @@ const FirebaseSettingsModal: FC = () => {
       messagingSenderId:
         window.localStorage.getItem("Firebase-messagingSenderId") ?? "",
       appId: window.localStorage.getItem("Firebase-appId") ?? "",
-      measurementId:
-        window.localStorage.getItem("Firebase-measurementId") ?? "",
     });
     setCurrentFirebase(
       (window.localStorage.getItem(
@@ -79,8 +76,6 @@ const FirebaseSettingsModal: FC = () => {
         messagingSenderId:
           window.localStorage.getItem("Firebase-messagingSenderId") ?? "",
         appId: window.localStorage.getItem("Firebase-appId") ?? "",
-        measurementId:
-          window.localStorage.getItem("Firebase-measurementId") ?? "",
       });
     } else {
       initializeFirebase({
@@ -90,7 +85,6 @@ const FirebaseSettingsModal: FC = () => {
         storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
         messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
         appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-        measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
       });
 
       console.log(firebaseApp);
