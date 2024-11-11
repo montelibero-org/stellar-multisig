@@ -436,7 +436,7 @@ const SetOptions: FC<Props> = ({ id }) => {
                     value === ""
                   }
                   errorMessage={
-                    currentSignerType === signerOptions[3]
+                     currentSignerType === signerOptions[3]
                       ? "Accepts a 32-byte hash in hexadecimal format (64 characters)."
                       : "Public key is invalid."
                   }
