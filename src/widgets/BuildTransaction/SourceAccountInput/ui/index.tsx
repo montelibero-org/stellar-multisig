@@ -13,7 +13,6 @@ const SourceAccountInput: FC = () => {
     useShallow((state) => state)
   );
 
-
   useEffect(() => {
     const validateSourceAccount = async () => {
       const sourceAccountKey = tx.tx.source_account;
@@ -21,7 +20,7 @@ const SourceAccountInput: FC = () => {
         StellarSdk.StrKey.isValidEd25519PublicKey(sourceAccountKey);
 
       if (!isValidKey) {
-       
+        console.warn("Invalid source account key");
         return;
       }
 
@@ -35,14 +34,14 @@ const SourceAccountInput: FC = () => {
         const eligibleSigners = signers?.filter((signer) => signer.weight >= 1);
 
         if (Array.isArray(eligibleSigners) && eligibleSigners.length > 0) {
-          const validSignerExists = checkSigner(accounts, eligibleSigners);
-          
+          console.log("Eligible signers found:", eligibleSigners);
+          // Additional logic for handling eligible signers can go here
         } else {
-         
+          console.warn("No eligible signers found");
+          // Handle case when no eligible signers are found
         }
       } catch (fetchError) {
         console.error("Error fetching signers:", fetchError);
-        
       }
     };
 
@@ -50,24 +49,22 @@ const SourceAccountInput: FC = () => {
   }, [tx.tx.source_account, accounts, server]);
 
   useEffect(() => {
-    // Сохранение существующих параметров URL
     const params = new URLSearchParams(window.location.search);
     params.set("sourceAccount", tx.tx.source_account);
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [tx.tx.source_account]);
+
   return (
     <div>
       <div className="flex items-center ">
         <h4>Source Account</h4>
-        
       </div>
       <input
         placeholder="Example: GCEXAMPLE..."
         value={tx.tx.source_account}
         onChange={(e) => setSourceAccount(e.target.value)}
       />
-      
     </div>
   );
 };
