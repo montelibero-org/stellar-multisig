@@ -13,6 +13,12 @@ import Modals from "@/widgets/Layout/Modals";
 type Props = {
   children: React.ReactNode;
 };
+const allowedDomains = [{ domain: "stellar-multisig.montelibero.org" }];
+
+const isDomainAllowed = () => {
+  const currentDomain = window.location.hostname;
+  return allowedDomains.some((entry) => entry.domain === currentDomain);
+};
 
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
@@ -88,6 +94,11 @@ const PageLayout: FC<Props> = ({ children }) => {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     const fetchLatestCommitHash = async () => {
+      if (!isDomainAllowed()) {
+        console.error("Unauthorized domain. Skipping commit hash fetch.");
+        return;
+      }
+
       try {
         const response = await axios.get(
           "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
@@ -111,7 +122,6 @@ const PageLayout: FC<Props> = ({ children }) => {
           }, 60000);
         }
         setLastFetchedHash(latestHash);
-
       } catch (error) {
         console.warn("Error fetching commit hash:", error);
       }
