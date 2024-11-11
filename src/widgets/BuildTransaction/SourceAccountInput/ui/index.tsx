@@ -67,7 +67,7 @@ const SourceAccountInput: FC = () => {
         value={tx.tx.source_account}
         onChange={(e) => setSourceAccount(e.target.value)}
       />
-      {error && <p className="error">{error}</p>}
+      
     </div>
   );
 };
