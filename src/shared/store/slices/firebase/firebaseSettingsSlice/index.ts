@@ -30,16 +30,27 @@ export const firebaseSettingsSlice: StateCreator<
       }
     }
 
-    const newFirebaseApp = initializeApp(config, name);
-    set({ firebaseApp: newFirebaseApp });
+    if (
+      config.apiKey &&
+      config.appId &&
+      config.messagingSenderId &&
+      config.storageBucket &&
+      config.projectId &&
+      config.authDomain
+    ) {
+      const newFirebaseApp = initializeApp(config, name);
+      set({ firebaseApp: newFirebaseApp });
 
-    const newFirestore = getFirestore(newFirebaseApp);
-    set({ firestore: newFirestore });
+      if (newFirebaseApp) {
+        const newFirestore = getFirestore(newFirebaseApp);
+        set({ firestore: newFirestore });
+        return newFirebaseApp;
+      }
+    }
 
-    return newFirebaseApp;
   };
 
-  const setFirestore = (newFirestore: Firestore) => {
+  const setFirestore = (newFirestore: Firestore | undefined) => {
     set({ firestore: newFirestore });
   };
 

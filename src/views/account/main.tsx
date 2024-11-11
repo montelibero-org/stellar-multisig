@@ -10,7 +10,7 @@ const Account: FC = () => {
   const [isValidId, setIsValidId] = useState<boolean | null>(null);
   const params = useSearchParams();
   const id: string | undefined | null = params?.get("id");
- 
+
   useEffect(() => {
     if (id) setIsValidId(StellarSdk.StrKey.isValidEd25519PublicKey(id));
   }, [id]);

@@ -68,3 +68,6 @@ npm update
   - "storageBucket > NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"
   - "messagingSenderId > NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"
   - "appId > NEXT_PUBLIC_FIREBASE_APP_ID"
+6. Create `Firestore Database` in your app.
+  - Change Rules:
+    - Rewrite the string `allow read, write: if false;` to `allow read, write;`.
