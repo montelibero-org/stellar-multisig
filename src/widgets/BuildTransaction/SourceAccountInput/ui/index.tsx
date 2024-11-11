@@ -4,7 +4,7 @@ import { FC, useEffect } from "react";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import StellarSdk from "stellar-sdk";
-import { checkSigner } from "@/shared/helpers";
+
 import axios from "axios";
 import { Information } from "@/shared/types";
 
