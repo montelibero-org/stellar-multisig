@@ -46,8 +46,9 @@ export const firebaseSettingsSlice: StateCreator<
         set({ firestore: newFirestore });
         return newFirebaseApp;
       }
+    } else {
+      console.warn("Firebase config is empty. Firebase is not in use. ");
     }
-
   };
 
   const setFirestore = (newFirestore: Firestore | undefined) => {
