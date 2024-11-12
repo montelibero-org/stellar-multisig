@@ -1,5 +1,5 @@
 "use client";
-import s from "@/widgets/OperationTypes/index.module.scss";
+
 import { FC, useEffect, useState, useRef, FormEvent } from "react";
 import "./index.scss";
 import { useStore } from "@/shared/store";
