@@ -58,6 +58,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
     information,
     firestore,
     firebaseApp,
+    currentAccount
   } = useStore(useShallow((state) => state));
   const [secondInformation, setSecondInformation] = useState<Information>();
   const [seqNumsIsStales, setSeqNumsIsStales] = useState<ISeqNumIsStale[]>([]);
@@ -173,14 +174,20 @@ const AccountInfo: FC<Props> = ({ ID }) => {
   }, [net, ID]);
 
   useEffect(() => {
+    setIsVisibleTx(false);
+  }, [ID]);
+
+  useEffect(() => {
     if (Array.isArray(information?.signers) && information.signers.length > 0) {
       setIsVisibleTx(checkSigner(accounts, information.signers));
     }
-  }, [accounts, information.signers]);
 
-  useEffect(() => {
-    setIsVisibleTx(false);
-  }, [ID, accounts]);
+    information?.signers?.map((item) => {
+      if (item.key === currentAccount?.accountID && item.weight >= 1) {
+        setIsVisibleTx(true);
+      }
+    })
+  }, [accounts, information.signers, currentAccount, ID]);
 
   useEffect(() => {
     const handler = async () => {
