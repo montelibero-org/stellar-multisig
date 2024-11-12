@@ -95,7 +95,14 @@ const PageLayout: FC<Props> = ({ children }) => {
 
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
-        console.error("Unauthorized domain. Skipping commit hash fetch.");
+        console.warn("Unauthorized domain. Skipping commit hash fetch.");
+        return;
+      }
+
+      if (!process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
+        console.warn(
+          "You have not set the NEXT_PUBLIC_GITHUB_TOKEN environment variable. Skipping commit hash fetch."
+        );
         return;
       }
 
@@ -123,7 +130,7 @@ const PageLayout: FC<Props> = ({ children }) => {
         }
         setLastFetchedHash(latestHash);
       } catch (error) {
-        console.warn("Error fetching commit hash:", error);
+        console.warn("Error fetching commit hash (maybe, your token is wrong):", error);
       }
     };
 
