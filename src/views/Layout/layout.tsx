@@ -5,7 +5,6 @@ import { useStore } from "@/shared/store";
 import { Footer, Header } from "@/widgets";
 import { useShallow } from "zustand/react/shallow";
 import { usePathname } from "next/navigation";  // Используем для отслеживания изменения пути
-import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
 import axios from "axios";
 
 import Modals from "@/widgets/Layout/Modals";
@@ -23,12 +22,8 @@ const isDomainAllowed = () => {
 
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
-
-  const [commitHash, setCommitHash] = useState(
-    process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
-  );
-  const pathname = usePathname();  // Получаем текущий путь
-  const [showPopup, setShowPopup] = useState(false);
+  const [commitHash, setCommitHash] = useState(process.env.NEXT_PUBLIC_COMMIT_HASH ?? "");
+  const pathname = usePathname();  // Отслеживаем изменения пути
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
@@ -119,7 +114,8 @@ const PageLayout: FC<Props> = ({ children }) => {
         console.log("Version changed");
         console.log(latestHash);
         console.log(lastFetchedHash);
-        setShowPopup(true);
+        // Перезагружаем страницу при изменении версии
+        window.location.reload();
       }
       setLastFetchedHash(latestHash);
     } catch (error) {
@@ -127,10 +123,10 @@ const PageLayout: FC<Props> = ({ children }) => {
     }
   };
 
+  // Проверка версии при каждом переходе по ссылке
   useEffect(() => {
-    // Проверка версии при каждом переходе на новый путь
     fetchLatestCommitHash();
-  }, [pathname]);  // Срабатывает при изменении пути (роута)
+  }, [pathname]);  // Это срабатывает при изменении пути (переход по ссылке)
 
   useEffect(() => {
     if (
@@ -163,10 +159,7 @@ const PageLayout: FC<Props> = ({ children }) => {
     return (
       <html>
         <head>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>MTL Stellar Multisig</title>
         </head>
         <body></body>
@@ -194,7 +187,6 @@ const PageLayout: FC<Props> = ({ children }) => {
           {children}
           <Footer />
         </main>
-        {showPopup && <PopupVersionTheSite />}
         <Modals />
       </body>
     </html>
