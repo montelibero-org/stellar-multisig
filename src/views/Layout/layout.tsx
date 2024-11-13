@@ -7,7 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useSearchParams, usePathname } from "next/navigation";
 import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
 import axios from "axios";
-import { cacheConfig } from "@/shared/configs";
+
 import Modals from "@/widgets/Layout/Modals";
 
 type Props = {
