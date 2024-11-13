@@ -4,10 +4,10 @@ import { FC, useEffect, useState } from "react";
 import { useStore } from "@/shared/store";
 import { Footer, Header } from "@/widgets";
 import { useShallow } from "zustand/react/shallow";
-import { usePathname, useSearchParams } from "next/navigation";
-// import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
+import { usePathname } from "next/navigation";
+import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
 import axios from "axios";
-// import { cacheConfig } from "@/shared/configs";
+import { cacheConfig } from "@/shared/configs";
 import Modals from "@/widgets/Layout/Modals";
 
 type Props = {
@@ -23,12 +23,11 @@ const isDomainAllowed = () => {
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
 
-  const [commitHash] = useState(
+  const [commitHash, setCommitHash] = useState(
     process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
   );
   const pathname = usePathname();
-  // const [showPopup, setShowPopup] = useState(false);
-  const searchParams = useSearchParams();
+  const [showPopup, setShowPopup] = useState(false);
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
@@ -91,6 +90,9 @@ const PageLayout: FC<Props> = ({ children }) => {
   }, [net]);
 
   useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
         console.warn("Unauthorized domain. Skipping commit hash fetch.");
@@ -114,21 +116,58 @@ const PageLayout: FC<Props> = ({ children }) => {
           }
         );
         const latestHash = response.data[0].sha.substring(0, 7);
+        setCommitHash(latestHash);
 
         if (lastFetchedHash && latestHash !== lastFetchedHash) {
-          console.log("Version changed, reloading page.");
-          window.location.reload();
+          console.log("Version changed");
+          console.log(latestHash);
+          console.log(lastFetchedHash);
+          if (timeoutId) clearTimeout(timeoutId);
+
+          timeoutId = setTimeout(() => {
+            setShowPopup(true);
+          }, 60000);
         }
-        
         setLastFetchedHash(latestHash);
       } catch (error) {
-        console.warn("Error fetching commit hash:", error);
+        console.warn("Error fetching commit hash (maybe, your token is wrong):", error);
       }
     };
 
-   
+    const startPolling = () => {
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(
+        fetchLatestCommitHash,
+        cacheConfig.checkOfCurrentVersionDurationMs
+      );
+    };
+
+    const stopPolling = () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchLatestCommitHash();
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     fetchLatestCommitHash();
-  }, [searchParams, lastFetchedHash]);
+    startPolling();
+
+    return () => {
+      stopPolling();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [lastFetchedHash]);
 
   useEffect(() => {
     if (
@@ -194,7 +233,7 @@ const PageLayout: FC<Props> = ({ children }) => {
           {children}
           <Footer />
         </main>
-        {/* {showPopup && <PopupVersionTheSite />} */}
+        {showPopup && <PopupVersionTheSite />}
         <Modals />
       </body>
     </html>
