@@ -4,15 +4,14 @@ import { FC, useEffect, useState } from "react";
 import { useStore } from "@/shared/store";
 import { Footer, Header } from "@/widgets";
 import { useShallow } from "zustand/react/shallow";
-import { usePathname, useSearchParams } from "next/navigation";
-// import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
+import { usePathname } from "next/navigation";
 import axios from "axios";
-// import { cacheConfig } from "@/shared/configs";
 import Modals from "@/widgets/Layout/Modals";
 
 type Props = {
   children: React.ReactNode;
 };
+
 const allowedDomains = [{ domain: "stellar-multisig.montelibero.org" }];
 
 const isDomainAllowed = () => {
@@ -22,13 +21,8 @@ const isDomainAllowed = () => {
 
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
-
-  const [commitHash] = useState(
-    process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
-  );
+  const [commitHash, setCommitHash] = useState(process.env.NEXT_PUBLIC_COMMIT_HASH ?? "");
   const pathname = usePathname();
-  // const [showPopup, setShowPopup] = useState(false);
-  const searchParams = useSearchParams();
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
@@ -44,15 +38,17 @@ const PageLayout: FC<Props> = ({ children }) => {
     initializeFirebase,
   } = useStore(useShallow((state) => state));
 
+  // Устанавливаем состояние, когда доступен объект window
   useEffect(() => {
     setIsWindowDefined(typeof window !== "undefined");
     if (isWindowDefined) {
+      // Логика для получения темы, сети и аккаунтов из localStorage
       if (localStorage.getItem("theme")) {
         const theme = localStorage.getItem("theme")!;
         if (theme === "day" || theme === "night") {
           setTheme(theme);
         } else {
-          console.error(`Invalid theme value: ${theme}`);
+          console.error(`Недопустимое значение темы: ${theme}`);
         }
       }
 
@@ -90,16 +86,17 @@ const PageLayout: FC<Props> = ({ children }) => {
     setNetwork(net);
   }, [net]);
 
+  // Проверка версии при изменении пути
   useEffect(() => {
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
-        console.warn("Unauthorized domain. Skipping commit hash fetch.");
+        console.warn("Неавторизованный домен. Пропуск проверки хеша коммита.");
         return;
       }
 
       if (!process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
         console.warn(
-          "You have not set the NEXT_PUBLIC_GITHUB_TOKEN environment variable. Skipping commit hash fetch."
+          "Вы не указали переменную окружения NEXT_PUBLIC_GITHUB_TOKEN. Пропуск проверки хеша коммита."
         );
         return;
       }
@@ -116,19 +113,19 @@ const PageLayout: FC<Props> = ({ children }) => {
         const latestHash = response.data[0].sha.substring(0, 7);
 
         if (lastFetchedHash && latestHash !== lastFetchedHash) {
-          console.log("Version changed, reloading page.");
-          window.location.reload();
+          console.log("Версия изменена. Проверьте новую версию.");
+          // Здесь можно показать уведомление или выполнить другие действия, без перезагрузки страницы.
+          // Например, можно отобразить модальное окно с предупреждением или обновить состояние.
         }
-        
+
         setLastFetchedHash(latestHash);
       } catch (error) {
-        console.warn("Error fetching commit hash:", error);
+        console.warn("Ошибка при получении хеша коммита:", error);
       }
     };
 
-   
     fetchLatestCommitHash();
-  }, [searchParams, lastFetchedHash]);
+  }, [pathname, lastFetchedHash]); // Теперь запрос выполняется при изменении пути
 
   useEffect(() => {
     if (
