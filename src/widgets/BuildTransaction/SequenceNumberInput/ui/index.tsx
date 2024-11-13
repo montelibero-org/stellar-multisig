@@ -17,6 +17,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   const [error, setError] = useState<string>("");
   const [isShowUpdateSeqNum, setIsShowUpdateSeqNum] = useState<boolean>(false);
   const [initialSeqNum, setInitialSeqNum] = useState<bigint | null>(null);
+  const [tempSeqNum, setTempSeqNum] = useState<string>(tx.tx.seq_num.toString()); // New temporary state
   const searchParams = useSearchParams();
 
   const fetchSequenceNumber = async () => {
@@ -28,6 +29,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
       if (data.sequence !== undefined && /^[0-9]+$/.test(data.sequence)) {
         const sequence = BigInt(data.sequence) + BigInt(1);
         setSeqNum(sequence);
+        setTempSeqNum(sequence.toString()); // Sync temporary state
         setIsShowUpdateSeqNum(false);
       } else {
         setError("Sequence number is undefined or invalid.");
@@ -69,6 +71,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
       localStorage.setItem("initialSeqNum", tx.tx.seq_num.toString());
     }
     setSeqNum(tx.tx.seq_num);
+    setTempSeqNum(tx.tx.seq_num.toString()); // Sync temporary state on mount
   }, [setSeqNum, tx.tx.seq_num]);
 
   useEffect(() => {
@@ -94,21 +97,25 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
         )}
         <input
           placeholder="Ex: 559234806710273"
-          value={tx.tx.seq_num?.toString() || ""}
+          value={tempSeqNum}
           onChange={(e) => {
             const value = e.target.value.trim();
             if (/^[0-9]*$/.test(value)) {
-              const newSeqNum = value ? BigInt(value) : BigInt(0);
-              setSeqNum(newSeqNum);
+              setTempSeqNum(value); // Update temporary state
 
-              if (
-                initialSeqNum !== null &&
-                newSeqNum !== initialSeqNum &&
-                isSequenceNumberOutdated(newSeqNum, tx.tx.seq_num)
-              ) {
-                setIsShowUpdateSeqNum(true);
-              } else {
-                setIsShowUpdateSeqNum(false);
+              if (value) {
+                const newSeqNum = BigInt(value);
+                setSeqNum(newSeqNum);
+
+                if (
+                  initialSeqNum !== null &&
+                  newSeqNum !== initialSeqNum &&
+                  isSequenceNumberOutdated(newSeqNum, tx.tx.seq_num)
+                ) {
+                  setIsShowUpdateSeqNum(true);
+                } else {
+                  setIsShowUpdateSeqNum(false);
+                }
               }
             }
           }}
@@ -123,7 +130,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
         )}
       </div>
       <p>
-        The transaction sequence number is usually one higher than current
+        The transaction sequence number is usually one higher than the current
         account sequence number.
       </p>
       {isShowUpdateSeqNum && (
