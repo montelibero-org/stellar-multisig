@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { useStore } from "@/shared/store";
 import { Footer, Header } from "@/widgets";
 import { useShallow } from "zustand/react/shallow";
-import { useSearchParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";  // Используем для отслеживания изменения пути
 import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
 import axios from "axios";
 
@@ -27,8 +27,7 @@ const PageLayout: FC<Props> = ({ children }) => {
   const [commitHash, setCommitHash] = useState(
     process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
   );
-  const pathname = usePathname();
-  const searchParams = useSearchParams(); // Получаем параметры запроса
+  const pathname = usePathname();  // Получаем текущий путь
   const [showPopup, setShowPopup] = useState(false);
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
@@ -129,14 +128,9 @@ const PageLayout: FC<Props> = ({ children }) => {
   };
 
   useEffect(() => {
-    // Проверяем версию при изменении параметров URL
+    // Проверка версии при каждом переходе на новый путь
     fetchLatestCommitHash();
-  }, [searchParams]); // Хук будет срабатывать при изменении параметров запроса
-
-  useEffect(() => {
-    // Проверяем версию при изменении пути
-    fetchLatestCommitHash();
-  }, [pathname]); // Хук срабатывает при изменении пути
+  }, [pathname]);  // Срабатывает при изменении пути (роута)
 
   useEffect(() => {
     if (
