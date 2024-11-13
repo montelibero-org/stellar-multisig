@@ -7,7 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import { usePathname, useSearchParams } from "next/navigation";
 // import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
 import axios from "axios";
-import { cacheConfig } from "@/shared/configs";
+// import { cacheConfig } from "@/shared/configs";
 import Modals from "@/widgets/Layout/Modals";
 
 type Props = {
@@ -23,7 +23,7 @@ const isDomainAllowed = () => {
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
 
-  const [commitHash, setCommitHash] = useState(
+  const [commitHash] = useState(
     process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
   );
   const pathname = usePathname();
