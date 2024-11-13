@@ -307,7 +307,7 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("masterWeight", masterWeight ? masterWeight.toString() : "none");
+    params.set("masterWeight", masterWeight ? masterWeight.toString() : "");
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [masterWeight]);
 
@@ -339,9 +339,16 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("masterWeight", masterWeightValue);
+    
+    // Проверяем, что значение является числом, прежде чем добавлять его в параметры
+    if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
+      params.set("masterWeight", masterWeight?.toString() ?? "");
+    } else {
+      params.delete("masterWeight"); // Удаляем параметр, если он невалиден
+    }
+  
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [masterWeightValue]);
+  }, [masterWeight]);
 
   return (
     <>

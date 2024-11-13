@@ -91,7 +91,6 @@ const PageLayout: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
@@ -119,15 +118,10 @@ const PageLayout: FC<Props> = ({ children }) => {
         setCommitHash(latestHash);
 
         if (lastFetchedHash && latestHash !== lastFetchedHash) {
-          console.log("Version changed");
-          console.log(latestHash);
-          console.log(lastFetchedHash);
-          if (timeoutId) clearTimeout(timeoutId);
-
-          timeoutId = setTimeout(() => {
-            setShowPopup(true);
-          }, 60000);
+          console.log("Version changed. Reloading page...");
+          window.location.reload();  // Перезагрузка страницы при обнаружении новой версии
         }
+
         setLastFetchedHash(latestHash);
       } catch (error) {
         console.warn("Error fetching commit hash (maybe, your token is wrong):", error);
@@ -160,7 +154,7 @@ const PageLayout: FC<Props> = ({ children }) => {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    fetchLatestCommitHash();
+    fetchLatestCommitHash(); // Изначальный запуск проверки
     startPolling();
 
     return () => {
