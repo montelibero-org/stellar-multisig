@@ -91,20 +91,20 @@ const PageLayout: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
-
+  
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
         console.warn("Unauthorized domain. Skipping commit hash fetch.");
         return;
       }
-
+  
       if (!process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
         console.warn(
           "You have not set the NEXT_PUBLIC_GITHUB_TOKEN environment variable. Skipping commit hash fetch."
         );
         return;
       }
-
+  
       try {
         const response = await axios.get(
           "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
@@ -116,18 +116,17 @@ const PageLayout: FC<Props> = ({ children }) => {
         );
         const latestHash = response.data[0].sha.substring(0, 7);
         setCommitHash(latestHash);
-
+  
         if (lastFetchedHash && latestHash !== lastFetchedHash) {
-          console.log("Version changed. Reloading page...");
-          window.location.reload();  // Перезагрузка страницы при обнаружении новой версии
+          console.log("Version changed, reloading page.");
+          window.location.reload();
         }
-
         setLastFetchedHash(latestHash);
       } catch (error) {
         console.warn("Error fetching commit hash (maybe, your token is wrong):", error);
       }
     };
-
+  
     const startPolling = () => {
       if (intervalId) clearInterval(intervalId);
       intervalId = setInterval(
@@ -135,14 +134,14 @@ const PageLayout: FC<Props> = ({ children }) => {
         cacheConfig.checkOfCurrentVersionDurationMs
       );
     };
-
+  
     const stopPolling = () => {
       if (intervalId) {
         clearInterval(intervalId);
         intervalId = null;
       }
     };
-
+  
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         fetchLatestCommitHash();
@@ -151,12 +150,12 @@ const PageLayout: FC<Props> = ({ children }) => {
         stopPolling();
       }
     };
-
+  
     document.addEventListener("visibilitychange", handleVisibilityChange);
-
+  
     fetchLatestCommitHash();
     startPolling();
-
+  
     return () => {
       stopPolling();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
