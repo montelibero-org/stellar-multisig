@@ -5,7 +5,7 @@ import { useStore } from "@/shared/store";
 import { Footer, Header } from "@/widgets";
 import { useShallow } from "zustand/react/shallow";
 import { usePathname } from "next/navigation";
-import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
+// import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
 import axios from "axios";
 import { cacheConfig } from "@/shared/configs";
 import Modals from "@/widgets/Layout/Modals";
