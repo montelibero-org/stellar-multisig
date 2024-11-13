@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, ChangeEvent, useEffect } from "react";
+import React, { FC, ChangeEvent, useEffect, useState } from "react";
 import s from "@/widgets/OperationTypes/index.module.scss";
 import InputField from "@/widgets/OperationTypes/shared/InputField";
 import { useStore } from "@/shared/store";
@@ -8,14 +8,14 @@ import { useShallow } from "zustand/react/shallow";
 import StellarSdk from "stellar-sdk";
 import { IOperation } from "@/shared/types/store/slices";
 import { hexToString, stringToHex } from "@/shared/helpers";
-import { useHandleSourceAccountChange } from "@/features/hooks";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   id: number;
 }
 
 const ManageData: FC<Props> = ({ id }) => {
-  const handleSourceAccountChange = useHandleSourceAccountChange();
+  const searchParams = useSearchParams();
   const { tx, setOperations } = useStore(
     useShallow((state) => ({
       tx: state.tx,
@@ -33,17 +33,58 @@ const ManageData: FC<Props> = ({ id }) => {
     },
   };
 
-  // Ensure we have an operation with default structure
   const operation = tx.tx.operations[id] || defaultOperation;
 
-  // Ensure `data_name` and `data_value` are not `undefined`
-  const entryName = operation.body.manage_data?.data_name ?? "";
-  const entryValue = operation.body.manage_data?.data_value ?? null;
-  const sourceAccount = operation.source_account || "";
+  const initialEntryName =
+    searchParams.get("entryName" + id.toString()) ||
+    operation.body.manage_data?.data_name ||
+    undefined;
+
+  const initialEntryValue =
+    stringToHex(searchParams.get("entryValue" + id.toString()) ?? "") ||
+    operation.body.manage_data?.data_value ||
+    null;
+
+  const initialSourceAccount =
+    searchParams.get("sourceAccount" + id.toString()) ||
+    operation.source_account ||
+    "";
+
+  const [entryName, setEntryName] = useState(initialEntryName);
+  const [entryValue, setEntryValue] = useState(initialEntryValue);
+  const [sourceAccount, setSourceAccount] = useState(initialSourceAccount);
+
+  useEffect(() => {
+    const newOperations = [...tx.tx.operations];
+
+    const currentOperation = newOperations[id] || defaultOperation;
+
+    const updatedOperation: IOperation = {
+      ...currentOperation,
+      source_account: sourceAccount.toString(),
+    };
+
+    newOperations[id] = updatedOperation;
+
+    setOperations(newOperations);
+  }, [entryName, entryValue, sourceAccount]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("entryName" + id.toString(), entryName?.toString() || "");
+    params.set(
+      "entryValue" + id.toString(),
+      hexToString(entryValue?.toString() ?? "") || ""
+    );
+    params.set(
+      "sourceAccount" + id.toString(),
+      sourceAccount?.toString() || ""
+    );
+    window.history.replaceState({}, "", `?${params.toString()}`);
+  }, [entryName, entryValue, sourceAccount]);
 
   const validateSymbols = (value: string): boolean => value.length <= 64;
 
-  // Update the operations list
   const updateOperations = (updatedOperation: Partial<IOperation>) => {
     const newOperations = [...tx.tx.operations];
     newOperations[id] = {
@@ -63,6 +104,8 @@ const ManageData: FC<Props> = ({ id }) => {
         },
       },
     });
+
+    setEntryName(event.target.value);
   };
 
   const handleEntryValueChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,6 +118,8 @@ const ManageData: FC<Props> = ({ id }) => {
         },
       },
     });
+
+    setEntryValue(stringToHex(event.target.value));
   };
 
   useEffect(() => {
@@ -91,20 +136,20 @@ const ManageData: FC<Props> = ({ id }) => {
         <InputField
           title="Entry Name"
           placeholder=""
-          value={tx.tx.operations[id].body?.manage_data?.data_name ?? ""}
+          value={entryName ?? ""}
           onChange={handleEntryNameChange}
           validate={validateSymbols}
-          errorMessage={`Entry name can only contain a maximum of 64 characters. ${entryName.length} characters.`}
+          errorMessage={`Entry name can only contain a maximum of 64 characters. ${
+            entryName !== undefined &&
+            entryName.toString().length > 0 &&
+            entryName.toString().length
+          } characters.`}
           isOptional={false}
         />
         <InputField
           title="Entry Value"
           placeholder=""
-          value={
-            hexToString(
-              tx.tx.operations[id].body.manage_data?.data_value || ""
-            ) ?? ""
-          }
+          value={hexToString(entryValue || "") ?? ""}
           onChange={handleEntryValueChange}
           validate={validateSymbols}
           warningMessage={
@@ -120,8 +165,8 @@ const ManageData: FC<Props> = ({ id }) => {
         <InputField
           title="Source Account"
           placeholder="Ex: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6Q4UG"
-          value={sourceAccount === null ? "" : sourceAccount}
-          onChange={(e) => handleSourceAccountChange(e, id)}
+          value={sourceAccount?.toString() ?? ""}
+          onChange={(e) => setSourceAccount(e.target.value)}
           validate={(value) =>
             StellarSdk.StrKey.isValidEd25519PublicKey(value) || value === ""
           }
