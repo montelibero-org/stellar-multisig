@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { useStore } from "@/shared/store";
 import { Footer, Header } from "@/widgets";
 import { useShallow } from "zustand/react/shallow";
-import { usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
 import axios from "axios";
 import { cacheConfig } from "@/shared/configs";
@@ -13,6 +13,7 @@ import Modals from "@/widgets/Layout/Modals";
 type Props = {
   children: React.ReactNode;
 };
+
 const allowedDomains = [{ domain: "stellar-multisig.montelibero.org" }];
 
 const isDomainAllowed = () => {
@@ -27,6 +28,7 @@ const PageLayout: FC<Props> = ({ children }) => {
     process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
   );
   const pathname = usePathname();
+  const searchParams = useSearchParams(); // Получаем параметры запроса
   const [showPopup, setShowPopup] = useState(false);
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
@@ -89,85 +91,52 @@ const PageLayout: FC<Props> = ({ children }) => {
     setNetwork(net);
   }, [net]);
 
-  useEffect(() => {
-    let intervalId: ReturnType<typeof setInterval> | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  const fetchLatestCommitHash = async () => {
+    if (!isDomainAllowed()) {
+      console.warn("Unauthorized domain. Skipping commit hash fetch.");
+      return;
+    }
 
-    const fetchLatestCommitHash = async () => {
-      if (!isDomainAllowed()) {
-        console.warn("Unauthorized domain. Skipping commit hash fetch.");
-        return;
-      }
-
-      if (!process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
-        console.warn(
-          "You have not set the NEXT_PUBLIC_GITHUB_TOKEN environment variable. Skipping commit hash fetch."
-        );
-        return;
-      }
-
-      try {
-        const response = await axios.get(
-          "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-            },
-          }
-        );
-        const latestHash = response.data[0].sha.substring(0, 7);
-        setCommitHash(latestHash);
-
-        if (lastFetchedHash && latestHash !== lastFetchedHash) {
-          console.log("Version changed");
-          console.log(latestHash);
-          console.log(lastFetchedHash);
-          if (timeoutId) clearTimeout(timeoutId);
-
-          timeoutId = setTimeout(() => {
-            setShowPopup(true);
-          }, 60000);
-        }
-        setLastFetchedHash(latestHash);
-      } catch (error) {
-        console.warn("Error fetching commit hash (maybe, your token is wrong):", error);
-      }
-    };
-
-    const startPolling = () => {
-      if (intervalId) clearInterval(intervalId);
-      intervalId = setInterval(
-        fetchLatestCommitHash,
-        cacheConfig.checkOfCurrentVersionDurationMs
+    if (!process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
+      console.warn(
+        "You have not set the NEXT_PUBLIC_GITHUB_TOKEN environment variable. Skipping commit hash fetch."
       );
-    };
+      return;
+    }
 
-    const stopPolling = () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
+    try {
+      const response = await axios.get(
+        "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+          },
+        }
+      );
+      const latestHash = response.data[0].sha.substring(0, 7);
+      setCommitHash(latestHash);
+
+      if (lastFetchedHash && latestHash !== lastFetchedHash) {
+        console.log("Version changed");
+        console.log(latestHash);
+        console.log(lastFetchedHash);
+        setShowPopup(true);
       }
-    };
+      setLastFetchedHash(latestHash);
+    } catch (error) {
+      console.warn("Error fetching commit hash (maybe, your token is wrong):", error);
+    }
+  };
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        fetchLatestCommitHash();
-        startPolling();
-      } else {
-        stopPolling();
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
+  useEffect(() => {
+    // Проверяем версию при изменении параметров URL
     fetchLatestCommitHash();
-    startPolling();
+  }, [searchParams]); // Хук будет срабатывать при изменении параметров запроса
 
-    return () => {
-      stopPolling();
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [lastFetchedHash]);
+  useEffect(() => {
+    // Проверяем версию при изменении пути
+    fetchLatestCommitHash();
+  }, [pathname]); // Хук срабатывает при изменении пути
 
   useEffect(() => {
     if (
@@ -224,9 +193,7 @@ const PageLayout: FC<Props> = ({ children }) => {
       </head>
       <body>
         <main
-          className={`flex min-h-screen flex-col ${
-            isOpenAddAccountModal && "is-open-add-account-modal"
-          }`}
+          className={`flex min-h-screen flex-col ${isOpenAddAccountModal && "is-open-add-account-modal"}`}
         >
           <hr className="blue-ribbon" />
           <Header />
