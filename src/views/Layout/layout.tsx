@@ -21,7 +21,7 @@ const isDomainAllowed = () => {
 
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
-  const [commitHash, setCommitHash] = useState(process.env.NEXT_PUBLIC_COMMIT_HASH ?? "");
+  const [commitHash] = useState(process.env.NEXT_PUBLIC_COMMIT_HASH ?? "");
   const pathname = usePathname();
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
