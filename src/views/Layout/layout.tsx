@@ -27,7 +27,7 @@ const PageLayout: FC<Props> = ({ children }) => {
     process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
   );
   const pathname = usePathname();
-  const [showPopup, setShowPopup] = useState(false);
+  // const [showPopup, setShowPopup] = useState(false);
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
@@ -154,7 +154,7 @@ const PageLayout: FC<Props> = ({ children }) => {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    fetchLatestCommitHash(); // Изначальный запуск проверки
+    fetchLatestCommitHash();
     startPolling();
 
     return () => {
@@ -227,7 +227,7 @@ const PageLayout: FC<Props> = ({ children }) => {
           {children}
           <Footer />
         </main>
-        {showPopup && <PopupVersionTheSite />}
+        {/* {showPopup && <PopupVersionTheSite />} */}
         <Modals />
       </body>
     </html>
