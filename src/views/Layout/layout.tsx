@@ -91,7 +91,7 @@ const PageLayout: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  
 
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
