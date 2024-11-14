@@ -11,7 +11,7 @@ import { cacheConfig } from "@/shared/configs";
 import Modals from "@/widgets/Layout/Modals";
 
 type Props = {
-  children: React.ReactNode;
+  children:  React.ReactNode;
 };
 const allowedDomains = [{ domain: "stellar-multisig.montelibero.org" }];
 
@@ -91,7 +91,6 @@ const PageLayout: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
-  
 
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
@@ -122,7 +121,6 @@ const PageLayout: FC<Props> = ({ children }) => {
           console.log("Version changed");
           console.log(latestHash);
           console.log(lastFetchedHash);
-          
 
           setShowPopup(true);
         }
