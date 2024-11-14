@@ -5,14 +5,14 @@ import { useStore } from "@/shared/store";
 import { Footer, Header } from "@/widgets";
 import { useShallow } from "zustand/react/shallow";
 import { usePathname } from "next/navigation";
-import { PopupVersionTheSite } from "@/widgets/shared/ui/PopupVersionTheSite";
 import axios from "axios";
 import { cacheConfig } from "@/shared/configs";
 import Modals from "@/widgets/Layout/Modals";
 
 type Props = {
-  children:  React.ReactNode;
+  children: React.ReactNode;
 };
+
 const allowedDomains = [{ domain: "stellar-multisig.montelibero.org" }];
 
 const isDomainAllowed = () => {
@@ -22,12 +22,8 @@ const isDomainAllowed = () => {
 
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
-
-  const [commitHash, setCommitHash] = useState(
-    process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
-  );
+  const [commitHash, setCommitHash] = useState(process.env.NEXT_PUBLIC_COMMIT_HASH ?? "");
   const pathname = usePathname();
-  const [showPopup, setShowPopup] = useState(false);
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
@@ -117,14 +113,14 @@ const PageLayout: FC<Props> = ({ children }) => {
         const latestHash = response.data[0].sha.substring(0, 7);
         setCommitHash(latestHash);
 
+        // Если хеш изменился, перезагружаем страницу
         if (lastFetchedHash && latestHash !== lastFetchedHash) {
-          console.log("Version changed");
-          console.log(latestHash);
-          console.log(lastFetchedHash);
-
-          setShowPopup(true);
+          console.log("Version changed, reloading page...");
+          setLastFetchedHash(latestHash);
+          window.location.reload(); // Перезагружаем страницу
+        } else {
+          setLastFetchedHash(latestHash);
         }
-        setLastFetchedHash(latestHash);
       } catch (error) {
         console.warn(
           "Error fetching commit hash (maybe, your token is wrong):",
@@ -232,7 +228,6 @@ const PageLayout: FC<Props> = ({ children }) => {
           {children}
           <Footer />
         </main>
-        {showPopup && <PopupVersionTheSite />}
         <Modals />
       </body>
     </html>
