@@ -122,7 +122,7 @@ const PageLayout: FC<Props> = ({ children }) => {
           console.log("Version changed");
           console.log(latestHash);
           console.log(lastFetchedHash);
-          if (timeoutId) clearTimeout(timeoutId);
+          
 
           setShowPopup(true);
         }
