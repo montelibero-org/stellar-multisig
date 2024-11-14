@@ -162,7 +162,7 @@ const PageLayout: FC<Props> = ({ children }) => {
       stopPolling();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [lastFetchedHash]);
+  }, [lastFetchedHash]); 
 
   useEffect(() => {
     if (
