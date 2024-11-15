@@ -13,6 +13,7 @@ import Modals from "@/widgets/Layout/Modals";
 type Props = {
   children: React.ReactNode;
 };
+
 const allowedDomains = [{ domain: "stellar-multisig.montelibero.org" }];
 
 const isDomainAllowed = () => {
