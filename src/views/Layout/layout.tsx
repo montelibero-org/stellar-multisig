@@ -42,6 +42,7 @@ const PageLayout: FC<Props> = ({ children }) => {
     setServer,
     setNetwork,
     initializeFirebase,
+    isOpenFirebaseSettingsModal
   } = useStore(useShallow((state) => state));
 
   useEffect(() => {
@@ -131,7 +132,10 @@ const PageLayout: FC<Props> = ({ children }) => {
         }
         setLastFetchedHash(latestHash);
       } catch (error) {
-        console.warn("Error fetching commit hash (maybe, your token is wrong):", error);
+        console.warn(
+          "Error fetching commit hash (maybe, your token is wrong):",
+          error
+        );
       }
     };
 
@@ -197,6 +201,10 @@ const PageLayout: FC<Props> = ({ children }) => {
     }
   }, []);
 
+  useEffect(() => {
+    console.log(theme);
+  }, [theme]);
+
   if (!isWindowDefined) {
     return (
       <html>
@@ -226,7 +234,7 @@ const PageLayout: FC<Props> = ({ children }) => {
       <body>
         <main
           className={`flex min-h-screen flex-col ${
-            isOpenAddAccountModal && "is-open-add-account-modal"
+            (isOpenAddAccountModal || isOpenFirebaseSettingsModal) && "is-open-add-account-modal"
           }`}
         >
           <hr className="blue-ribbon" />
