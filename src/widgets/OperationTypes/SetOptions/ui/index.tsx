@@ -250,10 +250,7 @@ const SetOptions: FC<Props> = ({ id }) => {
         return;
       }
 
-      if (
-        value === "" ||
-        (!isNaN(numValue) && validateRange(numValue.toString()))
-      ) {
+      if (value === "" || (!isNaN(numValue) && validateRange(numValue.toString()))) {
         const fieldSetters = {
           master_weight: setMasterWeightValue,
           low_threshold: setLowThresholdValue,
@@ -372,7 +369,7 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("master_weight")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage="This can result in a permanently locked account. Are you sure you know what you're doing?"
+          warningMessage={+masterWeightValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
         />
 
         <InputField
@@ -391,7 +388,7 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("med_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage="This can result in a permanently locked account. Are you sure you know what you're doing?"
+          warningMessage={+mediumThresholdValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
         />
 
         <InputField
@@ -401,7 +398,7 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("high_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage="This can result in a permanently locked account. Are you sure you know what you're doing?"
+          warningMessage={+highThresholdValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
         />
 
         <div className={s.section}>

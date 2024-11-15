@@ -1,5 +1,5 @@
 "use client";
-
+import s from "@/widgets/OperationTypes/index.module.scss";
 import { FC, useEffect, useState, useRef, FormEvent } from "react";
 import "./index.scss";
 import { useStore } from "@/shared/store";
@@ -126,18 +126,18 @@ const AddAccountModal: FC = () => {
                 : "add-account-container-content-title-light"
             }
           >
-            <div className="tabs">
-              <div className="tabs-header">
+            <div className={`tabs ${s.tabs}`}>
+            <div className={`tabs-header ${s.tabsheader} `}>
                 {["Personal", "Corporate"].map((type) => (
                   <Link
                     key={type}
                     onClick={() => handleAccountTypeChange(type as AccountType)}
                     href="#"
                     className={
-                      `tabs-item condensed ` +
+                      `tabs-item ${s.tabsitem} condensed ` +
                       (accountType === type ? "selected " : "")
                     }
-                    style={{ marginInline: "10px" }}
+                    style={{ marginInline: "10px"  }}
                   >
                     <span
                       className="tabs-item-text"

@@ -32,7 +32,7 @@ const ModalLayout: FC<Props> = ({ isOpenModal, setIsOpenModal, children }) => {
   return isOpenModal ? (
     <div className={theme === "night" ? "modal-container" : "modal-container-light"}>
       <div
-        className={theme === "night" ? "modal-container-content" : "modal-content-light"}
+        className={theme === "night" || theme === "day" ? "modal-container-content" : "modal-content-light"}
         ref={modalRef}
       >
                 <span
