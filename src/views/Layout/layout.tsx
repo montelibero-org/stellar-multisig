@@ -104,7 +104,7 @@ const PageLayout: FC<Props> = ({ children }) => {
           "You have not set the NEXT_PUBLIC_GITHUB_TOKEN environment variable. Skipping commit hash fetch."
         );
         return;
-      }
+      } 
   
       try { 
         const response = await axios.get(
