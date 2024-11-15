@@ -110,7 +110,7 @@ const PageLayout: FC<Props> = ({ children }) => {
         const response = await axios.get(
           "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
           {
-            headers: {
+            headers: { 
               Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
             },
           }
