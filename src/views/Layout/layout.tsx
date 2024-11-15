@@ -106,7 +106,7 @@ const PageLayout: FC<Props> = ({ children }) => {
         return;
       }
   
-      try {
+      try { 
         const response = await axios.get(
           "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
           {
