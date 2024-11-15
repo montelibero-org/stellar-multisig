@@ -23,11 +23,11 @@ const isDomainAllowed = () => {
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
 
-  const [commitHash, setCommitHash] = useState(
+  const [commitHash] = useState(
     process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
   );
   const pathname = usePathname();
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup] = useState(false);
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
@@ -91,7 +91,7 @@ const PageLayout: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
 
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
