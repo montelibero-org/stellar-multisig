@@ -376,7 +376,12 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("master_weight")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage={+masterWeightValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
+          warningMessage={
+            masterWeightValue !== "" && +masterWeightValue >= 0
+              ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
+              : ""
+          }
+          
         />
 
         <InputField
@@ -395,7 +400,11 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("med_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage={+mediumThresholdValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
+          warningMessage={
+            mediumThresholdValue !== "" && +mediumThresholdValue >= 0
+              ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
+              : ""
+          }
         />
 
         <InputField
@@ -405,10 +414,17 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("high_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage={+highThresholdValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
+          
+          warningMessage={
+            highThresholdValue !== "" && +highThresholdValue >= 0
+              ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
+              : ""
+          }
+          
         />
 
         <div className={s.section}>
+          
           <h4 className={s.sectionTitle}>
             Signer Type <span className={s.optional}>(optional)</span>
           </h4>
