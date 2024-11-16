@@ -122,7 +122,7 @@ const PageLayout: FC<Props> = ({ children }) => {
           window.location.reload();
         }
    
-        setLastFetchedHash(latestHash);
+        setLastFetchedHash(latestHash); 
       } catch (error) {
         console.warn("Error fetching commit hash (maybe, your token is wrong):", error);
       }
