@@ -307,7 +307,7 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("masterWeight", masterWeight ? masterWeight.toString() : "none");
+    params.set("masterWeight", masterWeight ? masterWeight.toString() : "");
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [masterWeight]);
 
@@ -339,9 +339,16 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("masterWeight", masterWeightValue);
+    
+    // Проверяем, что значение является числом, прежде чем добавлять его в параметры
+    if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
+      params.set("masterWeight", masterWeight?.toString() ?? "");
+    } else {
+      params.delete("masterWeight"); // Удаляем параметр, если он невалиден
+    }
+  
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [masterWeightValue]);
+  }, [masterWeight]);
 
   return (
     <>
@@ -369,7 +376,12 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("master_weight")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage={+masterWeightValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
+          warningMessage={
+            masterWeightValue !== "" && +masterWeightValue >= 0
+              ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
+              : ""
+          }
+          
         />
 
         <InputField
@@ -388,7 +400,11 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("med_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage={+mediumThresholdValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
+          warningMessage={
+            mediumThresholdValue !== "" && +mediumThresholdValue >= 0
+              ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
+              : ""
+          }
         />
 
         <InputField
@@ -398,10 +414,17 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("high_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          warningMessage={+highThresholdValue > 0 ? "This can result in a permanently locked account. Are you sure you know what you're doing? " : ""}
+          
+          warningMessage={
+            highThresholdValue !== "" && +highThresholdValue >= 0
+              ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
+              : ""
+          }
+          
         />
 
         <div className={s.section}>
+          
           <h4 className={s.sectionTitle}>
             Signer Type <span className={s.optional}>(optional)</span>
           </h4>

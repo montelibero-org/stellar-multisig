@@ -18,17 +18,17 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
   const thresholds = [
     {
       label: "Low",
-      value: Number(information?.thresholds?.low_threshold),
+      value: Number(information?.thresholds?.low_threshold) || 0, 
       title: "Low threshold",
     },
     {
       label: "Med",
-      value: Number(information?.thresholds?.med_threshold),
+      value: Number(information?.thresholds?.med_threshold) || 0,  
       title: "Medium threshold",
     },
     {
       label: "High",
-      value: Number(information?.thresholds?.high_threshold),
+      value: Number(information?.thresholds?.high_threshold) || 0,
       title: "High threshold",
     },
   ];
@@ -52,13 +52,13 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
                 <span
                   title={`${threshold.label} threshold is unlocked, operations are permitted`}
                 >
-                  {threshold.label}{" "}🟢{" "}
+                  {threshold.label} 🟢{" "}
                 </span>
               ) : (
                 <span
                   title={`${threshold.label} threshold is locked, operations are prohibited`}
                 >
-                  {threshold.label}{" "}🔴{" "}
+                  {threshold.label} 🔴{" "}
                 </span>
               )}
               <span

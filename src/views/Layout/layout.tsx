@@ -24,11 +24,11 @@ const isDomainAllowed = () => {
 const PageLayout: FC<Props> = ({ children }) => {
   const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
 
-  const [commitHash, setCommitHash] = useState(
+  const [commitHash] = useState(
     process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
   );
   const pathname = usePathname();
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup] = useState(false);
   const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
@@ -93,44 +93,38 @@ const PageLayout: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
 
     const fetchLatestCommitHash = async () => {
       if (!isDomainAllowed()) {
         console.warn("Unauthorized domain. Skipping commit hash fetch.");
         return;
       }
-
+  
       if (!process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
         console.warn(
           "You have not set the NEXT_PUBLIC_GITHUB_TOKEN environment variable. Skipping commit hash fetch."
         );
         return;
-      }
-
-      try {
+      } 
+  
+      try { 
         const response = await axios.get(
           "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
           {
-            headers: {
+            headers: { 
               Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
             },
           }
         );
         const latestHash = response.data[0].sha.substring(0, 7);
-        setCommitHash(latestHash);
-
+  
         if (lastFetchedHash && latestHash !== lastFetchedHash) {
-          console.log("Version changed");
-          console.log(latestHash);
-          console.log(lastFetchedHash);
-          if (timeoutId) clearTimeout(timeoutId);
-
-          timeoutId = setTimeout(() => {
-            setShowPopup(true);
-          }, 60000);
+          console.log("Version changed, reloading page...");
+          window.location.reload();
         }
-        setLastFetchedHash(latestHash);
+   
+        setLastFetchedHash(latestHash); 
       } catch (error) {
         console.warn(
           "Error fetching commit hash (maybe, your token is wrong):",
@@ -138,6 +132,7 @@ const PageLayout: FC<Props> = ({ children }) => {
         );
       }
     };
+    fetchLatestCommitHash();
 
     const startPolling = () => {
       if (intervalId) clearInterval(intervalId);
@@ -172,7 +167,7 @@ const PageLayout: FC<Props> = ({ children }) => {
       stopPolling();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [lastFetchedHash]);
+  }, []);
 
   useEffect(() => {
     if (

@@ -76,7 +76,7 @@ const TransactionIcon: FC<Props> = ({
       }),
       ...(sourceAccount && { sourceAccountForSetOptions: sourceAccount }),
       ...(weight != null && { weight: weight.toString() }),
-      ...(masterWeight != null && { masterWeight: masterWeight.toString() }),
+
       ...(operationThresholds && {
         operationThresholds: [
           operationThresholds.low_threshold != null ? operationThresholds.low_threshold.toString() : "",
@@ -91,7 +91,9 @@ const TransactionIcon: FC<Props> = ({
       ...(flags?.auth_revocable && { auth_revocable: "true" }),
     };
    
-   
+    if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
+      params.masterWeight = masterWeight.toString();
+    }
     if (baseFee !== previousBaseFee.current) {
       params.baseFee = baseFee?.toString() || "";
     }
