@@ -7,3 +7,21 @@
   flex-direction: column;
   margin-block: 1rem;
 }
+
+.add-account-container-content-close {
+  position: absolute;
+  right: 6px;
+  top: 8px;
+  cursor: pointer;
+}
+
+.add-account-container-content-close-light {
+  position: absolute;
+  right: 6px;
+  top: 8px;
+  cursor: pointer;
+}
+
+.add-account-container-content-button-disabled::before {
+  background-color: #7dc7db;
+}
