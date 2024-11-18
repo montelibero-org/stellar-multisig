@@ -61,7 +61,7 @@ const SourceAccountInput: FC = () => {
         <h4>Source Account</h4>
       </div>
       <input
-        placeholder="Example: GCEXAMPLE..."
+        placeholder="Ex: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6Q4UG"
         value={tx.tx.source_account}
         onChange={(e) => setSourceAccount(e.target.value)}
       />

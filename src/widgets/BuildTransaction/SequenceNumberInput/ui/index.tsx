@@ -17,7 +17,8 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   const [error, setError] = useState<string>("");
   const [isShowUpdateSeqNum, setIsShowUpdateSeqNum] = useState<boolean>(false);
   const [initialSeqNum, setInitialSeqNum] = useState<bigint | null>(null);
-  const [tempSeqNum, setTempSeqNum] = useState<string>(tx.tx.seq_num.toString()); // New temporary state
+  
+  const [tempSeqNum, setTempSeqNum] = useState<string>(tx.tx.seq_num.toString() ); 
   const searchParams = useSearchParams();
 
   const fetchSequenceNumber = async () => {
@@ -80,6 +81,16 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [tx.tx.seq_num]);
 
+  useEffect(() => {
+    if (!tx.tx.source_account) {
+      setTempSeqNum(""); 
+      setIsShowUpdateSeqNum(false); 
+    } else {
+      setSeqNum(tx.tx.seq_num);
+      setTempSeqNum(tx.tx.seq_num.toString()); 
+    }
+  }, [ setSeqNum, tx.tx.seq_num]);
+
   return (
     <div>
       <h4>Transaction Sequence Number</h4>
@@ -97,11 +108,11 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
         )}
         <input
           placeholder="Ex: 559234806710273"
-          value={tempSeqNum}
+          value={tempSeqNum ?? ""}
           onChange={(e) => {
             const value = e.target.value.trim();
             if (/^[0-9]*$/.test(value)) {
-              setTempSeqNum(value); // Update temporary state
+              setTempSeqNum(value);
 
               if (value) {
                 const newSeqNum = BigInt(value);
