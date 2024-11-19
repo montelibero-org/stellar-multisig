@@ -103,8 +103,8 @@ const FirebaseSettingsModal: FC = () => {
         <div
           className={
             theme === "night"
-              ? "modal-container-content-title"
-              : "modal-container-content-title-light"
+              ? "add-account-container-content-title"
+              : "add-account-container-content-title-light"
           }
         >
           <div className="tabs">
