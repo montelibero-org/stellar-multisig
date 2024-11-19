@@ -35,14 +35,15 @@ const SourceAccountInput: FC = () => {
 
         if (Array.isArray(eligibleSigners) && eligibleSigners.length > 0) {
           console.log("Eligible signers found:", eligibleSigners);
-          // Additional logic for handling eligible signers can go here
         } else {
           console.warn("No eligible signers found");
-          // Handle case when no eligible signers are found
         }
       } catch (fetchError) {
         console.error("Error fetching signers:", fetchError);
       }
+
+      
+     
     };
 
     validateSourceAccount();
