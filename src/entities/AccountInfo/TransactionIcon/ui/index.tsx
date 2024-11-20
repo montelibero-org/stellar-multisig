@@ -40,7 +40,7 @@ const TransactionIcon: FC<Props> = ({
   baseFee,
   lowerTime,
   upperTime,
-  TransactionSequenceNumber,
+  // TransactionSequenceNumber,
   typeOp,
   style,
   processedKey,
