@@ -108,9 +108,9 @@ const TransactionIcon: FC<Props> = ({
     }
 
   
-    if (TransactionSequenceNumber != null) {
+    if (TransactionSequenceNumber !== null && TransactionSequenceNumber !== undefined && TransactionSequenceNumber !== 0) {
       params.TransactionSequenceNumber = TransactionSequenceNumber.toString();
-    }
+    }    
     
     return `/${net}/build-transaction?${new URLSearchParams(params).toString()}`;
   };
