@@ -99,18 +99,18 @@ const TransactionIcon: FC<Props> = ({
     }
     
  
-    if (lowerTime !== undefined && lowerTime !== previousLowerTime.current) {
-      params.lowerTime = lowerTime.toString();
-    }
+    // if (lowerTime !== undefined && lowerTime !== previousLowerTime.current) {
+    //   params.lowerTime = lowerTime.toString();
+    // }
   
-    if (upperTime !== undefined && upperTime !== previousUpperTime.current) {
-      params.upperTime = upperTime.toString();
-    }
+    // if (upperTime !== undefined && upperTime !== previousUpperTime.current) {
+    //   params.upperTime = upperTime.toString();
+    // }
 
   
-    if (TransactionSequenceNumber !== null && TransactionSequenceNumber !== undefined && TransactionSequenceNumber !== 0) {
-      params.TransactionSequenceNumber = TransactionSequenceNumber.toString();
-    }    
+    // if (TransactionSequenceNumber !== null && TransactionSequenceNumber !== undefined && TransactionSequenceNumber !== 0) {
+    //   params.TransactionSequenceNumber = TransactionSequenceNumber.toString();
+    // }    
     
     return `/${net}/build-transaction?${new URLSearchParams(params).toString()}`;
   };
