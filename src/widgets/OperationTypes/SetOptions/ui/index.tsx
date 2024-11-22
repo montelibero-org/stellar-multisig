@@ -102,7 +102,7 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   // Fix unknown error about source account in every tx
   useEffect(() => {
-    fixUnknownError(id, OperationTypes.SetOptions);
+    fixUnknownError(id);
   }, [id]);
 
   useEffect(() => {

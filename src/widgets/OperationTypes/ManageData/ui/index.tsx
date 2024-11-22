@@ -9,7 +9,7 @@ import StellarSdk from "stellar-sdk";
 import { IOperation } from "@/shared/types/store/slices";
 import { hexToString, stringToHex } from "@/shared/helpers";
 import { useSearchParams } from "next/navigation";
-import { useFixUnknownError, useHandleSourceAccountChange } from "@/features/hooks";
+import { useFixUnknownError } from "@/features/hooks";
 import { OperationTypes } from "@/shared/lib";
 
 interface Props {
@@ -31,7 +31,6 @@ const defaultOperation: IOperation = {
 const ManageData: FC<Props> = ({ id }) => {
   /* Hooks */
   const searchParams = useSearchParams();
-  const handleSourceAccountChange = useHandleSourceAccountChange();
   const fixUnknownError = useFixUnknownError();
 
   const { tx, setOperations } = useStore(
@@ -66,7 +65,7 @@ const ManageData: FC<Props> = ({ id }) => {
 
   // Fix unknown error about source account in every tx
   useEffect(() => {
-    fixUnknownError(id, OperationTypes.ManageData);
+    fixUnknownError(id);
   }, [id]);
 
   useEffect(() => {

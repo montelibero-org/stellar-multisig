@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
 import { useStore } from "@/shared/store";
-import { OperationTypes,OperationTypesOptions } from "@/shared/lib";
+import { OperationTypes } from "@/shared/lib";
 import { getOperationType } from "@/widgets/BuildTransaction/OperationsList/ui";
 
 export default function useFixUnknownError() {
@@ -39,7 +39,7 @@ export default function useFixUnknownError() {
     setOperations(newOperations);
   };
 
-  const fixUnknownError = (id: number, typeOp: OperationTypes) => {
+  const fixUnknownError = (id: number) => {
     handleSourceAccountChange(
       "GAQPZKOYGJDEWLYO6PBOJ4NG6HNBBNNZSOJNKUUCVJGLBQIQSO5AC26F",
       id,
