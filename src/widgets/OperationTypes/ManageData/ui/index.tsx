@@ -10,7 +10,6 @@ import { IOperation } from "@/shared/types/store/slices";
 import { hexToString, stringToHex } from "@/shared/helpers";
 import { useSearchParams } from "next/navigation";
 import { useFixUnknownError } from "@/features/hooks";
-import { OperationTypes } from "@/shared/lib";
 
 interface Props {
   id: number;

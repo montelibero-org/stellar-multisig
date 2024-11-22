@@ -11,7 +11,6 @@ import { useShallow } from "zustand/react/shallow";
 import { IFlag } from "../../shared/FlagSelector";
 import { useFixUnknownError, useHandleSourceAccountChange } from "@/features/hooks";
 import { IOperation } from "@/shared/types";
-import { OperationTypes } from "@/shared/lib";
 
 type Field =
   | "master_weight"
