@@ -8,6 +8,16 @@ import { useShallow } from "zustand/react/shallow";
 import { setOperationType } from "@/shared/helpers";
 import { IsShowedBlock } from "@/shared/widgets";
 
+export const getOperationType = (operation: IOperation): string => {
+  if (operation.body?.set_options) {
+    return "set_options";
+  } else if (operation.body?.manage_data) {
+    return "manage_data";
+  } else {
+    return "select_operation_type";
+  }
+};
+
 const OperationsList: FC = () => {
   const { tx, setOperations } = useStore(useShallow((state) => state));
   const [showTooltip, setShowTooltip] = useState(false);
@@ -31,6 +41,10 @@ const OperationsList: FC = () => {
       setOperationIds(initialIds);
       setNextOperationId(tx.tx.operations.length + 1);
     }
+  }, [tx.tx.operations]);
+
+  useEffect(() => {
+    console.log(tx.tx.operations)
   }, [tx.tx.operations]);
 
   const addIsShowOperation = () => {
@@ -94,16 +108,6 @@ const OperationsList: FC = () => {
   const deleteOperation = (index: number) => {
     setOperations(tx.tx.operations.filter((_, i) => i !== index));
     setOperationIds(operationIds.filter((_, i) => i !== index));
-  };
-
-  const getOperationType = (operation: IOperation): string => {
-    if (operation.body?.set_options) {
-      return "set_options";
-    } else if (operation.body?.manage_data) {
-      return "manage_data";
-    } else {
-      return "select_operation_type";
-    }
   };
 
   const moveDownOperation = (index: number) => {
@@ -266,30 +270,31 @@ const OperationsList: FC = () => {
           >
             <i className="fa fa-plus" aria-hidden="true"></i> Add operation
           </button>
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-      <button onClick={handleCopy} title="Share">
-            
-        <i className="fa-solid fa-arrow-up-from-bracket"></i>
-      </button>
-      {showTooltip && (
-        <div style={{
-          position: 'absolute',
-          top: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          marginTop: '5px',
-          backgroundColor: '#333',
-          color: '#fff',
-          padding: '5px 10px',
-          borderRadius: '4px',
-          whiteSpace: 'nowrap',
-          fontSize: '12px',
-          zIndex: 1
-        }}>
-          Copied shareable URL
-        </div>
-      )}
-    </div>
+          <div style={{ position: "relative", display: "inline-block" }}>
+            <button onClick={handleCopy} title="Share">
+              <i className="fa-solid fa-arrow-up-from-bracket"></i>
+            </button>
+            {showTooltip && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  marginTop: "5px",
+                  backgroundColor: "#333",
+                  color: "#fff",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  whiteSpace: "nowrap",
+                  fontSize: "12px",
+                  zIndex: 1,
+                }}
+              >
+                Copied shareable URL
+              </div>
+            )}
+          </div>
         </div>
         <button onClick={() => handleClearOperations()}>
           <i className="fa fa-trash" aria-hidden="true"></i> Clear operations
