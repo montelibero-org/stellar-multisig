@@ -1,6 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
 import { useStore } from "@/shared/store";
-import { OperationTypes } from "@/shared/lib";
 import { getOperationType } from "@/widgets/BuildTransaction/OperationsList/ui";
 
 export default function useFixUnknownError() {
