@@ -90,7 +90,7 @@ const BuildTransaction: FC = () => {
   const [currentTab, setCurrentTab] = useState<"Create Transaction" | "Import Transaction">("Create Transaction");
 
   const [scoreOfSetFlags, setScoreOfSetFlags] = useState<number>(0);
-  const [isLoadingSequence, setIsLoadingSequence] = useState<boolean>(true);
+
   const decodedXDR = useXDRDecoding(currentXDR, currentXDR);
 
   useEffect(() => {
@@ -105,7 +105,7 @@ const BuildTransaction: FC = () => {
   useEffect(() => {
     const updateSequenceNumber = async () => {
       if (StellarSdk.StrKey.isValidEd25519PublicKey(tx.tx.source_account)) {
-        setIsLoadingSequence(true); // Установка состояния загрузки
+        // Установка состояния загрузки
         try {
           const { data } = await axios.get<Information>(`${server}/accounts/${tx.tx.source_account}`);
           if (data.sequence !== undefined) {
@@ -119,14 +119,9 @@ const BuildTransaction: FC = () => {
           if (axios.isAxiosError(error) && error.response?.status === 404) {
             console.error("Account not found or not funded.");
           }
-        } finally {
-          setIsLoadingSequence(false); // Завершение загрузки
-        }
-      } else {
-        setIsLoadingSequence(false); // Завершение загрузки при недействительном ключе
-      }
+        } 
     };
-
+  }
     updateSequenceNumber();
   }, [tx.tx.source_account, server, setSeqNum]);
 
