@@ -11,6 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 import { IFlag } from "../../shared/FlagSelector";
 import { useHandleSourceAccountChange } from "@/features/hooks";
 import { IOperation } from "@/shared/types";
+import { useSearchParams } from "next/navigation";
 
 type Field =
   | "master_weight"
@@ -250,7 +251,10 @@ const SetOptions: FC<Props> = ({ id }) => {
         return;
       }
 
-      if (value === "" || (!isNaN(numValue) && validateRange(numValue.toString()))) {
+      if (
+        value === "" ||
+        (!isNaN(numValue) && validateRange(numValue.toString()))
+      ) {
         const fieldSetters = {
           master_weight: setMasterWeightValue,
           low_threshold: setLowThresholdValue,
@@ -307,9 +311,43 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("masterWeight", masterWeight ? masterWeight.toString() : "");
+
+
+  
+      params.set("masterWeight", masterWeight?.toString() ?? "");
+   
+    params.set(
+      "lowThreshold" + id.toString(),
+      lowThresholdValue?.toString() || ""
+    );
+
+    params.set(
+      "mediumThreshold" + id.toString(),
+      mediumThresholdValue?.toString() || ""
+    );
+
+    params.set(
+      "highThreshold" + id.toString(),
+      highThresholdValue?.toString() || ""
+    );
+
+    params.set("homeDomain" + id.toString(), homeDomain?.toString() || "");
+
+    params.set(
+      "sourceAccount" + id.toString(),
+      sourceAccount?.toString() || ""
+    );
+
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [masterWeight]);
+  }, [
+    masterWeight,
+    lowThresholdValue,
+    mediumThresholdValue,
+    highThresholdValue,
+    homeDomain,
+    sourceAccount,
+    id,
+  ]);
 
   const handleSignerTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedType = e.target.value;
@@ -339,16 +377,16 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    
-    // Проверяем, что значение является числом, прежде чем добавлять его в параметры
-    if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
-      params.set("masterWeight", masterWeight?.toString() ?? "");
-    } else {
-      params.delete("masterWeight"); // Удаляем параметр, если он невалиден
-    }
-  
+
+    params.set("masterWeight", masterWeight?.toString() ?? "");
+
+    params.set(
+      "sourceAccount" + id.toString(),
+      sourceAccount?.toString() || ""
+    );
+
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [masterWeight]);
+  }, [masterWeight, sourceAccount, homeDomain]);
 
   return (
     <>
@@ -381,7 +419,6 @@ const SetOptions: FC<Props> = ({ id }) => {
               ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
               : ""
           }
-          
         />
 
         <InputField
@@ -414,17 +451,14 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("high_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-          
           warningMessage={
             highThresholdValue !== "" && +highThresholdValue >= 0
               ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
               : ""
           }
-          
         />
 
         <div className={s.section}>
-          
           <h4 className={s.sectionTitle}>
             Signer Type <span className={s.optional}>(optional)</span>
           </h4>

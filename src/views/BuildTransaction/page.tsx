@@ -477,9 +477,7 @@ const BuildTransaction: FC = () => {
 
   return (
     <MainLayout>
-       {isLoadingSequence ? (
-          <div></div>
-        ) : (
+      
       <div className="container">
         <div
           style={{
@@ -525,7 +523,7 @@ const BuildTransaction: FC = () => {
             <div className="segment blank">
             <SourceAccountInput  />
               <hr className="flare" />
-              <SequenceNumberInput   firebaseID={firebaseIDParam} />
+              <SequenceNumberInput  firebaseID={firebaseIDParam} />
               <hr className="flare" />
               <BaseFeeInput />
               <hr className="flare" />
@@ -574,7 +572,7 @@ const BuildTransaction: FC = () => {
         )}
       </div>
         
-      )}
+      
       
     </MainLayout>
   );

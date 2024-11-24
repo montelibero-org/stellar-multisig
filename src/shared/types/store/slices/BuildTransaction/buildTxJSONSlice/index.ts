@@ -73,6 +73,7 @@ export interface IOperation {
   source_account: string | null;
   body: {
     set_options?: {
+
       inflation_dest?: string | null;
       clear_flags?: AuthFlag | null | number;
       set_flags?: AuthFlag | null | number;

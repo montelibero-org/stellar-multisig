@@ -17,10 +17,12 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   const [error, setError] = useState<string>("");
   const [isShowUpdateSeqNum, setIsShowUpdateSeqNum] = useState<boolean>(false);
   const [initialSeqNum, setInitialSeqNum] = useState<bigint | null>(null);
-  
-  const [tempSeqNum, setTempSeqNum] = useState<string>(tx.tx.seq_num.toString() ); 
-  const searchParams = useSearchParams();
 
+  const [tempSeqNum, setTempSeqNum] = useState<string>(
+    tx.tx.seq_num ? tx.tx.seq_num.toString() : "" // Если seq_num не задан, оставить пустую строку
+  );
+  const searchParams = useSearchParams();
+ 
   const fetchSequenceNumber = async () => {
     try {
       const { data } = await axios.get<Information>(
@@ -30,7 +32,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
       if (data.sequence !== undefined && /^[0-9]+$/.test(data.sequence)) {
         const sequence = BigInt(data.sequence) + BigInt(1);
         setSeqNum(sequence);
-        setTempSeqNum(sequence.toString()); // Sync temporary state
+        setTempSeqNum(""); // Sync temporary state
         setIsShowUpdateSeqNum(false);
       } else {
         setError("Sequence number is undefined or invalid.");
@@ -84,12 +86,11 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   useEffect(() => {
     if (!tx.tx.source_account) {
       setTempSeqNum(""); 
-      setIsShowUpdateSeqNum(false); 
+      setIsShowUpdateSeqNum(false);
     } else {
-      setSeqNum(tx.tx.seq_num);
-      setTempSeqNum(tx.tx.seq_num.toString()); 
+      setTempSeqNum(tx.tx.seq_num ? tx.tx.seq_num.toString() : ""); // Проверить наличие seq_num
     }
-  }, [ setSeqNum, tx.tx.seq_num]);
+  }, [tx.tx.seq_num, tx.tx.source_account]);
 
   return (
     <div>
@@ -114,20 +115,31 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
             if (/^[0-9]*$/.test(value)) {
               setTempSeqNum(value);
 
-              if (value) {
-                const newSeqNum = BigInt(value);
-                setSeqNum(newSeqNum);
-
-                if (
-                  initialSeqNum !== null &&
-                  newSeqNum !== initialSeqNum &&
-                  isSequenceNumberOutdated(newSeqNum, tx.tx.seq_num)
-                ) {
-                  setIsShowUpdateSeqNum(true);
-                } else {
-                  setIsShowUpdateSeqNum(false);
-                }
+              if (!value) {
+                setError("Sequence number is required.");
+                setIsShowUpdateSeqNum(false);
+                return;
+              } else {
+                setError("");
               }
+
+              const newSeqNum = BigInt(value);
+              setSeqNum(newSeqNum);
+
+              if (
+                initialSeqNum !== null &&
+                newSeqNum !== initialSeqNum &&
+                isSequenceNumberOutdated(newSeqNum, tx.tx.seq_num)
+              ) {
+                setIsShowUpdateSeqNum(true);
+              } else {
+                setIsShowUpdateSeqNum(false);
+              }
+            }
+          }}
+          onBlur={() => {
+            if (!tempSeqNum) {
+              setError("Sequence number is required.");
             }
           }}
         />
