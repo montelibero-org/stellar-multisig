@@ -478,7 +478,7 @@ const BuildTransaction: FC = () => {
   return (
     <MainLayout>
        {isLoadingSequence ? (
-          <div>Loading sequence number...</div>
+          <div></div>
         ) : (
       <div className="container">
         <div
