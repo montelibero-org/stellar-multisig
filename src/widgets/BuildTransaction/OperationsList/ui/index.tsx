@@ -5,7 +5,7 @@ import { useStore } from "@/shared/store";
 import { SetOptions, ManageData } from "@/widgets";
 import { IOperation } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
 import { useShallow } from "zustand/react/shallow";
-import { setOperationType } from "@/shared/helpers";
+import {setOperationType} from "@/shared/helpers";
 import { IsShowedBlock } from "@/shared/widgets";
 
 const OperationsList: FC = () => {
@@ -20,14 +20,20 @@ const OperationsList: FC = () => {
     },
   ]);
 
-  // State to keep track of operation IDs
-  const [operationIds, setOperationIds] = useState<number[]>([]);
-  const [nextOperationId, setNextOperationId] = useState<number>(0);
+ 
+  const [operationIds, setOperationIds] = useState<Map<number, IOperation>>(
+    new Map()
+  );
 
-  // Initialize operationIds and nextOperationId when the component mounts
+  const [nextOperationId, setNextOperationId] = useState<number>(1);
+
+
   useEffect(() => {
-    if (tx.tx.operations.length > 0 && operationIds.length === 0) {
-      const initialIds = tx.tx.operations.map((_, index) => index + 1);
+    if (tx.tx.operations.length > 0 && operationIds.size === 0) {
+      const initialIds = new Map<number, IOperation>();
+      tx.tx.operations.forEach((operation, index) => {
+        initialIds.set(index + 1, operation); // Присваиваем уникальный ID на основе индекса
+      });
       setOperationIds(initialIds);
       setNextOperationId(tx.tx.operations.length + 1);
     }
@@ -64,19 +70,14 @@ const OperationsList: FC = () => {
   }, []);
 
   const handleAddOperation = () => {
-    /*const body: IOperation["body"] = {};
-        (state.tx.tx.operations as IOperation[]).push({
-          source_account: "",
-          body,
-        } as IOperation);
-        state.fullTransaction = { tx: state.tx };*/
+    const newOperationId = nextOperationId;
     const body: IOperation["body"] = {};
     const newOperation: IOperation = {
       source_account: "",
       body,
     };
     setOperations([...tx.tx.operations, newOperation]);
-    setOperationIds([...operationIds, nextOperationId]);
+    setOperationIds(new Map(operationIds.set(newOperationId, newOperation)));
     setNextOperationId(nextOperationId + 1);
     addIsShowOperation();
   };
@@ -84,18 +85,44 @@ const OperationsList: FC = () => {
   const duplicateOperation = (index: number) => {
     const operationToDuplicate = tx.tx.operations[index];
     if (operationToDuplicate) {
+      const newOperationId = nextOperationId;
       setOperations([...tx.tx.operations, { ...operationToDuplicate }]);
-      setOperationIds([...operationIds, nextOperationId]);
+      setOperationIds(new Map(operationIds.set(newOperationId, operationToDuplicate)));
       setNextOperationId(nextOperationId + 1);
       addIsShowOperation();
     }
   };
 
   const deleteOperation = (index: number) => {
-    setOperations(tx.tx.operations.filter((_, i) => i !== index));
-    setOperationIds(operationIds.filter((_, i) => i !== index));
+    
+    const updatedOperations = tx.tx.operations.filter((_, i) => i !== index);
+  
+    
+    const updatedOperationIds = new Map<number, IOperation>();
+    updatedOperations.forEach((operation, idx) => {
+      updatedOperationIds.set(idx + 1, operation); 
+    });
+  
+    
+    const updatedIsShowOperation = updatedOperations.map((_, idx) => ({
+      isShow: true,
+      index: idx,
+    }));
+  
+  
+    setOperations(updatedOperations);
+    setOperationIds(updatedOperationIds);
+    setIsShowOperation(updatedIsShowOperation);
+  
+    const urlParams = new URLSearchParams(window.location.search);
+    Array.from(urlParams.keys()).forEach((key) => {
+      const match = key.match(/(\d+)$/);
+      if (match && parseInt(match[1]) === index) {
+        urlParams.delete(key);
+      }
+    });
+    window.history.replaceState(null, "", `${window.location.pathname}?${urlParams.toString()}`);
   };
-
   const getOperationType = (operation: IOperation): string => {
     if (operation.body?.set_options) {
       return "set_options";
@@ -107,17 +134,25 @@ const OperationsList: FC = () => {
   };
 
   const moveDownOperation = (index: number) => {
-    if (index >= tx.tx.operations.length - 1) return;
+    if (index >= tx.tx.operations.length - 1) return; 
+    
+   
     const updatedOperations = [...tx.tx.operations];
     [updatedOperations[index], updatedOperations[index + 1]] = [
       updatedOperations[index + 1],
       updatedOperations[index],
     ];
+  
+   
     setOperations(updatedOperations);
-
-    const updatedIds = updatedOperations.map((_, i) => i + 1);
+  
+    
+    const updatedIds = new Map(
+      updatedOperations.map((operation, i) => [i + 1, operation])
+    );
     setOperationIds(updatedIds);
-
+  
+   
     const updatedIsShow = updatedOperations.map((_, i) => ({
       ...isShowOperation[i],
       index: i,
@@ -126,33 +161,43 @@ const OperationsList: FC = () => {
   };
 
   const moveUpOperation = (index: number) => {
-    if (index <= 0) return;
+    if (index <= 0) return; 
+    
+
     const updatedOperations = [...tx.tx.operations];
     [updatedOperations[index], updatedOperations[index - 1]] = [
       updatedOperations[index - 1],
       updatedOperations[index],
     ];
+  
+ 
     setOperations(updatedOperations);
-
-    const updatedIds = updatedOperations.map((_, i) => i + 1);
+  
+ 
+    const updatedIds = new Map(
+      updatedOperations.map((operation, i) => [i + 1, operation])
+    );
     setOperationIds(updatedIds);
-
+  
+   
     const updatedIsShow = updatedOperations.map((_, i) => ({
       ...isShowOperation[i],
       index: i,
     }));
     setIsShowOperation(updatedIsShow);
   };
+
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href);
     setShowTooltip(true);
     setTimeout(() => {
       setShowTooltip(false);
-    }, 2000); // Подсказка исчезнет через 2 секунды
+    }, 2000); 
   };
+
   const handleClearOperations = () => {
     setOperations([]);
-    setOperationIds([]);
+    setOperationIds(new Map());
     setNextOperationId(1);
     setIsShowOperation([]);
   };
@@ -160,7 +205,7 @@ const OperationsList: FC = () => {
   return (
     <div className="segment blank">
       {tx.tx.operations.map((operation, index) => (
-        <div key={index}>
+        <div  key={operationIds.get(index + 1)?.source_account || index}>
           <div
             style={{
               marginTop: "20px",
@@ -171,7 +216,7 @@ const OperationsList: FC = () => {
             }}
           >
             <div className="flex" style={{ justifyContent: "space-between" }}>
-              <h4>Operation {operationIds[index]}</h4>
+              <h4>Operation {operationIds.get(index + 1)?.source_account || index + 1}</h4>
               <div>
                 <button
                   title="Move up"
@@ -266,30 +311,31 @@ const OperationsList: FC = () => {
           >
             <i className="fa fa-plus" aria-hidden="true"></i> Add operation
           </button>
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-      <button onClick={handleCopy} title="Share">
-            
-        <i className="fa-solid fa-arrow-up-from-bracket"></i>
-      </button>
-      {showTooltip && (
-        <div style={{
-          position: 'absolute',
-          top: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          marginTop: '5px',
-          backgroundColor: '#333',
-          color: '#fff',
-          padding: '5px 10px',
-          borderRadius: '4px',
-          whiteSpace: 'nowrap',
-          fontSize: '12px',
-          zIndex: 1
-        }}>
-          Copied shareable URL
-        </div>
-      )}
-    </div>
+          <div style={{ position: "relative", display: "inline-block" }}>
+            <button onClick={handleCopy} title="Share">
+              <i className="fa-solid fa-arrow-up-from-bracket"></i>
+            </button>
+            {showTooltip && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  marginTop: "5px",
+                  backgroundColor: "#333",
+                  color: "#fff",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  whiteSpace: "nowrap",
+                  fontSize: "12px",
+                  zIndex: 1,
+                }}
+              >
+                Copied shareable URL
+              </div>
+            )}
+          </div>
         </div>
         <button onClick={() => handleClearOperations()}>
           <i className="fa fa-trash" aria-hidden="true"></i> Clear operations

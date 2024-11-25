@@ -36,14 +36,14 @@ const ManageData: FC<Props> = ({ id }) => {
   const operation = tx.tx.operations[id] || defaultOperation;
 
   const initialEntryName =
-    searchParams.get("entryName" + id.toString()) ||
-    operation.body.manage_data?.data_name ||
-    undefined;
+  searchParams.get("entryName" + id.toString()) ||
+  operation.body.manage_data?.data_name ||
+  undefined;
 
   const initialEntryValue =
-    stringToHex(searchParams.get("entryValue" + id.toString()) ?? "") ||
-    operation.body.manage_data?.data_value ||
-    null;
+  stringToHex(searchParams.get("entryValue" + id.toString()) ?? "") ||
+  operation.body.manage_data?.data_value ||
+  null;
 
   const initialSourceAccount =
     searchParams.get("sourceAccount" + id.toString()) ||
