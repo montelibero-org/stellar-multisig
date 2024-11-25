@@ -308,7 +308,7 @@ const SetOptions: FC<Props> = ({ id }) => {
         setOperations(newOperations);
       }
     };
-
+   
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 

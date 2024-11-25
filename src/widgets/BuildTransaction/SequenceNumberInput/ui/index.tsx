@@ -19,7 +19,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   const [initialSeqNum, setInitialSeqNum] = useState<bigint | null>(null);
 
   const [tempSeqNum, setTempSeqNum] = useState<string>(
-    tx.tx.seq_num ? tx.tx.seq_num.toString() : "" // Если seq_num не задан, оставить пустую строку
+    tx.tx.seq_num ? tx.tx.seq_num.toString() : "" 
   );
   const searchParams = useSearchParams();
  
@@ -32,7 +32,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
       if (data.sequence !== undefined && /^[0-9]+$/.test(data.sequence)) {
         const sequence = BigInt(data.sequence) + BigInt(1);
         setSeqNum(sequence);
-        setTempSeqNum(""); // Sync temporary state
+        setTempSeqNum(""); 
         setIsShowUpdateSeqNum(false);
       } else {
         setError("Sequence number is undefined or invalid.");
@@ -74,21 +74,21 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
       localStorage.setItem("initialSeqNum", tx.tx.seq_num.toString());
     }
     setSeqNum(tx.tx.seq_num);
-    setTempSeqNum(tx.tx.seq_num.toString()); // Sync temporary state on mount
+    setTempSeqNum(tx.tx.seq_num.toString()); 
   }, [setSeqNum, tx.tx.seq_num]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("TransactionSequenceNumber", tx.tx.seq_num.toString());
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [tx.tx.seq_num]);
-
+  // useEffect(() => {
+  //   const params = new URLSearchParams(searchParams.toString());
+  //   params.set("TransactionSequenceNumber", tx.tx.seq_num.toString());
+  //   window.history.replaceState({}, "", `?${params.toString()}`);
+  // }, [tx.tx.seq_num]);
+ 
   useEffect(() => {
     if (!tx.tx.source_account) {
       setTempSeqNum(""); 
       setIsShowUpdateSeqNum(false);
     } else {
-      setTempSeqNum(tx.tx.seq_num ? tx.tx.seq_num.toString() : ""); // Проверить наличие seq_num
+      setTempSeqNum(tx.tx.seq_num ? tx.tx.seq_num.toString() : ""); 
     }
   }, [tx.tx.seq_num, tx.tx.source_account]);
 
