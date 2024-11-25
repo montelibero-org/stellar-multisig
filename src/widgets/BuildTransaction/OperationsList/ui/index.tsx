@@ -43,10 +43,6 @@ const OperationsList: FC = () => {
     }
   }, [tx.tx.operations]);
 
-  useEffect(() => {
-    console.log(tx.tx.operations)
-  }, [tx.tx.operations]);
-
   const addIsShowOperation = () => {
     setIsShowOperation([
       ...isShowOperation,

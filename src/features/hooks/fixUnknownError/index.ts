@@ -44,11 +44,8 @@ export default function useFixUnknownError() {
       id,
     );
 
-    console.log(1);
-
     setTimeout(() => {
       handleSourceAccountChange(null, id);
-      console.log(2);
     }, 250);
   };
 

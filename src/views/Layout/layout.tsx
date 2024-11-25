@@ -10,9 +10,13 @@ import axios from "axios";
 import { cacheConfig } from "@/shared/configs";
 import Modals from "@/widgets/Layout/Modals";
 
+/* TS */
+
 type Props = {
   children: React.ReactNode;
 };
+
+/* Constants */
 
 const allowedDomains = [{ domain: "stellar-multisig.montelibero.org" }];
 
@@ -22,14 +26,8 @@ const isDomainAllowed = () => {
 };
 
 const PageLayout: FC<Props> = ({ children }) => {
-  const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
+  /* Not ordinary hooks */
 
-  const [commitHash] = useState(
-    process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
-  );
-  const pathname = usePathname();
-  const [showPopup] = useState(false);
-  const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
   const {
     theme,
     setTheme,
@@ -42,8 +40,20 @@ const PageLayout: FC<Props> = ({ children }) => {
     setServer,
     setNetwork,
     initializeFirebase,
-    isOpenFirebaseSettingsModal
+    isOpenFirebaseSettingsModal,
   } = useStore(useShallow((state) => state));
+
+  const pathname = usePathname();
+
+  /* UseStates */
+
+  const [isWindowDefined, setIsWindowDefined] = useState<boolean>(false);
+  const [commitHash] = useState<string>(
+    process.env.NEXT_PUBLIC_COMMIT_HASH ?? ""
+  );
+  const [showPopup] = useState<boolean>(false);
+  const [lastFetchedHash, setLastFetchedHash] = useState<string | null>(null);
+  const [CheckSiteVersion, setCheckSiteVersion] = useState<number>(0);
 
   useEffect(() => {
     setIsWindowDefined(typeof window !== "undefined");
@@ -94,45 +104,48 @@ const PageLayout: FC<Props> = ({ children }) => {
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
-
     const fetchLatestCommitHash = async () => {
-      if (!isDomainAllowed()) {
+      if (!isDomainAllowed() && CheckSiteVersion < 3) {
         console.warn("Unauthorized domain. Skipping commit hash fetch.");
+        setCheckSiteVersion((prev) => prev + 1);
         return;
       }
-  
-      if (!process.env.NEXT_PUBLIC_GITHUB_TOKEN) {
+
+      if (!process.env.NEXT_PUBLIC_GITHUB_TOKEN && CheckSiteVersion < 3) {
         console.warn(
           "You have not set the NEXT_PUBLIC_GITHUB_TOKEN environment variable. Skipping commit hash fetch."
         );
+        setCheckSiteVersion((prev) => prev + 1);
         return;
-      } 
-  
-      try { 
+      }
+
+      try {
         const response = await axios.get(
           "https://api.github.com/repos/montelibero-org/stellar-multisig/commits",
           {
-            headers: { 
+            headers: {
               Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
             },
           }
         );
         const latestHash = response.data[0].sha.substring(0, 7);
-  
+
         if (lastFetchedHash && latestHash !== lastFetchedHash) {
           console.log("Version changed, reloading page...");
           window.location.reload();
         }
-   
-        setLastFetchedHash(latestHash); 
+
+        setLastFetchedHash(latestHash);
       } catch (error) {
-        console.warn(
-          "Error fetching commit hash (maybe, your token is wrong):",
-          error
-        );
+        if (CheckSiteVersion < 3) {
+          console.warn(
+            "Error fetching commit hash (maybe, your token is wrong):",
+            error
+          );
+          setCheckSiteVersion((prev) => prev + 1);
+        }
       }
     };
-    fetchLatestCommitHash();
 
     const startPolling = () => {
       if (intervalId) clearInterval(intervalId);
@@ -160,6 +173,7 @@ const PageLayout: FC<Props> = ({ children }) => {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
+    // Переместили вызов функции ниже ее определения
     fetchLatestCommitHash();
     startPolling();
 
@@ -167,7 +181,8 @@ const PageLayout: FC<Props> = ({ children }) => {
       stopPolling();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, [CheckSiteVersion]);
+
 
   useEffect(() => {
     if (
@@ -195,10 +210,6 @@ const PageLayout: FC<Props> = ({ children }) => {
       });
     }
   }, []);
-
-  useEffect(() => {
-    console.log(theme);
-  }, [theme]);
 
   if (!isWindowDefined) {
     return (
@@ -229,7 +240,8 @@ const PageLayout: FC<Props> = ({ children }) => {
       <body>
         <main
           className={`flex min-h-screen flex-col ${
-            (isOpenAddAccountModal || isOpenFirebaseSettingsModal) && "is-open-add-account-modal"
+            (isOpenAddAccountModal || isOpenFirebaseSettingsModal) &&
+            "is-open-add-account-modal"
           }`}
         >
           <hr className="blue-ribbon" />
