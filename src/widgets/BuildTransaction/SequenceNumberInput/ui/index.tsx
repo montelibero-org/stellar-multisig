@@ -21,7 +21,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   const [tempSeqNum, setTempSeqNum] = useState<string>(
     tx.tx.seq_num ? tx.tx.seq_num.toString() : "" 
   );
-  const searchParams = useSearchParams();
+
  
   const fetchSequenceNumber = async () => {
     try {
