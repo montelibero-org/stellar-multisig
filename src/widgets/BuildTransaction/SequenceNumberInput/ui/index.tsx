@@ -6,7 +6,7 @@ import axios from "axios";
 import { Information } from "@/shared/types";
 import { useShallow } from "zustand/react/shallow";
 import { isSequenceNumberOutdated } from "@/shared/helpers";
-import { useSearchParams } from "next/navigation";
+
 
 type Props = {
   firebaseID: string;
