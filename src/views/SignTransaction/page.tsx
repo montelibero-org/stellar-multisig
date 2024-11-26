@@ -96,6 +96,10 @@ const SignTransaction: FC = () => {
     }
   }, [window, importXDRParam, href]);
 
+  useEffect(() => {
+    console.log(resultXdr)
+  }, [resultXdr]);
+
   return (
     <MainLayout>
       {importXDRParam ? (
@@ -128,17 +132,12 @@ const SignTransaction: FC = () => {
               } signature(s) total`}
               xdr={resultXdr}
               lowerDescription="Now that this transaction is signed, you can submit it to the network. Horizon provides an endpoint called Post Transaction that will relay your transaction to the network and inform you of the result."
-              buttons={
-                <ShowXDRButtons
-                  XDR={resultXdr}
-                  currentFirebaseId={currentFirebaseId}
-                  successMessageFirebase={successMessageFirebase}
-                  setSuccessMessageFirebase={setSuccessMessageFirebase}
-                  setErrorMessageFirebase={setErrorMessageFirebase}
-                />
-              }
               successMessage={successMessageFirebase}
               errorMessage={errorMessageFirebase}
+              currentFirebaseId={currentFirebaseId}
+              successMessageFirebase={successMessageFirebase}
+              setSuccessMessageFirebase={setSuccessMessageFirebase}
+              setErrorMessageFirebase={setErrorMessageFirebase}
             />
           )}
         </>

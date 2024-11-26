@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
-import { Transaction } from "stellar-sdk";
+import { Keypair, Transaction } from "stellar-sdk";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -10,6 +10,7 @@ import {
   deleteTransaction,
 } from "@/shared/helpers";
 import Link from "next/link";
+import stellarSdk from "stellar-sdk";
 
 type Props = {
   transaction: Transaction | null;
@@ -30,12 +31,22 @@ const ShowXdrButtons: FC<Props> = ({
   setErrorMessage,
   XDR,
 }) => {
-  const { net, firestore } = useStore(useShallow((state) => state));
+  const { net, firestore, tx } = useStore(useShallow((state) => state));
 
   const handleSendTransactionForSign = async () => {
+    if (!firebaseID) return;
     if (!transaction) return;
 
     try {
+      const txCopy = tx;
+
+      txCopy.signatures.map((signature) => {
+        const secretKey = Buffer.from(signature.hint).toString("hex"); // Преобразуем hint в строку
+        const keypair = Keypair.fromSecret(secretKey); // Создаем Keypair
+
+        // Выводим публичный ключ в консоль
+        console.log("Public Key:", keypair.publicKey());
+      });
       const txHash = await sendTransactionForSign(firestore, transaction, net);
       if (txHash) {
         setSuccessMessage(`Transaction sent with ID ${txHash}`);
@@ -96,16 +107,16 @@ const ShowXdrButtons: FC<Props> = ({
   return (
     <>
       <Link href={`/${net}/sign-transaction?importXDR=${XDR}`}>
-        <button>Sign transaction</button>
+        <button onClick={handleSendTransactionForSign}>Sign transaction</button>
       </Link>
-      <button onClick={handleSendTransactionForSign}>
-        Send a new transaction to the Firebase
-      </button>
       <button disabled={!firebaseID} onClick={handleEditTransaction}>
         Edit transaction
       </button>
-      <button disabled={!firebaseID} onClick={handleDeleteTransaction}>
-        Delete transaction from Firebase
+      <button
+        disabled={!firebaseID && tx.signatures.length === 0}
+        onClick={handleDeleteTransaction}
+      >
+        Delete <i className="fa-solid fa-trash"></i>
       </button>
     </>
   );
