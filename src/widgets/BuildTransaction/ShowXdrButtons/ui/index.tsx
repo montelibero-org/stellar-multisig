@@ -10,7 +10,6 @@ import {
   deleteTransaction,
 } from "@/shared/helpers";
 import Link from "next/link";
-import stellarSdk from "stellar-sdk";
 
 type Props = {
   transaction: Transaction | null;

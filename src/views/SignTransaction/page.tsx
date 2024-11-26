@@ -12,7 +12,6 @@ import useTransactionValidation from "@/features/hooks/signTransaction/useTransa
 import useXDRDecoding from "@/features/hooks/signTransaction/useXDRDecoding";
 import { TransactionBuilder, Networks } from "stellar-sdk";
 import { useStore } from "@/shared/store";
-import ShowXDRButtons from "@/widgets/SignTransaction/ShowXDRButtons";
 import { getAllTransactions } from "@/shared/api/firebase/firestore/Transactions";
 import { hrefToXDR } from "@/shared/helpers";
 import { useShallow } from "zustand/react/shallow";
