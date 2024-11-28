@@ -113,7 +113,7 @@ const SignTransaction: FC = () => {
             signatureCount={signatureCount}
             transaction={transaction}
           />
-          <TransactionSignatures
+          {/* <TransactionSignatures
             localSignatures={localSignatures}
             setLocalSignatures={setLocalSignatures}
             transactionEnvelope={transactionEnvelope}
@@ -122,7 +122,7 @@ const SignTransaction: FC = () => {
             currentTransaction={transaction}
             setSignaturesAdded={setSignaturesAdded}
             signaturesAdded={signaturesAdded}
-          />
+          /> */}
           {resultXdr && (
             <ShowXdr
               title="Transaction signed!"

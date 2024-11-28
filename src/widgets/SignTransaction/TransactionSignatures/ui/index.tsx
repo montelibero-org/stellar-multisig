@@ -1,11 +1,11 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Header, InputField } from "../../ui/widgets";
 import { localSignature } from "@/views/SignTransaction/page";
 import { getSecretKeyError, signTransaction } from "@/features/helpers";
 import { Networks } from "@stellar/stellar-sdk";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
-import { Transaction } from "stellar-sdk";
+import { Keypair, Transaction } from "stellar-sdk";
 
 interface Props {
   localSignatures: localSignature;
@@ -16,6 +16,10 @@ interface Props {
   currentTransaction: Transaction | null;
   signaturesAdded: number;
   setSignaturesAdded: (signaturesAdded: number) => void;
+  txHash: Buffer;
+  Buttons?: JSX.Element;
+  errorMessage?: string;
+  successMessage?: string;
 }
 
 const TransactionSignatures: FC<Props> = ({
@@ -26,8 +30,18 @@ const TransactionSignatures: FC<Props> = ({
   setResultXdr,
   signaturesAdded,
   setSignaturesAdded,
+  txHash,
+  Buttons,
+  errorMessage,
+  successMessage,
 }) => {
-  const { net } = useStore(useShallow((store) => store));
+  const { net, tx, setFullTransaction } = useStore(
+    useShallow((store) => store)
+  );
+
+  useEffect(() => {
+    console.log(localSignatures);
+  }, [localSignatures]);
 
   const handleSetSignature = (value: string, index: number) => {
     const newSignatures = [...localSignatures];
@@ -45,13 +59,33 @@ const TransactionSignatures: FC<Props> = ({
         validSignatures,
         net === "testnet" ? Networks.TESTNET : Networks.PUBLIC,
         transactionEnvelope
-     );
+      );
 
-     if (signedXDR !== resultXdr) {
-       setSignaturesAdded(signaturesAdded + 1);
-       setResultXdr(signedXDR);
-     }
+      if (signedXDR !== resultXdr) {
+        setSignaturesAdded(signaturesAdded + 1);
+        setResultXdr(signedXDR);
+      }
 
+      setFullTransaction({
+        signatures: validSignatures.map((sig) => {
+          const keypair = Keypair.fromSecret(sig);
+          return {
+            hint: keypair.publicKey(),
+            signature: keypair.sign(txHash).toString("hex"),
+          };
+        }),
+        tx: tx.tx,
+      });
+
+      console.log(
+        validSignatures.map((sig) => {
+          const keypair = Keypair.fromSecret(sig);
+          return {
+            hint: keypair.publicKey(),
+            signature: keypair.signDecorated(txHash),
+          };
+        })
+      );
     } catch (error) {
       console.error("Error signing transaction:", error);
       alert(`Error signing transaction: ${error}`);
@@ -72,25 +106,18 @@ const TransactionSignatures: FC<Props> = ({
             value={signature || ""}
             setValue={(value) => handleSetSignature(value, index)}
             isDeleting={index !== 0}
-            placeholder={
-              "Secret key (starts with S) or hash preimage (in hex)"
-            }
+            placeholder={"Secret key (starts with S) or hash preimage (in hex)"}
             index={index}
             localSignatures={localSignatures}
             setLocalSignatures={setLocalSignatures}
           />
         ))}
-        <button
-          disabled={localSignatures.some(
-            (sig) => !sig || sig.trim() === "" || getSecretKeyError(sig)
-          )}
-          onClick={handleSignTransaction}
-        >
-          Sign Transaction
-        </button>
         <button onClick={() => setLocalSignatures([...localSignatures, ""])}>
           Add Signature
         </button>
+        {Buttons && <>{Buttons}</>}
+        {errorMessage && <p className="error">{errorMessage}</p>}
+        {successMessage && <p className="success">{successMessage}</p>}
       </div>
     </div>
   );

@@ -37,15 +37,6 @@ const ShowXdrButtons: FC<Props> = ({
     if (!transaction) return;
 
     try {
-      const txCopy = tx;
-
-      txCopy.signatures.map((signature) => {
-        const secretKey = Buffer.from(signature.hint).toString("hex"); // Преобразуем hint в строку
-        const keypair = Keypair.fromSecret(secretKey); // Создаем Keypair
-
-        // Выводим публичный ключ в консоль
-        console.log("Public Key:", keypair.publicKey());
-      });
       const txHash = await sendTransactionForSign(firestore, transaction, net);
       if (txHash) {
         setSuccessMessage(`Transaction sent with ID ${txHash}`);

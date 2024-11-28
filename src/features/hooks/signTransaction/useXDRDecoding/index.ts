@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
 import __wbg_init, { decode } from "@stellar/stellar-xdr-json-web";
-import { Transaction, FeeBumpTransaction, Networks, TransactionBuilder } from "stellar-sdk";
+import {
+  Transaction,
+  FeeBumpTransaction,
+  Networks,
+  TransactionBuilder,
+} from "stellar-sdk";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import JSONbig from "json-bigint";
+
 /**
  * Custom hook for decoding XDR and extracting transaction details.
  *
@@ -11,8 +17,12 @@ import JSONbig from "json-bigint";
  * @param envelope - XDR envelope string to decode
  * @returns An object containing decoded transaction details and metadata
  */
-const useXDRDecoding = (trigger: string | null | undefined, envelope: string) => {
-  const [decodedTransactionJSON, setDecodedTransactionJSON] = useState<string>("");
+const useXDRDecoding = (
+  trigger: string | null | undefined,
+  envelope: string
+) => {
+  const [decodedTransactionJSON, setDecodedTransactionJSON] =
+    useState<string>("");
   const [transactionHash, setTransactionHash] = useState<string>("");
   const [sourceAccount, setSourceAccount] = useState<string>("");
   const [sequenceNumber, setSequenceNumber] = useState<string>("");
@@ -21,16 +31,35 @@ const useXDRDecoding = (trigger: string | null | undefined, envelope: string) =>
   const [signatureCount, setSignatureCount] = useState<string>("");
   const [transaction, setTransaction] = useState<Transaction | null>(null);
 
-  const { net } = useStore(useShallow(store => store));
+  const { net } = useStore(useShallow((store) => store));
 
   useEffect(() => {
+    // Avoid decoding if trigger or envelope is not provided
+    if (!trigger || !envelope) {
+      setDecodedTransactionJSON("");
+      setTransactionHash("");
+      setSourceAccount("");
+      setSequenceNumber("");
+      setTransactionFee("");
+      setOperationCount("");
+      setSignatureCount("");
+      setTransaction(null);
+      return;
+    }
+
     const decodeXDR = async (envelope: string) => {
-      await __wbg_init();
-      if (trigger) {
+      try {
+        await __wbg_init();
         const decodedXDR = decodeURIComponent(envelope);
         const decodedTransaction = decode("TransactionEnvelope", decodedXDR);
-        setDecodedTransactionJSON(JSONbig.stringify(decodedTransaction, null, 2));
-        const tx = TransactionBuilder.fromXDR(envelope, net === "testnet" ? Networks.TESTNET : Networks.PUBLIC);
+        setDecodedTransactionJSON(
+          JSONbig.stringify(decodedTransaction, null, 2)
+        );
+
+        const tx = TransactionBuilder.fromXDR(
+          envelope,
+          net === "testnet" ? Networks.TESTNET : Networks.PUBLIC
+        );
         setTransactionHash(tx.hash().toString("hex"));
         if (tx instanceof Transaction) {
           setTransaction(tx);
@@ -46,10 +75,23 @@ const useXDRDecoding = (trigger: string | null | undefined, envelope: string) =>
           setOperationCount("1 (FeeBumpTransaction)");
           setSignatureCount(tx.signatures.length.toString());
         }
+      } catch (error) {
+        console.error("Error decoding XDR:", error);
+        // Handle errors gracefully, resetting state
+        setDecodedTransactionJSON("");
+        setTransactionHash("");
+        setSourceAccount("");
+        setSequenceNumber("");
+        setTransactionFee("");
+        setOperationCount("");
+        setSignatureCount("");
+        setTransaction(null);
       }
     };
+
     decodeXDR(envelope);
   }, [trigger, envelope, net]);
+
   return {
     decodedTransactionJSON,
     transactionHash,
@@ -59,6 +101,7 @@ const useXDRDecoding = (trigger: string | null | undefined, envelope: string) =>
     operationCount,
     signatureCount,
     transaction,
+    txHashBuffer: Buffer.from(transactionHash, "hex"),
   };
 };
 
