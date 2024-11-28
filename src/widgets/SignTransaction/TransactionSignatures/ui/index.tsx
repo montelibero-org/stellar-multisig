@@ -1,11 +1,10 @@
 import React, { FC, useEffect } from "react";
 import { Header, InputField } from "../../ui/widgets";
 import { localSignature } from "@/views/SignTransaction/page";
-import { getSecretKeyError, signTransaction } from "@/features/helpers";
-import { Networks } from "@stellar/stellar-sdk";
+import { getSecretKeyError,  } from "@/features/helpers";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
-import { Keypair, Transaction } from "stellar-sdk";
+import { Transaction } from "stellar-sdk";
 
 interface Props {
   localSignatures: localSignature;
@@ -35,13 +34,6 @@ const TransactionSignatures: FC<Props> = ({
   errorMessage,
   successMessage,
 }) => {
-  const { net, tx, setFullTransaction } = useStore(
-    useShallow((store) => store)
-  );
-
-  useEffect(() => {
-    console.log(localSignatures);
-  }, [localSignatures]);
 
   const handleSetSignature = (value: string, index: number) => {
     const newSignatures = [...localSignatures];
