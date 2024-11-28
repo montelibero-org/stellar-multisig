@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import {
   TransactionForm,
   TransactionOverview,
-  TransactionSignatures,
 } from "@/widgets/SignTransaction";
 import useTransactionValidation from "@/features/hooks/signTransaction/useTransactionValidation";
 import useXDRDecoding from "@/features/hooks/signTransaction/useXDRDecoding";
@@ -26,7 +25,7 @@ const SignTransaction: FC = () => {
   const params = useSearchParams();
   const importXDRParam = params?.get("importXDR") ?? "";
 
-  const [signaturesAdded, setSignaturesAdded] = useState<number>(0);
+  const [signaturesAdded] = useState<number>(0);
   const [currentFirebaseId, setCurrentFirebaseId] = useState<string>("");
 
   const net = useStore((state) => state.net);
@@ -35,7 +34,7 @@ const SignTransaction: FC = () => {
 
   const [transactionEnvelope, setTransactionEnvelope] = useState<string>("");
   const [resultXdr, setResultXdr] = useState<string>("");
-  const [localSignatures, setLocalSignatures] = useState<localSignature>([""]);
+  const [, setLocalSignatures] = useState<localSignature>([""]);
   const [errorMessageFirebase, setErrorMessageFirebase] = useState<string>("");
   const [successMessageFirebase, setSuccessMessageFirebase] =
     useState<string>("");

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
-import { Keypair, Transaction } from "stellar-sdk";
+import { Transaction } from "stellar-sdk";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import {

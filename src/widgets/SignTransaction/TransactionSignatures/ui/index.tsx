@@ -25,12 +25,12 @@ interface Props {
 const TransactionSignatures: FC<Props> = ({
   localSignatures,
   setLocalSignatures,
-  transactionEnvelope,
-  resultXdr,
-  setResultXdr,
-  signaturesAdded,
-  setSignaturesAdded,
-  txHash,
+  // transactionEnvelope,
+  // resultXdr,
+  // setResultXdr,
+  // signaturesAdded,
+  // setSignaturesAdded,
+  // txHash,
   Buttons,
   errorMessage,
   successMessage,
@@ -49,49 +49,49 @@ const TransactionSignatures: FC<Props> = ({
     setLocalSignatures(newSignatures);
   };
 
-  const handleSignTransaction = async () => {
-    try {
-      const validSignatures = localSignatures.filter(
-        (sig) => sig && sig.trim() !== "" && !getSecretKeyError(sig)
-      );
+  // const handleSignTransaction = async () => {
+  //   try {
+  //     const validSignatures = localSignatures.filter(
+  //       (sig) => sig && sig.trim() !== "" && !getSecretKeyError(sig)
+  //     );
 
-      const signedXDR = await signTransaction(
-        validSignatures,
-        net === "testnet" ? Networks.TESTNET : Networks.PUBLIC,
-        transactionEnvelope
-      );
+  //     const signedXDR = await signTransaction(
+  //       validSignatures,
+  //       net === "testnet" ? Networks.TESTNET : Networks.PUBLIC,
+  //       transactionEnvelope
+  //     );
 
-      if (signedXDR !== resultXdr) {
-        setSignaturesAdded(signaturesAdded + 1);
-        setResultXdr(signedXDR);
-      }
+  //     if (signedXDR !== resultXdr) {
+  //       setSignaturesAdded(signaturesAdded + 1);
+  //       setResultXdr(signedXDR);
+  //     }
 
-      setFullTransaction({
-        signatures: validSignatures.map((sig) => {
-          const keypair = Keypair.fromSecret(sig);
-          return {
-            hint: keypair.publicKey(),
-            signature: keypair.sign(txHash).toString("hex"),
-          };
-        }),
-        tx: tx.tx,
-      });
+  //     setFullTransaction({
+  //       signatures: validSignatures.map((sig) => {
+  //         const keypair = Keypair.fromSecret(sig);
+  //         return {
+  //           hint: keypair.publicKey(),
+  //           signature: keypair.sign(txHash).toString("hex"),
+  //         };
+  //       }),
+  //       tx: tx.tx,
+  //     });
 
-      console.log(
-        validSignatures.map((sig) => {
-          const keypair = Keypair.fromSecret(sig);
-          return {
-            hint: keypair.publicKey(),
-            signature: keypair.signDecorated(txHash),
-          };
-        })
-      );
-    } catch (error) {
-      console.error("Error signing transaction:", error);
-      alert(`Error signing transaction: ${error}`);
-      setResultXdr("");
-    }
-  };
+  //     console.log(
+  //       validSignatures.map((sig) => {
+  //         const keypair = Keypair.fromSecret(sig);
+  //         return {
+  //           hint: keypair.publicKey(),
+  //           signature: keypair.signDecorated(txHash),
+  //         };
+  //       })
+  //     );
+  //   } catch (error) {
+  //     console.error("Error signing transaction:", error);
+  //     alert(`Error signing transaction: ${error}`);
+  //     setResultXdr("");
+  //   }
+  // };
 
   return (
     <div className="container">
