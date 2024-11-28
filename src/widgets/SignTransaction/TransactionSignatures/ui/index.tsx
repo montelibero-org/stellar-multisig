@@ -1,9 +1,7 @@
-import React, { FC, useEffect } from "react";
+import React, { FC} from "react";
 import { Header, InputField } from "../../ui/widgets";
 import { localSignature } from "@/views/SignTransaction/page";
 import { getSecretKeyError,  } from "@/features/helpers";
-import { useStore } from "@/shared/store";
-import { useShallow } from "zustand/react/shallow";
 import { Transaction } from "stellar-sdk";
 
 interface Props {

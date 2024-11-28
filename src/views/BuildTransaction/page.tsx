@@ -3,7 +3,6 @@
 import { FC, useEffect, useState } from "react";
 import {
   MainLayout,
-  ShowXdr,
   XDRInput,
   ShowXdrButtons,
   SourceAccountInput,
