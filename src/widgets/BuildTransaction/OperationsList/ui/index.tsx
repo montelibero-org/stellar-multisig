@@ -220,7 +220,7 @@ const OperationsList: FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const operationsFromUrl: IOperation[] = [];
     let index = 0;
-    let updatedIsShowOperation: { isShow: boolean; index: number }[] = [];
+    const updatedIsShowOperation: { isShow: boolean; index: number }[] = [];
 
     // Чтение операций из URL-параметров
     while (urlParams.has(`entryName${index}`)) {
