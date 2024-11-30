@@ -6,6 +6,7 @@ import axios from "axios";
 import { Information } from "@/shared/types";
 import { useShallow } from "zustand/react/shallow";
 import { isSequenceNumberOutdated } from "@/shared/helpers";
+import { useSearchParams } from "next/navigation";
 
 
 type Props = {
@@ -17,13 +18,19 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   const [error, setError] = useState<string>("");
   const [isShowUpdateSeqNum, setIsShowUpdateSeqNum] = useState<boolean>(false);
   const [initialSeqNum, setInitialSeqNum] = useState<bigint | null>(null);
-
+  const searchParams = useSearchParams();
   const [tempSeqNum, setTempSeqNum] = useState<string>(
     tx.tx.seq_num ? tx.tx.seq_num.toString() : "" 
   );
+  const [sourceError, setSourceError] = useState<string>("");
 
  
   const fetchSequenceNumber = async () => {
+    if (!tx.tx.source_account || sourceError) {
+      setError("Invalid Source Account");
+      return;
+    }
+  
     try {
       const { data } = await axios.get<Information>(
         `${server}/accounts/${tx.tx.source_account}`
@@ -77,11 +84,11 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
     setTempSeqNum(tx.tx.seq_num.toString()); 
   }, [setSeqNum, tx.tx.seq_num]);
 
-  // useEffect(() => {
-  //   const params = new URLSearchParams(searchParams.toString());
-  //   params.set("TransactionSequenceNumber", tx.tx.seq_num.toString());
-  //   window.history.replaceState({}, "", `?${params.toString()}`);
-  // }, [tx.tx.seq_num]);
+   useEffect(() => {
+     const params = new URLSearchParams(searchParams.toString());
+     params.set("TransactionSequenceNumber", tx.tx.seq_num.toString());
+     window.history.replaceState({}, "", `?${params.toString()}`);
+   }, [tx.tx.seq_num]);
  
   useEffect(() => {
     if (!tx.tx.source_account) {
@@ -112,20 +119,28 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
           value={tempSeqNum ?? ""}
           onChange={(e) => {
             const value = e.target.value.trim();
-            if (/^[0-9]*$/.test(value)) {
+          
+     
+            if (/^[0-9]+$/.test(value)) {
               setTempSeqNum(value);
-
-              if (!value) {
-                setError("Sequence number is required.");
+          
+            
+              if (value.length < 10 ) {
+                setSourceError("Invalid Source Account");
+                setSeqNum(""); 
                 setIsShowUpdateSeqNum(false);
+          
+               
+             
                 return;
-              } else {
-                setError("");
               }
-
+          
+             
+              setSourceError("");
+              
+             
               const newSeqNum = BigInt(value);
               setSeqNum(newSeqNum);
-
               if (
                 initialSeqNum !== null &&
                 newSeqNum !== initialSeqNum &&
@@ -135,11 +150,11 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
               } else {
                 setIsShowUpdateSeqNum(false);
               }
-            }
-          }}
-          onBlur={() => {
-            if (!tempSeqNum) {
-              setError("Sequence number is required.");
+            } else {
+              
+              setSourceError("Invalid Source Account");
+              setSeqNum("");
+              setIsShowUpdateSeqNum(false);
             }
           }}
         />
@@ -162,6 +177,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
         </p>
       )}
       {error && <p className="error">{error}</p>}
+      {sourceError && <p className="error">{'Invalid Source Account'}</p>}
     </div>
   );
 };

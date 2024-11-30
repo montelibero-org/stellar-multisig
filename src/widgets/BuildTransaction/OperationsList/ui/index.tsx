@@ -19,6 +19,7 @@ const OperationsList: FC = () => {
       index: 0,
     },
   ]);
+  const [operationsLoadedFromUrl, setOperationsLoadedFromUrl] = useState<boolean>(false);
 
  
   const [operationIds, setOperationIds] = useState<Map<number, IOperation>>(
@@ -76,14 +77,23 @@ const OperationsList: FC = () => {
       source_account: "",
       body,
     };
-    setOperations([...tx.tx.operations, newOperation]);
+  
+    // Получаем текущие операции из хранилища
+    const currentOperations = [...tx.tx.operations];
+  
+    // Обновляем список операций, добавляя новую
+    setOperations([...currentOperations, newOperation]);
+  
+    // Обновляем operationIds и nextOperationId
     setOperationIds(new Map(operationIds.set(newOperationId, newOperation)));
     setNextOperationId(nextOperationId + 1);
+    
     addIsShowOperation();
   };
 
   const duplicateOperation = (index: number) => {
     const operationToDuplicate = tx.tx.operations[index];
+    const body: IOperation["body"] = {};
     if (operationToDuplicate) {
       const newOperationId = nextOperationId;
       setOperations([...tx.tx.operations, { ...operationToDuplicate }]);
@@ -91,6 +101,10 @@ const OperationsList: FC = () => {
       setNextOperationId(nextOperationId + 1);
       addIsShowOperation();
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(nextOperationId.toString(), JSON.stringify(body)); 
+    window.history.replaceState(null, "", `${window.location.pathname}?${urlParams.toString()}`);
   };
 
   const deleteOperation = (index: number) => {
@@ -201,6 +215,49 @@ const OperationsList: FC = () => {
     setNextOperationId(1);
     setIsShowOperation([]);
   };
+  useEffect(() => {
+    console.log("URL Params: ", window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
+    const operationsFromUrl: IOperation[] = [];
+    let index = 0;
+    let updatedIsShowOperation: { isShow: boolean; index: number }[] = [];
+
+    // Чтение операций из URL-параметров
+    while (urlParams.has(`entryName${index}`)) {
+      const entryName = urlParams.get(`entryName${index}`);
+      const entryValue = urlParams.get(`entryValue${index}`);
+      const sourceAccount = urlParams.get(`sourceAccount${index}`);
+
+      if (entryName && entryValue) {
+        operationsFromUrl.push({
+          source_account: sourceAccount || "",
+          body: {
+            manage_data: {
+              data_name: entryName,
+              data_value: entryValue,
+            },
+          },
+        });
+        updatedIsShowOperation.push({ isShow: true, index: index });
+      }
+      index++;
+    }
+
+    // Если операции из URL присутствуют и мы ещё не загрузили их
+    if (operationsFromUrl.length > 0 && !operationsLoadedFromUrl) {
+      setOperations(operationsFromUrl);
+      const initialIds = new Map();
+      operationsFromUrl.forEach((operation, idx) => {
+        initialIds.set(idx + 1, operation);
+      });
+      setOperationIds(initialIds);
+      setNextOperationId(operationsFromUrl.length + 1);
+      setIsShowOperation(updatedIsShowOperation);
+
+      // Устанавливаем флаг, что операции из URL были загружены
+      setOperationsLoadedFromUrl(true);
+    }
+  }, [window.location.search, operationsLoadedFromUrl]);
 
   return (
     <div className="segment blank">

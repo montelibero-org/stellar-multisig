@@ -46,6 +46,8 @@ const setOperationType = (
       currentUrlParams.set(`medThreshold${index}`, "");
       currentUrlParams.set(`highThreshold${index}`, "");
       currentUrlParams.set(`homeDomain${index}`, "");
+      currentUrlParams.set(`SetFlags${index}`, "");
+      currentUrlParams.set(`ClearFlags${index}`, "");
     }
 
    

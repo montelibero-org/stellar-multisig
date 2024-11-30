@@ -13,6 +13,7 @@ const SourceAccountInput: FC = () => {
     useShallow((state) => state)
   );
 
+ 
   useEffect(() => {
     const validateSourceAccount = async () => {
       const sourceAccountKey = tx.tx.source_account;
@@ -55,7 +56,7 @@ const SourceAccountInput: FC = () => {
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [tx.tx.source_account]);
-
+ 
   return (
     <div>
       <div className="flex items-center ">
@@ -66,6 +67,7 @@ const SourceAccountInput: FC = () => {
         value={tx.tx.source_account}
         onChange={(e) => setSourceAccount(e.target.value)}
       />
+
     </div>
   );
 };

@@ -40,7 +40,7 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
         isVisible={isVisibleTx}
         typeIcon="Change"
         typeOp="set_options"
-        operationThresholds={information?.thresholds}
+        // operationThresholds={information?.thresholds}
       />
       <dt>Thresholds:</dt>
       <dd>

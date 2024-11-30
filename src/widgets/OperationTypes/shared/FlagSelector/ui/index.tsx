@@ -1,5 +1,7 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import s from "@/widgets/OperationTypes/index.module.scss";
+import { useStore } from "@/shared/store";
+import { useShallow } from "zustand/react/shallow";
 
 export interface IFlag {
   id: number;
@@ -22,6 +24,39 @@ const FlagSelector: FC<FlagSelectorProps> = ({
 }) => {
   const isSelected = (flagId: number) => selectedFlags.includes(flagId);
 
+  
+ 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+   
+    const selectedFlagNames = selectedFlags
+      .map((id) => {
+        const flag = flags.find((flag) => flag.id === id);
+        return flag ? flag.name : null;
+      })
+      .filter((name) => name !== null)
+      .join(","); 
+
+    if (selectedFlagNames) {
+      if (title === "Set Flags") {
+      
+        params.set("SetFlags", `${encodeURIComponent(selectedFlagNames)}=Authorization required`);
+      } else if (title === "Clear Flags") {
+       
+        params.set("ClearFlags", `${encodeURIComponent(selectedFlagNames)}=Authorization required`);
+      }
+    } else {
+
+      params.delete("SetFlags");
+      params.delete("ClearFlags");
+    }
+
+    
+    window.history.replaceState({}, "", `?${params.toString()}`);
+  }, [selectedFlags, title, flags]);
+
+
   const totalPoints = selectedFlags.reduce((sum, id) => {
     const flag = flags.find((flag) => flag.id === id);
     return sum + (flag ? flag.points : 0);
@@ -43,24 +78,18 @@ const FlagSelector: FC<FlagSelectorProps> = ({
                     e.preventDefault();
                     onToggle(flag.id);
                   }}
-                  className={`tabs-item ${s.tabsitem} condensed  ${
-                    isSelected(flag.id) && "selected"
-                  }
-
-
-                  `}
+                  className={`tabs-item ${s.tabsitem} condensed  ${isSelected(flag.id) ? "selected" : ""}`}
                   style={{
                     cursor: "pointer",
                     width: "140px",
                     height: "90%",
-
                     textDecoration: "none",
                     flexWrap: "nowrap",
                   }}
                   href="#"
                 >
                   <span
-                    className="tabs-item-text  "
+                    className="tabs-item-text"
                     style={{ fontSize: "100%", border: "none" }}
                   >
                     {flag.name}
@@ -72,17 +101,17 @@ const FlagSelector: FC<FlagSelectorProps> = ({
         </div>
         {selectedFlags.length > 0 && (
           <p>
-            {selectedFlags.map((id, index) => {
-              const flag = flags.find((flag) => flag.id === id);
-              return flag ? (
-                <React.Fragment key={id}>
-                  {index > 0 && " + "}
-                  <span>
-                    {flag.name} ({flag.points})
-                  </span>
-                </React.Fragment>
-              ) : null;
-            })}
+           {selectedFlags.map((id, index) => {
+  const flag = flags.find((flag) => flag.id === id);
+  return flag ? (
+    <React.Fragment key={id}>
+      {index > 0 && " + "}
+      <span>
+        {flag.name} ({flag.points})
+      </span>
+    </React.Fragment>
+  ) : null;
+})}
             {" = "}
             {totalPoints}
           </p>
