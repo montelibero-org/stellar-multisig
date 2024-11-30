@@ -3,7 +3,7 @@ import { doc, updateDoc, getDoc, DocumentData, Firestore } from "firebase/firest
 async function sendSignatureToTransaction(
   firestore: Firestore | undefined,
   transactionId: string,
-  signedXDR: string,
+  signedXDR: string | null | undefined,
   net: "public" | "testnet"
 ): Promise<DocumentData | undefined> {
   if (!firestore) {

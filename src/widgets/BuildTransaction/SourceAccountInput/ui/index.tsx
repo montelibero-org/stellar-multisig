@@ -33,17 +33,12 @@ const SourceAccountInput: FC = () => {
 
         const eligibleSigners = signers?.filter((signer) => signer.weight >= 1);
 
-        if (Array.isArray(eligibleSigners) && eligibleSigners.length > 0) {
-          console.log("Eligible signers found:", eligibleSigners);
-        } else {
+        if (Array.isArray(eligibleSigners) && eligibleSigners.length <= 0) {
           console.warn("No eligible signers found");
         }
       } catch (fetchError) {
         console.error("Error fetching signers:", fetchError);
       }
-
-      
-     
     };
 
     validateSourceAccount();
