@@ -53,8 +53,7 @@ export interface IBuildTxJSONActions {
   ) => void;
   selectedMemoType: string; // Добавляем свойство
   setSelectedMemoType: (type: string) => void;
-  selectedFlagsType: string; // Добавляем свойство
-  setSelectedFlagsType: (type: string) => void;
+
   addOperation: () => void;
   removeOperation: (index: number) => void;
   addSignature: (signature: ISignature) => void;
