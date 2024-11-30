@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from "react";
 import s from "@/widgets/OperationTypes/index.module.scss";
-import { useStore } from "@/shared/store";
-import { useShallow } from "zustand/react/shallow";
+
 
 export interface IFlag {
   id: number;
