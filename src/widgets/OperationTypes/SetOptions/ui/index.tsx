@@ -12,7 +12,6 @@ import { IFlag } from "../../shared/FlagSelector";
 import { useHandleSourceAccountChange } from "@/features/hooks";
 import { IOperation } from "@/shared/types";
 
-
 type Field =
   | "master_weight"
   | "low_threshold"
@@ -76,14 +75,15 @@ const SetOptions: FC<Props> = ({ id }) => {
   const [masterWeightValue, setMasterWeightValue] = useState(
     masterWeight?.toString() || ""
   );
-
+  const [selectedSetFlagsBitmask, setSelectedSetFlagsBitmask] = useState(0);
+  const [selectedClearFlagsBitmask, setSelectedClearFlagsBitmask] = useState(0);
   const [selectedClearFlags, setSelectedClearFlags] = useState<number[][]>([]);
-  const [selectedSetFlagsLocal, setSelectedSetFlagsLocal] = useState<number[]>(
-    selectedSetFlags[id] || []
-  );
-  const [selectedClearFlagsLocal, setSelectedClearFlagsLocal] = useState<
-    number[]
-  >(selectedClearFlags[id] || []);
+  // const [selectedSetFlagsLocal, setSelectedSetFlagsLocal] = useState<number[]>(
+  //   selectedSetFlags[id] || []
+  // );
+  // const [selectedClearFlagsLocal, setSelectedClearFlagsLocal] = useState<
+  //   number[]
+  // >(selectedClearFlags[id] || []);
   const [currentSignerType, setCurrentSignerType] = useState<string>(
     signerOptions[0]
   );
@@ -150,13 +150,20 @@ const SetOptions: FC<Props> = ({ id }) => {
     operation.body.set_options?.signer?.weight,
   ]);
 
-  useEffect(() => {
-    setSelectedSetFlagsLocal(selectedSetFlags[id] || []);
-  }, [selectedSetFlags, id]);
+  // useEffect(() => {
+  //   setSelectedSetFlagsLocal(selectedSetFlags[id] || []);
+  // }, [selectedSetFlags, id]);
 
-  useEffect(() => {
-    setSelectedClearFlagsLocal(selectedClearFlags[id] || []);
-  }, [selectedClearFlags, id]);
+  // useEffect(() => {
+  //   setSelectedClearFlagsLocal(selectedClearFlags[id] || []);
+  // }, [selectedClearFlags, id]);
+
+  // const calculateFlagPoints = (flags: number[], flagData: IFlag[]) => {
+  //   return flags.reduce((total, flagId) => {
+  //     const flag = flagData.find((f) => f.id === flagId);
+  //     return total + (flag ? flag.points : 0);
+  //   }, 0);
+  // };
 
   useEffect(() => {
     if (signer?.key || signer?.weight !== null) {
@@ -165,30 +172,29 @@ const SetOptions: FC<Props> = ({ id }) => {
       setCurrentSignerType(signerOptions[0]);
     }
   }, [signer]);
+  useEffect(() => {
+    const currentSetFlags = selectedSetFlags[id] || [];
+    setSelectedSetFlagsBitmask(
+      currentSetFlags.reduce((bitmask, flagId) => bitmask | (1 << flagId), 0)
+    );
 
-  const calculateFlagPoints = (flags: number[], flagData: IFlag[]) => {
-    return flags.reduce((total, flagId) => {
-      const flag = flagData.find((f) => f.id === flagId);
-      return total + (flag ? flag.points : 0);
-    }, 0);
-  };
-
+    const currentClearFlags = selectedClearFlags[id] || [];
+    setSelectedClearFlagsBitmask(
+      currentClearFlags.reduce((bitmask, flagId) => bitmask | (1 << flagId), 0)
+    );
+  }, [selectedSetFlags, selectedClearFlags, id]);
   const handleToggleFlag = (flagId: number, flagType: "set" | "clear") => {
-    const selectedFlagsLocal =
-      flagType === "set" ? selectedSetFlagsLocal : selectedClearFlagsLocal;
-    const setSelectedFlagsLocal =
-      flagType === "set"
-        ? setSelectedSetFlagsLocal
-        : setSelectedClearFlagsLocal;
-    const flagData = flagType === "set" ? setFlagsData : clearFlagsData;
+    const bitmask =
+      flagType === "set" ? selectedSetFlagsBitmask : selectedClearFlagsBitmask;
+    const newBitmask = bitmask ^ (1 << flagId);
 
-    const newSelectedFlags = selectedFlagsLocal.includes(flagId)
-      ? selectedFlagsLocal.filter((id) => id !== flagId)
-      : [...selectedFlagsLocal, flagId];
+    if (flagType === "set") {
+      setSelectedSetFlagsBitmask(newBitmask);
+    } else {
+      setSelectedClearFlagsBitmask(newBitmask);
+    }
 
-    const newFlagsValue = calculateFlagPoints(newSelectedFlags, flagData);
-
-    const newOperations = [...operations];
+    const newOperations = [...fullTransaction.tx.tx.operations];
     if (newOperations[id]) {
       newOperations[id] = {
         ...newOperations[id],
@@ -196,24 +202,11 @@ const SetOptions: FC<Props> = ({ id }) => {
           ...newOperations[id].body,
           set_options: {
             ...newOperations[id].body.set_options,
-            [flagType === "set" ? "set_flags" : "clear_flags"]: newFlagsValue,
+            [flagType === "set" ? "set_flags" : "clear_flags"]: newBitmask,
           },
         },
       };
       setOperations(newOperations);
-    }
-
-    setSelectedFlagsLocal(newSelectedFlags);
-
-    // Update global selected flags in the store
-    if (flagType === "set") {
-      const newSelectedSetFlags = [...selectedSetFlags];
-      newSelectedSetFlags[id] = newSelectedFlags;
-      useStore.setState({ selectedSetFlags: newSelectedSetFlags });
-    } else {
-      const newSelectedClearFlags = [...selectedClearFlags];
-      newSelectedClearFlags[id] = newSelectedFlags;
-      setSelectedClearFlags(newSelectedClearFlags);
     }
   };
 
@@ -308,14 +301,12 @@ const SetOptions: FC<Props> = ({ id }) => {
         setOperations(newOperations);
       }
     };
-   
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
+    params.set("masterWeight", masterWeight?.toString() ?? "");
 
-  
-      params.set("masterWeight", masterWeight?.toString() ?? "");
-   
     params.set(
       "lowThreshold" + id.toString(),
       lowThresholdValue?.toString() || ""
@@ -331,9 +322,12 @@ const SetOptions: FC<Props> = ({ id }) => {
       highThresholdValue?.toString() || ""
     );
 
-    
+    params.set("homeDomain" + id.toString(), homeDomain?.toString() || "");
 
-    
+    params.set(
+      "sourceAccount" + id.toString(),
+      sourceAccount?.toString() || ""
+    );
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [
@@ -385,7 +379,6 @@ const SetOptions: FC<Props> = ({ id }) => {
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [masterWeight, sourceAccount, homeDomain]);
 
-  
   return (
     <>
       <p>Sets various configuration options for an account.</p>
@@ -394,14 +387,16 @@ const SetOptions: FC<Props> = ({ id }) => {
         <FlagSelector
           title="Set Flags"
           flags={setFlagsData}
-          selectedFlags={selectedSetFlagsLocal}
+          operationIndex={id}
+          selectedFlagsBitmask={selectedSetFlagsBitmask}
           onToggle={(flagId) => handleToggleFlag(flagId, "set")}
         />
 
         <FlagSelector
+          operationIndex={id}
           title="Clear Flags"
           flags={clearFlagsData}
-          selectedFlags={selectedClearFlagsLocal}
+          selectedFlagsBitmask={selectedClearFlagsBitmask}
           onToggle={(flagId) => handleToggleFlag(flagId, "clear")}
         />
 

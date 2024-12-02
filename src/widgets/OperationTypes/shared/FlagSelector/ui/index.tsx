@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from "react";
 import s from "@/widgets/OperationTypes/index.module.scss";
 
-
 export interface IFlag {
   id: number;
   name: string;
@@ -11,54 +10,38 @@ export interface IFlag {
 interface FlagSelectorProps {
   title: string;
   flags: IFlag[];
-  selectedFlags: number[];
+  selectedFlagsBitmask: number;  // Use bitmask here
   onToggle: (flagId: number) => void;
+  operationIndex: number; 
 }
 
 const FlagSelector: FC<FlagSelectorProps> = ({
   title,
+  operationIndex,
   flags,
-  selectedFlags,
+  selectedFlagsBitmask,
   onToggle,
 }) => {
-  const isSelected = (flagId: number) => selectedFlags.includes(flagId);
+  const isSelected = (flagId: number) => (selectedFlagsBitmask & (1 << flagId)) !== 0;
 
-  
- 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-   
-    const selectedFlagNames = selectedFlags
-      .map((id) => {
-        const flag = flags.find((flag) => flag.id === id);
-        return flag ? flag.name : null;
-      })
-      .filter((name) => name !== null)
-      .join(","); 
+    // Используем operationIndex для динамического выбора параметра
+    const flagParam = title === "Set Flags" ? `SetFlags${operationIndex}` : `ClearFlags${operationIndex}`;
 
-    if (selectedFlagNames) {
-      if (title === "Set Flags") {
-      
-        params.set("SetFlags", `${encodeURIComponent(selectedFlagNames)}=Authorization required`);
-      } else if (title === "Clear Flags") {
-       
-        params.set("ClearFlags", `${encodeURIComponent(selectedFlagNames)}=Authorization required`);
-      }
+    // Обновляем URL с параметром SetFlags или ClearFlags в зависимости от индекса
+    if (selectedFlagsBitmask !== 0) {
+      params.set(flagParam, selectedFlagsBitmask.toString());
     } else {
-
-      params.delete("SetFlags");
-      params.delete("ClearFlags");
+      params.delete(flagParam);
     }
 
-    
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [selectedFlags, title, flags]);
+  }, [selectedFlagsBitmask, title, operationIndex]);
 
-
-  const totalPoints = selectedFlags.reduce((sum, id) => {
-    const flag = flags.find((flag) => flag.id === id);
-    return sum + (flag ? flag.points : 0);
+  const totalPoints = flags.reduce((sum, flag) => {
+    return sum + (isSelected(flag.id) ? flag.points : 0);
   }, 0);
 
   return (
@@ -75,22 +58,13 @@ const FlagSelector: FC<FlagSelectorProps> = ({
                   key={flag.id}
                   onClick={(e) => {
                     e.preventDefault();
-                    onToggle(flag.id);
+                    onToggle(flag.id);  // Toggle the flag by ID
                   }}
-                  className={`tabs-item ${s.tabsitem} condensed  ${isSelected(flag.id) ? "selected" : ""}`}
-                  style={{
-                    cursor: "pointer",
-                    width: "140px",
-                    height: "90%",
-                    textDecoration: "none",
-                    flexWrap: "nowrap",
-                  }}
+                  className={`tabs-item ${s.tabsitem} condensed ${isSelected(flag.id) ? "selected" : ""}`}
+                  style={{ cursor: "pointer", width: "140px", height: "90%", textDecoration: "none", flexWrap: "nowrap" }}
                   href="#"
                 >
-                  <span
-                    className="tabs-item-text"
-                    style={{ fontSize: "100%", border: "none" }}
-                  >
+                  <span className="tabs-item-text" style={{ fontSize: "100%", border: "none" }}>
                     {flag.name}
                   </span>
                 </a>
@@ -98,35 +72,29 @@ const FlagSelector: FC<FlagSelectorProps> = ({
             </div>
           </div>
         </div>
-        {selectedFlags.length > 0 && (
+        {selectedFlagsBitmask !== 0 && (
           <p>
-           {selectedFlags.map((id, index) => {
-  const flag = flags.find((flag) => flag.id === id);
-  return flag ? (
-    <React.Fragment key={id}>
-      {index > 0 && " + "}
-      <span>
-        {flag.name} ({flag.points})
-      </span>
-    </React.Fragment>
-  ) : null;
-})}
+            {flags.map((flag, index) => {
+              return isSelected(flag.id) ? (
+                <React.Fragment key={flag.id}>
+                  {index > 0 && " + "}
+                  <span>
+                    {flag.name} ({flag.points})
+                  </span>
+                </React.Fragment>
+              ) : null;
+            })}
             {" = "}
             {totalPoints}
           </p>
         )}
         <p>
           Selected{" "}
-          <a
-            href="https://en.wikipedia.org/wiki/Bit_field"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://en.wikipedia.org/wiki/Bit_field" target="_blank" rel="noopener noreferrer">
             flags
           </a>{" "}
           mean to {title.includes("Set") ? "add" : "remove"} selected flags{" "}
-          {title.includes("Set") ? "in addition to" : "from"} flags already
-          present on the account.
+          {title.includes("Set") ? "in addition to" : "from"} flags already present on the account.
         </p>
       </div>
     </div>
