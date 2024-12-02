@@ -8,7 +8,7 @@ import StellarSdk from "stellar-sdk";
 import InputField from "../../shared/InputField";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
-import { IFlag } from "../../shared/FlagSelector";
+
 import { useHandleSourceAccountChange } from "@/features/hooks";
 import { IOperation } from "@/shared/types";
 
@@ -77,7 +77,7 @@ const SetOptions: FC<Props> = ({ id }) => {
   );
   const [selectedSetFlagsBitmask, setSelectedSetFlagsBitmask] = useState(0);
   const [selectedClearFlagsBitmask, setSelectedClearFlagsBitmask] = useState(0);
-  const [selectedClearFlags, setSelectedClearFlags] = useState<number[][]>([]);
+  const [selectedClearFlags] = useState<number[][]>([]);
   // const [selectedSetFlagsLocal, setSelectedSetFlagsLocal] = useState<number[]>(
   //   selectedSetFlags[id] || []
   // );
