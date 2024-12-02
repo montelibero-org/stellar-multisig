@@ -331,12 +331,9 @@ const SetOptions: FC<Props> = ({ id }) => {
       highThresholdValue?.toString() || ""
     );
 
-    params.set("homeDomain" + id.toString(), homeDomain?.toString() || "");
+    
 
-    params.set(
-      "sourceAccount" + id.toString(),
-      sourceAccount?.toString() || ""
-    );
+    
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [
@@ -388,6 +385,7 @@ const SetOptions: FC<Props> = ({ id }) => {
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [masterWeight, sourceAccount, homeDomain]);
 
+  
   return (
     <>
       <p>Sets various configuration options for an account.</p>
