@@ -412,11 +412,13 @@ const BuildTransaction: FC = () => {
           }
           return true;
         });
-        updateErrors(!isValid, "Fill out all required fields");
+        updateErrors(!isValid,"Signer Key is missing in operation");
+        updateErrors(!isValid,"Signer Weight is missing in operation");
       } catch (error) {
         console.error("Error in useSetTxBuildErrors:", error);
       }
     };
+
 
     const updateAllErrors = () => {
       updateErrorSourceAccount();

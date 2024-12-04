@@ -88,13 +88,15 @@ const SetOptions: FC<Props> = ({ id }) => {
     signerOptions[0]
   );
   const [lowThresholdValue, setLowThresholdValue] = useState(
-    lowThreshold?.toString() || ""
+    lowThreshold != null ? lowThreshold.toString() : "0"
   );
+  
   const [mediumThresholdValue, setMediumThresholdValue] = useState(
-    mediumThreshold?.toString() || ""
+    mediumThreshold != null ? mediumThreshold.toString() : "0"
   );
+  
   const [highThresholdValue, setHighThresholdValue] = useState(
-    highThreshold?.toString() || ""
+    highThreshold != null ? highThreshold.toString() : "0"
   );
   useEffect(() => {
     if (id === 0) {
@@ -211,6 +213,7 @@ const SetOptions: FC<Props> = ({ id }) => {
   };
 
   const validateRange = (value: string): boolean => {
+    if (value === "") return true; // Allow empty value
     const num = Number(value);
     return num >= 0 && num <= 255;
   };
@@ -234,45 +237,42 @@ const SetOptions: FC<Props> = ({ id }) => {
   };
 
   const handleInputChange =
-    (field: Field | "home_domain") =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      const numValue = Number(value);
+  (field: Field | "home_domain") =>
+  (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numValue = Number(value);
 
-      if (field === "home_domain") {
-        handleHomeDomainChange(e);
-        return;
-      }
+    if (field === "home_domain") {
+      handleHomeDomainChange(e);
+      return;
+    }
 
-      if (
-        value === "" ||
-        (!isNaN(numValue) && validateRange(numValue.toString()))
-      ) {
-        const fieldSetters = {
-          master_weight: setMasterWeightValue,
-          low_threshold: setLowThresholdValue,
-          med_threshold: setMediumThresholdValue,
-          high_threshold: setHighThresholdValue,
-        };
+    if (value === "" || (!isNaN(numValue) && validateRange(numValue.toString()))) {
+      const fieldSetters = {
+        master_weight: setMasterWeightValue,
+        low_threshold: setLowThresholdValue,
+        med_threshold: setMediumThresholdValue,
+        high_threshold: setHighThresholdValue,
+      };
 
-        fieldSetters[field]?.(value);
+      fieldSetters[field]?.(value);
 
-        const newOperations = [...operations];
-        if (newOperations[id]) {
-          newOperations[id] = {
-            ...newOperations[id],
-            body: {
-              ...newOperations[id].body,
-              set_options: {
-                ...newOperations[id].body.set_options,
-                [field]: value === "" ? undefined : numValue,
-              },
+      const newOperations = [...operations];
+      if (newOperations[id]) {
+        newOperations[id] = {
+          ...newOperations[id],
+          body: {
+            ...newOperations[id].body,
+            set_options: {
+              ...newOperations[id].body.set_options,
+              [field]: value === "" ? undefined : numValue, // Handle empty string properly
             },
-          };
-          setOperations(newOperations);
-        }
+          },
+        };
+        setOperations(newOperations);
       }
-    };
+    }
+  };
 
   const handleSignerChange =
     (field: "key" | "weight") => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -378,7 +378,27 @@ const SetOptions: FC<Props> = ({ id }) => {
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [masterWeight, sourceAccount, homeDomain]);
+  useEffect(() => {
+    console.log("Operation thresholds:", {
+      lowThreshold,
+      mediumThreshold,
+      highThreshold,
+    });
+  }, [lowThreshold, mediumThreshold, highThreshold]);
 
+  useEffect(() => {
+    const operation = fullTransaction.tx.tx.operations[id] || defaultOperation;
+  
+    setLowThresholdValue(
+      operation.body.set_options?.low_threshold?.toString() || ""
+    );
+    setMediumThresholdValue(
+      operation.body.set_options?.med_threshold?.toString() || ""
+    );
+    setHighThresholdValue(
+      operation.body.set_options?.high_threshold?.toString() || ""
+    );
+  }, [fullTransaction, id]);
   return (
     <>
       <p>Sets various configuration options for an account.</p>

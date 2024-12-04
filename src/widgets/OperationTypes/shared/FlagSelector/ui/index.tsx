@@ -10,7 +10,7 @@ export interface IFlag {
 interface FlagSelectorProps {
   title: string;
   flags: IFlag[];
-  selectedFlagsBitmask: number;  // Use bitmask here
+  selectedFlagsBitmask: number; 
   onToggle: (flagId: number) => void;
   operationIndex: number; 
 }
@@ -27,10 +27,9 @@ const FlagSelector: FC<FlagSelectorProps> = ({
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    // Используем operationIndex для динамического выбора параметра
+   
     const flagParam = title === "Set Flags" ? `SetFlags${operationIndex}` : `ClearFlags${operationIndex}`;
 
-    // Обновляем URL с параметром SetFlags или ClearFlags в зависимости от индекса
     if (selectedFlagsBitmask !== 0) {
       params.set(flagParam, selectedFlagsBitmask.toString());
     } else {
@@ -58,7 +57,7 @@ const FlagSelector: FC<FlagSelectorProps> = ({
                   key={flag.id}
                   onClick={(e) => {
                     e.preventDefault();
-                    onToggle(flag.id);  // Toggle the flag by ID
+                    onToggle(flag.id);  
                   }}
                   className={`tabs-item ${s.tabsitem} condensed ${isSelected(flag.id) ? "selected" : ""}`}
                   style={{ cursor: "pointer", width: "140px", height: "90%", textDecoration: "none", flexWrap: "nowrap" }}

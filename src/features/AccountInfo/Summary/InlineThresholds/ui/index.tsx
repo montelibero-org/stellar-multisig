@@ -18,21 +18,22 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
   const thresholds = [
     {
       label: "Low",
-      value: Number(information?.thresholds?.low_threshold) || 0, 
+      value: Number(information?.thresholds?.low_threshold) || '', 
       title: "Low threshold",
     },
     {
       label: "Med",
-      value: Number(information?.thresholds?.med_threshold) || 0,  
+      value: Number(information?.thresholds?.med_threshold) || '',  
       title: "Medium threshold",
     },
     {
       label: "High",
-      value: Number(information?.thresholds?.high_threshold) || 0,
+      value: Number(information?.thresholds?.high_threshold) || '',
       title: "High threshold",
     },
   ];
 
+  
   return (
     <>
       <TransactionIcon
@@ -40,7 +41,7 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
         isVisible={isVisibleTx}
         typeIcon="Change"
         typeOp="set_options"
-        // operationThresholds={information?.thresholds}
+        operationThresholds={information?.thresholds}
       />
       <dt>Thresholds:</dt>
       <dd>
@@ -48,7 +49,7 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
           <React.Fragment key={threshold.label}>
             {index > 0 && " / "}
             <span title={threshold.title}>
-              {signerWeights > threshold.value && signerWeights !== 0 ? (
+              {signerWeights > Number(threshold.value) && signerWeights !== 0 ? (
                 <span
                   title={`${threshold.label} threshold is unlocked, operations are permitted`}
                 >
@@ -63,7 +64,7 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
               )}
               <span
                 title={
-                  signerWeights > threshold.value && signerWeights !== 0
+                  signerWeights > Number(threshold.value) && signerWeights !== 0
                     ? `${threshold.label} threshold is unlocked, operations are permitted`
                     : `${threshold.label} threshold is locked, operations are prohibited`
                 }
@@ -98,8 +99,11 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
           </div>{" "}
         </i>
       </dd>
+      
     </>
+    
   );
+  
 };
 
 export default InlineThresholds;

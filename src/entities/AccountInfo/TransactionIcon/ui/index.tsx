@@ -40,7 +40,7 @@ const TransactionIcon: FC<Props> = ({
   baseFee,
   lowerTime,
   upperTime,
-   TransactionSequenceNumber,
+  TransactionSequenceNumber,
   typeOp,
   style,
   processedKey,
@@ -74,8 +74,8 @@ const TransactionIcon: FC<Props> = ({
         processedKey,
         processedValue,
       }),
-      ...(sourceAccount && { sourceAccountForSetOptions: sourceAccount }),
-      ...(weight != null && { weight: weight.toString() }),
+      ...(sourceAccount && { signerkey: sourceAccount }),
+      ...(weight != null && { signerWeight: weight.toString() }),
 
       ...(operationThresholds && {
         operationThresholds: [
