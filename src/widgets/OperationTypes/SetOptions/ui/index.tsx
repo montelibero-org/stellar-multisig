@@ -90,11 +90,11 @@ const SetOptions: FC<Props> = ({ id }) => {
   const [lowThresholdValue, setLowThresholdValue] = useState(
     lowThreshold != null ? lowThreshold.toString() : "0"
   );
-  
+
   const [mediumThresholdValue, setMediumThresholdValue] = useState(
     mediumThreshold != null ? mediumThreshold.toString() : "0"
   );
-  
+
   const [highThresholdValue, setHighThresholdValue] = useState(
     highThreshold != null ? highThreshold.toString() : "0"
   );
@@ -237,42 +237,45 @@ const SetOptions: FC<Props> = ({ id }) => {
   };
 
   const handleInputChange =
-  (field: Field | "home_domain") =>
-  (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const numValue = Number(value);
+    (field: Field | "home_domain") =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      const numValue = Number(value);
 
-    if (field === "home_domain") {
-      handleHomeDomainChange(e);
-      return;
-    }
-
-    if (value === "" || (!isNaN(numValue) && validateRange(numValue.toString()))) {
-      const fieldSetters = {
-        master_weight: setMasterWeightValue,
-        low_threshold: setLowThresholdValue,
-        med_threshold: setMediumThresholdValue,
-        high_threshold: setHighThresholdValue,
-      };
-
-      fieldSetters[field]?.(value);
-
-      const newOperations = [...operations];
-      if (newOperations[id]) {
-        newOperations[id] = {
-          ...newOperations[id],
-          body: {
-            ...newOperations[id].body,
-            set_options: {
-              ...newOperations[id].body.set_options,
-              [field]: value === "" ? undefined : numValue, // Handle empty string properly
-            },
-          },
-        };
-        setOperations(newOperations);
+      if (field === "home_domain") {
+        handleHomeDomainChange(e);
+        return;
       }
-    }
-  };
+
+      if (
+        value === "" ||
+        (!isNaN(numValue) && validateRange(numValue.toString()))
+      ) {
+        const fieldSetters = {
+          master_weight: setMasterWeightValue,
+          low_threshold: setLowThresholdValue,
+          med_threshold: setMediumThresholdValue,
+          high_threshold: setHighThresholdValue,
+        };
+
+        fieldSetters[field]?.(value);
+
+        const newOperations = [...operations];
+        if (newOperations[id]) {
+          newOperations[id] = {
+            ...newOperations[id],
+            body: {
+              ...newOperations[id].body,
+              set_options: {
+                ...newOperations[id].body.set_options,
+                [field]: value === "" ? undefined : numValue, 
+              },
+            },
+          };
+          setOperations(newOperations);
+        }
+      }
+    };
 
   const handleSignerChange =
     (field: "key" | "weight") => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -305,13 +308,15 @@ const SetOptions: FC<Props> = ({ id }) => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    params.set("masterWeight", masterWeight?.toString() ?? "");
-
+    if(masterWeight !== null && masterWeight !== undefined){
+      params.set("masterWeight", masterWeight.toString());
+    }
+    if(lowThresholdValue !== null && lowThresholdValue !== undefined){
     params.set(
       "lowThreshold" + id.toString(),
       lowThresholdValue?.toString() || ""
     );
-
+  }
     params.set(
       "mediumThreshold" + id.toString(),
       mediumThresholdValue?.toString() || ""
@@ -369,7 +374,7 @@ const SetOptions: FC<Props> = ({ id }) => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    params.set("masterWeight", masterWeight?.toString() ?? "");
+    
 
     params.set(
       "sourceAccount" + id.toString(),
@@ -377,7 +382,7 @@ const SetOptions: FC<Props> = ({ id }) => {
     );
 
     window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [masterWeight, sourceAccount, homeDomain]);
+  }, [ sourceAccount, homeDomain]);
   useEffect(() => {
     console.log("Operation thresholds:", {
       lowThreshold,
@@ -388,7 +393,7 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const operation = fullTransaction.tx.tx.operations[id] || defaultOperation;
-  
+
     setLowThresholdValue(
       operation.body.set_options?.low_threshold?.toString() || ""
     );

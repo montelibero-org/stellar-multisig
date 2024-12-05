@@ -25,7 +25,7 @@ const BaseFeeInput: FC = () => {
     if (value <= 0) {
       setSourceError("Base Fee is required");
     }else {
-      setSourceError(""); // Clear the error when a valid fee is entered
+      setSourceError(""); 
     }
   }
   useEffect(() => {

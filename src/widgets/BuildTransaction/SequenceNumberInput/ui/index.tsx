@@ -24,9 +24,15 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   );
   const [sourceError, setSourceError] = useState<string>("");
 
- 
+  const validateFee = (value: number) => {
+    if (value <= 0) {
+      setSourceError("Sequence Number is required");
+    }else {
+      setSourceError(""); 
+    }
+  }
   const fetchSequenceNumber = async () => {
-    if (!tx.tx.source_account || sourceError) {
+    if (sourceError) {
       setError("Invalid Source Account");
       return;
     }
@@ -98,7 +104,9 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
       setTempSeqNum(tx.tx.seq_num ? tx.tx.seq_num.toString() : ""); 
     }
   }, [tx.tx.seq_num, tx.tx.source_account]);
-
+  useEffect(() => {
+    validateFee(Number(tempSeqNum))
+  })
   return (
     <div>
       <h4>Transaction Sequence Number</h4>
@@ -119,28 +127,21 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
           value={tempSeqNum ?? ""}
           onChange={(e) => {
             const value = e.target.value.trim();
-          
-     
+        
             if (/^[0-9]+$/.test(value)) {
               setTempSeqNum(value);
-          
-            
-              if (value.length < 10 ) {
+        
+              if (value.length < 10) {
                 setSourceError("Invalid Source Account");
-                setSeqNum(""); 
+                setSeqNum(""); // Сбрасываем значение Sequence Number
                 setIsShowUpdateSeqNum(false);
-          
-               
-             
                 return;
               }
-          
-             
-              setSourceError("");
-              
-             
+        
+              setSourceError(""); // Ошибок нет, всё корректно
               const newSeqNum = BigInt(value);
               setSeqNum(newSeqNum);
+        
               if (
                 initialSeqNum !== null &&
                 newSeqNum !== initialSeqNum &&
@@ -151,8 +152,7 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
                 setIsShowUpdateSeqNum(false);
               }
             } else {
-              
-              setSourceError("Invalid Source Account");
+              setSourceError("Invalid Source Account"); // Если строка не числовая
               setSeqNum("");
               setIsShowUpdateSeqNum(false);
             }
@@ -176,8 +176,9 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
           The sequence number is outdated. Please update it.
         </p>
       )}
+      
+      {sourceError && <p className="error">{sourceError}</p>}
       {error && <p className="error">{error}</p>}
-      {sourceError && <p className="error">{'Invalid Source Account'}</p>}
     </div>
   );
 };

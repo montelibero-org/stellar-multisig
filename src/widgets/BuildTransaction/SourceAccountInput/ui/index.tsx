@@ -13,22 +13,15 @@ const SourceAccountInput: FC = () => {
     useShallow((state) => state)
   );
   const [sourceError, setSourceError] = useState<string>("");
-  const validateFee = (value: number | string) => {
-    if (typeof value === 'string') {
-      const numericValue = parseFloat(value);
-      if (isNaN(numericValue) || numericValue <= 0) {
-        setSourceError("Base Fee is required");
-      } else {
-        setSourceError(""); // Clear the error when a valid fee is entered
-      }
-    } else if (typeof value === 'number') {
-      if (value <= 0 || isNaN(value) || !isFinite(value)) {
-        setSourceError("Base Fee is required");
-      } else {
-        setSourceError(""); // Clear the error when a valid fee is entered
-      }
-    }
-  };
+
+ const validateFee = (value: number | string) => {
+  if (!StellarSdk.StrKey.isValidEd25519PublicKey(value)) {
+    setSourceError("Invalid source account key");
+  } else {
+    setSourceError("");
+  }
+};
+
   useEffect(() => {
     const validateSourceAccount = async () => {
       const sourceAccountKey = tx.tx.source_account;
@@ -71,8 +64,8 @@ const SourceAccountInput: FC = () => {
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [tx.tx.source_account]);
-  useEffect(() => {
-    validateFee((tx.tx.source_account)); // validate the fee on load or whenever feeState changes
+ useEffect(() => {
+  validateFee(tx.tx.source_account);
   }, [tx.tx.source_account]);
   return (
     <div>
@@ -84,7 +77,7 @@ const SourceAccountInput: FC = () => {
         value={tx.tx.source_account}
         onChange={(e) => setSourceAccount(e.target.value)}
       />
-{sourceError && <p className="error">{'Source Account is required'}</p>}
+  {sourceError && <p className="error">{'Source Account is required'}</p>}
     </div>
   );
 };
