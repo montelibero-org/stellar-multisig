@@ -66,9 +66,9 @@ const BuildTransaction: FC = () => {
   const processedKeyParam = searchParams.get("processedKey");
   const processedValueParam = searchParams.get("processedValue");
   const operationThresholdsParams = searchParams.get("operationThresholds");
-  const weightParam = searchParams.get("weight");
+  const weightParam = searchParams.get("signerWeight");
   const masterWeightParam = searchParams.get("masterWeight");
-  const sourceAccountForSetOptionsParam = searchParams.get("sourceAccountForSetOptions");
+  const sourceAccountForSetOptionsParam = searchParams.get("signerkey");
   const homeDomainParam = searchParams.get("homeDomain");
   const auth_clawback_enabledParam = searchParams.get("auth_clawback_enabled");
   const auth_immutableParam = searchParams.get("auth_immutable");
