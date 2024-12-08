@@ -215,7 +215,8 @@ const OperationsList: FC = () => {
     setNextOperationId(1);
     setIsShowOperation([]);
   };
-  useEffect(() => {
+  useEffect(() => 
+    {
     console.log("URL Params: ", window.location.search);
     const urlParams = new URLSearchParams(window.location.search);
     const operationsFromUrl: IOperation[] = [];
@@ -253,9 +254,9 @@ const OperationsList: FC = () => {
       index++;
     }
   
-    // Если операции из URL присутствуют и мы ещё не загрузили их
+   
     if (operationsFromUrl.length > 0 && !operationsLoadedFromUrl) {
-      setOperations(operationsFromUrl);  // Устанавливаем операции с флагами
+      setOperations(operationsFromUrl);  
       const initialIds = new Map();
       operationsFromUrl.forEach((operation, idx) => {
         initialIds.set(idx + 1, operation);
@@ -263,7 +264,7 @@ const OperationsList: FC = () => {
       setOperationIds(initialIds);
       setNextOperationId(operationsFromUrl.length + 1);
       setIsShowOperation(updatedIsShowOperation);
-      setOperationsLoadedFromUrl(true);  // Отмечаем, что операции загружены
+      setOperationsLoadedFromUrl(true);  
     }
   }, [window.location.search, operationsLoadedFromUrl]);
 

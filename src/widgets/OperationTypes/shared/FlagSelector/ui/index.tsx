@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import s from "@/widgets/OperationTypes/index.module.scss";
 
 export interface IFlag {
@@ -22,38 +22,42 @@ const FlagSelector: FC<FlagSelectorProps> = ({
   selectedFlagsBitmask,
   onToggle,
 }) => {
-  // Helper function to check if a flag is selected
-  const isSelected = (flagId: number) => (selectedFlagsBitmask & (1 << flagId)) !== 0;
+  const [currentFlags, setCurrentFlags] = useState<number>(selectedFlagsBitmask);
 
-  // Syncing URL with the selected flags bitmask on mount and when selectedFlagsBitmask changes
+
+  const isSelected = (flagId: number) => (currentFlags & (1 << flagId)) !== 0;
+
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    
-    // Determine the flag parameter based on the operation type (Set or Clear)
     const flagParam = title === "Set Flags" ? `SetFlags${operationIndex}` : `ClearFlags${operationIndex}`;
-    
-    // Update the URL with the current selected flags
-    if (selectedFlagsBitmask !== 0) {
-      params.set(flagParam, selectedFlagsBitmask.toString());
-    } else {
-      params.delete(flagParam);  // If no flags are selected, remove the query param
-    }
-    
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [selectedFlagsBitmask, title, operationIndex]);
 
-  // Calculate total points of selected flags
+
+    const flagFromUrl = params.get(flagParam);
+    if (flagFromUrl) {
+      setCurrentFlags(parseInt(flagFromUrl, 10));
+    }
+  }, [operationIndex, title]);
+
+  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const flagParam = title === "Set Flags" ? `SetFlags${operationIndex}` : `ClearFlags${operationIndex}`;
+  
+    if (currentFlags !== 0) {
+      params.set(flagParam, currentFlags.toString()); 
+    } else {
+      params.delete(flagParam); 
+    }
+  
+    window.history.replaceState({}, "", `?${params.toString()}`);
+  }, [currentFlags, operationIndex, title]);
+
+
+  
   const totalPoints = flags.reduce((sum, flag) => {
     return sum + (isSelected(flag.id) ? flag.points : 0);
   }, 0);
-
-
- 
-
-  // Update localStorage whenever the selected flags bitmask changes
-  useEffect(() => {
-    localStorage.setItem(`selectedFlagsBitmask${operationIndex}`, selectedFlagsBitmask.toString());
-  }, [selectedFlagsBitmask, operationIndex]);
 
   return (
     <div className={s.section}>
@@ -69,7 +73,12 @@ const FlagSelector: FC<FlagSelectorProps> = ({
                   key={flag.id}
                   onClick={(e) => {
                     e.preventDefault();
-                    onToggle(flag.id);  // Toggle flag selection when clicked
+                    const newFlags = isSelected(flag.id)
+                      ? currentFlags & ~(1 << flag.id)  
+                      : currentFlags | (1 << flag.id); 
+
+                    setCurrentFlags(newFlags);  
+                    onToggle(flag.id);  
                   }}
                   className={`tabs-item ${s.tabsitem} condensed ${isSelected(flag.id) ? "selected" : ""}`}
                   style={{ cursor: "pointer", width: "140px", height: "90%", textDecoration: "none", flexWrap: "nowrap" }}
@@ -83,7 +92,7 @@ const FlagSelector: FC<FlagSelectorProps> = ({
             </div>
           </div>
         </div>
-        {selectedFlagsBitmask !== 0 && (
+        {currentFlags !== 0 && (
           <p>
             {flags.map((flag, index) => {
               return isSelected(flag.id) ? (
@@ -94,9 +103,8 @@ const FlagSelector: FC<FlagSelectorProps> = ({
                   </span>
                 </React.Fragment>
               ) : null;
-            })}
-            {" = "}
-            {totalPoints}
+            })}{" "}
+            = {totalPoints}
           </p>
         )}
         <p>

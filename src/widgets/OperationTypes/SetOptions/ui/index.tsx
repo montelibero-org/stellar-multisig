@@ -99,6 +99,46 @@ const SetOptions: FC<Props> = ({ id }) => {
     highThreshold != null ? highThreshold.toString() : "0"
   );
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    
+    console.log("URL Params:", window.location.search);
+
+    
+    const setFlags = params.get(`SetFlags${id}`);
+    const clearFlags = params.get(`ClearFlags${id}`);
+
+    
+    if (setFlags !== null) {
+      console.log(`SetFlags0 из URL: ${setFlags}`);
+      setSelectedSetFlagsBitmask(Number(setFlags)); 
+    } else {
+      console.log('SetFlags0 не найден');
+    }
+
+    if (clearFlags !== null) {
+      console.log(`ClearFlags0 из URL: ${clearFlags}`);
+      setSelectedClearFlagsBitmask(Number(clearFlags));  
+    } else {
+      console.log('ClearFlags0 не найден');
+    }
+  }, []);
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  // Обновляем URL параметры при изменении битмасок
+  params.set(`SetFlags${id}`, selectedSetFlagsBitmask.toString());
+  params.set(`ClearFlags${id}`, selectedClearFlagsBitmask.toString());
+
+  window.history.replaceState({}, "", `?${params.toString()}`);
+}, [selectedSetFlagsBitmask, selectedClearFlagsBitmask, id]);
+useEffect(() => {
+  console.log("Current selectedSetFlagsBitmask:", selectedSetFlagsBitmask);
+  console.log("Current selectedClearFlagsBitmask:", selectedClearFlagsBitmask);
+  console.log("URL Params:", window.location.search);
+}, [selectedSetFlagsBitmask, selectedClearFlagsBitmask, id]);
+  useEffect(() => {
     if (id === 0) {
       if (
         operation.body.set_options?.signer?.key !== "" ||
@@ -406,28 +446,7 @@ const SetOptions: FC<Props> = ({ id }) => {
 
 
 
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search); // Объявляем params
 
-  const setFlagsBitmask = params.get(`SetFlags${id}`);
-  const clearFlagsBitmask = params.get(`ClearFlags${id}`);
-
-  if (setFlagsBitmask !== null) {
-      setSelectedSetFlagsBitmask(Number(setFlagsBitmask)); // Устанавливаем флаги из URL
-  }
-
-  if (clearFlagsBitmask !== null) {
-      setSelectedClearFlagsBitmask(Number(clearFlagsBitmask)); // Устанавливаем флаги из URL
-  }
-}, [id]);
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-
-  params.set("SetFlags" + id.toString(), selectedSetFlagsBitmask.toString());
-  params.set("ClearFlags" + id.toString(), selectedClearFlagsBitmask.toString());
-
-  window.history.replaceState({}, "", `?${params.toString()}`);
-}, [selectedSetFlagsBitmask, selectedClearFlagsBitmask, id]);
   return (
     <>
       <p>Sets various configuration options for an account.</p>
