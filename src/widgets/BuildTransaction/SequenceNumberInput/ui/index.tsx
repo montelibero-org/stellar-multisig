@@ -25,12 +25,14 @@ const SequenceNumberInput: FC<Props> = ({ firebaseID }) => {
   const [sourceError, setSourceError] = useState<string>("");
 
   const validateFee = (value: number) => {
-    if (value <= 0) {
-      setSourceError("Sequence Number is required");
-    }else {
-      setSourceError(""); 
+    const errorMessage = value <= 0 ? "Sequence Number is required" : "";
+  
+    // Only update state if the error message changes
+    if (sourceError !== errorMessage) {
+      setSourceError(errorMessage);
     }
-  }
+  };
+  
   const fetchSequenceNumber = async () => {
     if (sourceError) {
       setError("Invalid Source Account");

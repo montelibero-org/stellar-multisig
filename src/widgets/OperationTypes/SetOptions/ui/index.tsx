@@ -189,13 +189,13 @@ const SetOptions: FC<Props> = ({ id }) => {
     const bitmask =
       flagType === "set" ? selectedSetFlagsBitmask : selectedClearFlagsBitmask;
     const newBitmask = bitmask ^ (1 << flagId);
-
+  
     if (flagType === "set") {
       setSelectedSetFlagsBitmask(newBitmask);
     } else {
       setSelectedClearFlagsBitmask(newBitmask);
     }
-
+  
     const newOperations = [...fullTransaction.tx.tx.operations];
     if (newOperations[id]) {
       newOperations[id] = {
@@ -210,10 +210,10 @@ const SetOptions: FC<Props> = ({ id }) => {
       };
       setOperations(newOperations);
     }
-  };
+};
 
   const validateRange = (value: string): boolean => {
-    if (value === "") return true; // Allow empty value
+    if (value === "") return true; 
     const num = Number(value);
     return num >= 0 && num <= 255;
   };
@@ -308,15 +308,15 @@ const SetOptions: FC<Props> = ({ id }) => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    if(masterWeight !== null && masterWeight !== undefined){
-      params.set("masterWeight", masterWeight.toString());
-    }
-    if(lowThresholdValue !== null && lowThresholdValue !== undefined){
+    
+      params.set("masterWeight" + id.toString(), masterWeight?.toString() || "");
+    
+    
     params.set(
       "lowThreshold" + id.toString(),
       lowThresholdValue?.toString() || ""
     );
-  }
+  
     params.set(
       "mediumThreshold" + id.toString(),
       mediumThresholdValue?.toString() || ""
@@ -329,10 +329,9 @@ const SetOptions: FC<Props> = ({ id }) => {
 
     params.set("homeDomain" + id.toString(), homeDomain?.toString() || "");
 
-    params.set(
-      "sourceAccount" + id.toString(),
-      sourceAccount?.toString() || ""
-    );
+   
+  
+    
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [
@@ -343,6 +342,7 @@ const SetOptions: FC<Props> = ({ id }) => {
     homeDomain,
     sourceAccount,
     id,
+   
   ]);
 
   const handleSignerTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -371,6 +371,7 @@ const SetOptions: FC<Props> = ({ id }) => {
     setSignerTypes(newSignerTypes);
   };
 
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
@@ -383,13 +384,6 @@ const SetOptions: FC<Props> = ({ id }) => {
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [ sourceAccount, homeDomain]);
-  useEffect(() => {
-    console.log("Operation thresholds:", {
-      lowThreshold,
-      mediumThreshold,
-      highThreshold,
-    });
-  }, [lowThreshold, mediumThreshold, highThreshold]);
 
   useEffect(() => {
     const operation = fullTransaction.tx.tx.operations[id] || defaultOperation;
@@ -404,6 +398,36 @@ const SetOptions: FC<Props> = ({ id }) => {
       operation.body.set_options?.high_threshold?.toString() || ""
     );
   }, [fullTransaction, id]);
+  const parseFlagsFromURL = (paramName: string): number | null => {
+    const params = new URLSearchParams(window.location.search);
+    const bitmask = params.get(paramName);
+    return bitmask ? parseInt(bitmask, 10) : null;
+};
+
+
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search); // Объявляем params
+
+  const setFlagsBitmask = params.get(`SetFlags${id}`);
+  const clearFlagsBitmask = params.get(`ClearFlags${id}`);
+
+  if (setFlagsBitmask !== null) {
+      setSelectedSetFlagsBitmask(Number(setFlagsBitmask)); // Устанавливаем флаги из URL
+  }
+
+  if (clearFlagsBitmask !== null) {
+      setSelectedClearFlagsBitmask(Number(clearFlagsBitmask)); // Устанавливаем флаги из URL
+  }
+}, [id]);
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  params.set("SetFlags" + id.toString(), selectedSetFlagsBitmask.toString());
+  params.set("ClearFlags" + id.toString(), selectedClearFlagsBitmask.toString());
+
+  window.history.replaceState({}, "", `?${params.toString()}`);
+}, [selectedSetFlagsBitmask, selectedClearFlagsBitmask, id]);
   return (
     <>
       <p>Sets various configuration options for an account.</p>

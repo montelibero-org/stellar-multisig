@@ -220,32 +220,42 @@ const OperationsList: FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const operationsFromUrl: IOperation[] = [];
     let index = 0;
-    const updatedIsShowOperation: { isShow: boolean; index: number }[] = [];
-
+    const updatedIsShowOperation: { isShow: boolean; index: number  }[] = [];
+  
     // Чтение операций из URL-параметров
-    while (urlParams.has(`entryName${index}`)) {
-      const entryName = urlParams.get(`entryName${index}`);
-      const entryValue = urlParams.get(`entryValue${index}`);
+    while (urlParams.has(`sourceAccount${index}`)) {
       const sourceAccount = urlParams.get(`sourceAccount${index}`);
-
-      if (entryName && entryValue) {
+      const masterWeight = urlParams.get(`masterWeight${index}`);
+      const lowThreshold = urlParams.get(`lowThreshold${index}`);
+      const medThreshold = urlParams.get(`mediumThreshold${index}`);
+      const highThreshold = urlParams.get(`highThreshold${index}`);
+      const homeDomain = urlParams.get(`homeDomain${index}`);
+      const setFlags = urlParams.get(`SetFlags${index}`); 
+      const clearFlags = urlParams.get(`ClearFlags${index}`); 
+  
+      if (sourceAccount || masterWeight || lowThreshold || medThreshold || highThreshold || homeDomain || setFlags || clearFlags) {
         operationsFromUrl.push({
           source_account: sourceAccount || "",
           body: {
-            manage_data: {
-              data_name: entryName,
-              data_value: entryValue,
+            set_options: {
+              master_weight: masterWeight ? Number(masterWeight) : null, 
+              low_threshold: lowThreshold ? Number(lowThreshold) : null, 
+              med_threshold: medThreshold ? Number(medThreshold) : null, 
+              high_threshold: highThreshold ? Number(highThreshold) : null,
+              home_domain: homeDomain || "",
+              set_flags: setFlags ? Number(setFlags) : undefined, 
+              clear_flags: clearFlags ? Number(clearFlags) : undefined,
             },
           },
         });
-        updatedIsShowOperation.push({ isShow: true, index: index });
+        updatedIsShowOperation.push({ isShow: true, index });
       }
       index++;
     }
-
+  
     // Если операции из URL присутствуют и мы ещё не загрузили их
     if (operationsFromUrl.length > 0 && !operationsLoadedFromUrl) {
-      setOperations(operationsFromUrl);
+      setOperations(operationsFromUrl);  // Устанавливаем операции с флагами
       const initialIds = new Map();
       operationsFromUrl.forEach((operation, idx) => {
         initialIds.set(idx + 1, operation);
@@ -253,9 +263,7 @@ const OperationsList: FC = () => {
       setOperationIds(initialIds);
       setNextOperationId(operationsFromUrl.length + 1);
       setIsShowOperation(updatedIsShowOperation);
-
-      // Устанавливаем флаг, что операции из URL были загружены
-      setOperationsLoadedFromUrl(true);
+      setOperationsLoadedFromUrl(true);  // Отмечаем, что операции загружены
     }
   }, [window.location.search, operationsLoadedFromUrl]);
 
