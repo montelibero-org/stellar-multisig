@@ -398,11 +398,11 @@ const SetOptions: FC<Props> = ({ id }) => {
       operation.body.set_options?.high_threshold?.toString() || ""
     );
   }, [fullTransaction, id]);
-  const parseFlagsFromURL = (paramName: string): number | null => {
-    const params = new URLSearchParams(window.location.search);
-    const bitmask = params.get(paramName);
-    return bitmask ? parseInt(bitmask, 10) : null;
-};
+//   const parseFlagsFromURL = (paramName: string): number | null => {
+//     const params = new URLSearchParams(window.location.search);
+//     const bitmask = params.get(paramName);
+//     return bitmask ? parseInt(bitmask, 10) : null;
+// };
 
 
 

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import s from "@/widgets/OperationTypes/index.module.scss";
 
 export interface IFlag {
