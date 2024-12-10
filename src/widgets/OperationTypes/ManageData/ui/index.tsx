@@ -71,11 +71,20 @@ const ManageData: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("entryName" + id.toString(), entryName?.toString() || "");
-    params.set(
-      "entryValue" + id.toString(),
-      hexToString(entryValue?.toString() ?? "") || ""
-    );
+    if (entryName !== null && entryName !== undefined) {
+      params.set("entryName" + id.toString(), entryName?.toString() || "");
+    }else{
+      params.delete("entryName" + id.toString());
+    }
+    if (entryValue !== null && entryValue !== undefined) {
+      params.set(
+        "entryValue" + id.toString(),
+        hexToString(entryValue?.toString() ?? "") || ""
+      );
+    }else{
+      params.delete("entryValue" + id.toString());
+    }
+    
     params.set(
       "sourceAccount" + id.toString(),
       sourceAccount?.toString() || ""

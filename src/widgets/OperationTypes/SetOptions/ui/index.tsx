@@ -88,15 +88,15 @@ const SetOptions: FC<Props> = ({ id }) => {
     signerOptions[0]
   );
   const [lowThresholdValue, setLowThresholdValue] = useState(
-    lowThreshold != null ? lowThreshold.toString() : "0"
+    lowThreshold != null ? lowThreshold.toString() : ""
   );
 
   const [mediumThresholdValue, setMediumThresholdValue] = useState(
-    mediumThreshold != null ? mediumThreshold.toString() : "0"
+    mediumThreshold != null ? mediumThreshold.toString() : ""
   );
 
   const [highThresholdValue, setHighThresholdValue] = useState(
-    highThreshold != null ? highThreshold.toString() : "0"
+    highThreshold != null ? highThreshold.toString() : ""
   );
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -348,24 +348,37 @@ useEffect(() => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    
+    if (masterWeight !== null && masterWeight !== undefined) {
       params.set("masterWeight" + id.toString(), masterWeight?.toString() || "");
+    }
     
+    if (lowThreshold !== null && lowThreshold !== undefined) {
+      params.set(
+        "lowThreshold" + id.toString(),
+        lowThresholdValue?.toString() || ""
+      );
+    }else{
+      params.delete("lowThreshold" + id.toString());
+    }
+   
+    if (mediumThreshold !== null && mediumThreshold !== undefined) {
+      params.set(
+        "mediumThreshold" + id.toString(),
+        mediumThresholdValue?.toString() || ""
+      );
+    }else{
+      params.delete("mediumThreshold" + id.toString());
+    }
     
-    params.set(
-      "lowThreshold" + id.toString(),
-      lowThresholdValue?.toString() || ""
-    );
-  
-    params.set(
-      "mediumThreshold" + id.toString(),
-      mediumThresholdValue?.toString() || ""
-    );
-
-    params.set(
-      "highThreshold" + id.toString(),
-      highThresholdValue?.toString() || ""
-    );
+    if (highThreshold !== null && highThreshold !== undefined) {
+      params.set(
+        "highThreshold" + id.toString(),
+        highThresholdValue?.toString() || ""
+      );
+    }else{
+      params.delete("highThreshold" + id.toString());
+    }
+   
 
     params.set("homeDomain" + id.toString(), homeDomain?.toString() || "");
 

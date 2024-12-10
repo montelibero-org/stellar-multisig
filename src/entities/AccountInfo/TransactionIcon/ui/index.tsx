@@ -85,10 +85,10 @@ const TransactionIcon: FC<Props> = ({
         ].join(","),
       }),
       ...(homeDomain && { homeDomain }),
-      ...(flags?.auth_clawback_enabled && { auth_clawback_enabled: "true" }),
-      ...(flags?.auth_immutable && { auth_immutable: "true" }),
-      ...(flags?.auth_required && { auth_required: "true" }),
-      ...(flags?.auth_revocable && { auth_revocable: "true" }),
+      // ...(flags?.auth_clawback_enabled && { auth_clawback_enabled: "true" }),
+      // ...(flags?.auth_immutable && { auth_immutable: "true" }),
+      // ...(flags?.auth_required && { auth_required: "true" }),
+      // ...(flags?.auth_revocable && { auth_revocable: "true" }),
     };
    
     if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
