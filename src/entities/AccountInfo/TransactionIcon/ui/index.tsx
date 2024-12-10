@@ -50,7 +50,7 @@ const TransactionIcon: FC<Props> = ({
   operationThresholds,
   homeDomain,
   masterWeight,
-  flags,
+  // flags,
 
 }) => {
   const { net } = useStore(useShallow((state) => state));
