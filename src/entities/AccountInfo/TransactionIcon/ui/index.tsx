@@ -14,8 +14,8 @@ interface Props {
   TransactionSequenceNumber?: number | null;
   typeOp?: string;
   style?: React.CSSProperties;
-  processedKey?: string;
-  processedValue?: string;
+  entryName?: string;
+  entryValue?: string;
   sourceAccount?: string | null;
   weight?: number | null;
   operationThresholds?: {
@@ -43,8 +43,8 @@ const TransactionIcon: FC<Props> = ({
   TransactionSequenceNumber,
   typeOp,
   style,
-  processedKey,
-  processedValue,
+  entryName,
+  entryValue,
   sourceAccount,
   weight,
   operationThresholds,
@@ -70,9 +70,9 @@ const TransactionIcon: FC<Props> = ({
     const params: Record<string, string> = {
       sourceAccount: ID,
       ...(typeOp && { typeOperation: typeOp }),
-      ...(processedKey && processedValue && {
-        processedKey,
-        processedValue,
+      ...(entryName && entryValue && {
+        entryName,
+        entryValue,
       }),
       ...(sourceAccount && { signerkey: sourceAccount }),
       ...(weight != null && { signerWeight: weight.toString() }),

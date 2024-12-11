@@ -13,7 +13,7 @@ const TransactionErrors: FC<Props> = ({ errors }) => (
       {errors.map((error, index) => (
         <li key={index}>{`- ${error}`}</li>
       ))}
-      {!errors.length && <li>- Unknown error</li>}
+    
     </ul>
   </div>
 );

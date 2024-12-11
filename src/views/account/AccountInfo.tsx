@@ -836,8 +836,8 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                           isVisible={isVisibleTx}
                                           typeIcon="Change"
                                           typeOp="manage_data"
-                                          processedKey={processedKey}
-                                          processedValue={processedValue}
+                                          entryName={processedKey}
+                                          entryValue={processedValue}
                                         />
                                         {processedKey}: {renderedValue}{" "}
                                       </li>
