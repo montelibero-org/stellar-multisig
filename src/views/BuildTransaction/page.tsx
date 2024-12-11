@@ -63,8 +63,8 @@ const BuildTransaction: FC = () => {
 
   const firebaseIDParam = searchParams.get("firebaseID") || "";
   const operationTypeParam = searchParams.get("typeOperation");
-  const processedKeyParam = searchParams.get("processedKey");
-  const processedValueParam = searchParams.get("processedValue");
+  const processedKeyParam = searchParams.get("entryName");
+  const processedValueParam = searchParams.get("entryValue");
   const operationThresholdsParams = searchParams.get("operationThresholds");
   const weightParam = searchParams.get("signerWeight");
   const masterWeightParam = searchParams.get("masterWeight");

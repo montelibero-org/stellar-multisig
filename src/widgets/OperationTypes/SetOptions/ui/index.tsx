@@ -350,6 +350,8 @@ useEffect(() => {
 
     if (masterWeight !== null && masterWeight !== undefined) {
       params.set("masterWeight" + id.toString(), masterWeight?.toString() || "");
+    }else{
+      params.delete("masterWeight" + id.toString());
     }
     
     if (lowThreshold !== null && lowThreshold !== undefined) {
@@ -379,9 +381,11 @@ useEffect(() => {
       params.delete("highThreshold" + id.toString());
     }
    
-
+    if (homeDomain !== null && homeDomain !== undefined) {
     params.set("homeDomain" + id.toString(), homeDomain?.toString() || "");
-
+    }else{
+      params.delete("homeDomain" + id.toString());
+    }
    
   
     
@@ -425,18 +429,7 @@ useEffect(() => {
   };
 
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
 
-    
-
-    params.set(
-      "sourceAccount" + id.toString(),
-      sourceAccount?.toString() || ""
-    );
-
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [ sourceAccount, homeDomain]);
 
   useEffect(() => {
     const operation = fullTransaction.tx.tx.operations[id] || defaultOperation;

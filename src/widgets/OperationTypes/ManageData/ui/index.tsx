@@ -84,11 +84,14 @@ const ManageData: FC<Props> = ({ id }) => {
     }else{
       params.delete("entryValue" + id.toString());
     }
-    
+    if (sourceAccount !== null && sourceAccount !== undefined) {
     params.set(
       "sourceAccount" + id.toString(),
       sourceAccount?.toString() || ""
     );
+  }else{
+    params.delete("sourceAccount" + id.toString());
+  }
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [entryName, entryValue, sourceAccount]);
 
