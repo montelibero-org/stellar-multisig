@@ -14,13 +14,13 @@ const SourceAccountInput: FC = () => {
   );
   const [sourceError, setSourceError] = useState<string>("");
 
- const validateFee = (value: number | string) => {
-  if (!StellarSdk.StrKey.isValidEd25519PublicKey(value)) {
-    setSourceError("Invalid source account key");
-  } else {
-    setSourceError("");
-  }
-};
+  const validateFee = (value: number | string) => {
+    if (!StellarSdk.StrKey.isValidEd25519PublicKey(value)) {
+      setSourceError("Invalid source account key");
+    } else {
+      setSourceError("");
+    }
+  };
 
   useEffect(() => {
     const validateSourceAccount = async () => {
@@ -50,9 +50,6 @@ const SourceAccountInput: FC = () => {
       } catch (fetchError) {
         console.error("Error fetching signers:", fetchError);
       }
-
-      
-     
     };
 
     validateSourceAccount();
@@ -60,12 +57,16 @@ const SourceAccountInput: FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("sourceAccount", tx.tx.source_account);
+    if (tx.tx.source_account == undefined && tx.tx.source_account !== null) {
+      params.set("sourceAccount", tx.tx.source_account);
+    } else {
+      params.delete("sourceAccount");
+    }
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [tx.tx.source_account]);
- useEffect(() => {
-  validateFee(tx.tx.source_account);
+  useEffect(() => {
+    validateFee(tx.tx.source_account);
   }, [tx.tx.source_account]);
   return (
     <div>
@@ -77,7 +78,7 @@ const SourceAccountInput: FC = () => {
         value={tx.tx.source_account}
         onChange={(e) => setSourceAccount(e.target.value)}
       />
-  {sourceError && <p className="error">{'Source Account is required'}</p>}
+      {sourceError && <p className="error">{"Source Account is required"}</p>}
     </div>
   );
 };
