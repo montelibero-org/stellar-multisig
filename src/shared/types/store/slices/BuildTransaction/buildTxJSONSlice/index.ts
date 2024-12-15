@@ -87,6 +87,7 @@ export interface IOperation {
         | {
             key?: string | null;
             weight?: number | string | null;
+            type?: string;
           }
         | undefined
         | null;

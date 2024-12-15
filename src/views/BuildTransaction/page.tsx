@@ -25,6 +25,7 @@ import StellarSdk from "stellar-sdk";
 import { stringToHex } from "@/shared/helpers";
 import axios from "axios";
 import { Information } from "@/shared/types";
+import { signerOptions } from "@/widgets/OperationTypes/SetOptions/ui";
 
 export interface TXErrors {
   sourceAccount: string;
@@ -404,17 +405,26 @@ const BuildTransaction: FC = () => {
     const updateErrorOperationSetOptionsSigners = () => {
       try {
         let isValid = true;
+    
         isValid = fullTransaction.tx?.tx.operations.every((op: IOperation) => {
           if ("set_options" in op.body) {
+            // Проверяем, выбрано ли "Select signer type"
+            if ( op?.body?.set_options?.signer?.type === "Select signer type") {
+              return true;
+            }
+    
+            // Проверяем наличие ключа и веса
             return (
               op?.body?.set_options?.signer?.weight !== null &&
               op.body.set_options?.signer?.key !== ""
             );
           }
-          return true;
+          return true; // Для других операций считаем валидным
         });
-        updateErrors(!isValid,"Signer Key is missing in operation");
-        updateErrors(!isValid,"Signer Weight is missing in operation");
+    
+        // Обновляем ошибки только если isValid === false
+        updateErrors(!isValid, "Signer Key is missing in operation");
+        updateErrors(!isValid, "Signer Weight is missing in operation");
       } catch (error) {
         console.error("Error in useSetTxBuildErrors:", error);
       }
@@ -441,6 +451,8 @@ const BuildTransaction: FC = () => {
     accounts,
     fullTransaction,
     tx,
+    signerOptions,
+    fullTransaction.tx?.tx.operations
   ]);
 
   const clearParams = () => {
