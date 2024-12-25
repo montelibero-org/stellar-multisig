@@ -678,6 +678,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                             ID={ID}
                             isVisibleTx={isVisibleTx}
                             signerWeights={signerWeights}
+                            
                           />
                         </dl>
                         <ul className="text-small condensed">

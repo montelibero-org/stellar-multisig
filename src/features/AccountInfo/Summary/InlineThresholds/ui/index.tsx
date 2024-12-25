@@ -1,17 +1,20 @@
 import { TransactionIcon } from "@/entities";
 import { useStore } from "@/shared/store";
+
 import React, { FC } from "react";
 
 interface InlineThresholdsProps {
   ID: string;
   isVisibleTx: boolean;
   signerWeights: number;
+
 }
 
 const InlineThresholds: FC<InlineThresholdsProps> = ({
   ID,
   isVisibleTx,
   signerWeights,
+
 }) => {
   const { information } = useStore((state) => state);
 
@@ -33,7 +36,7 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
     },
   ];
 
-  
+ 
   return (
     <>
       <TransactionIcon
@@ -42,7 +45,9 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
         typeIcon="Change"
         typeOp="set_options"
         operationThresholds={information?.thresholds}
+        
       />
+       
       <dt>Thresholds:</dt>
       <dd>
         {thresholds.map((threshold, index) => (

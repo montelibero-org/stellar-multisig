@@ -408,21 +408,22 @@ const BuildTransaction: FC = () => {
     
         isValid = fullTransaction.tx?.tx.operations.every((op: IOperation) => {
           if ("set_options" in op.body) {
-            // Проверяем, выбрано ли "Select signer type"
-            if ( op?.body?.set_options?.signer?.type === "Select signer type") {
+           
+            const signer = op?.body?.set_options?.signer;
+
+    
+            if (!signer || signer.type === "Select signer type") {
               return true;
             }
-    
-            // Проверяем наличие ключа и веса
             return (
-              op?.body?.set_options?.signer?.weight !== null &&
-              op.body.set_options?.signer?.key !== ""
+              signer.key && signer.key.trim() !== "" &&
+              signer.weight !== undefined && signer.weight !== null
             );
           }
-          return true; // Для других операций считаем валидным
+          return true; 
         });
     
-        // Обновляем ошибки только если isValid === false
+  
         updateErrors(!isValid, "Signer Key is missing in operation");
         updateErrors(!isValid, "Signer Weight is missing in operation");
       } catch (error) {
