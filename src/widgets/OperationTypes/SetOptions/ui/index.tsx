@@ -9,7 +9,12 @@ import InputField from "../../shared/InputField";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 
+
 import { useHandleSourceAccountChange } from "@/features/hooks";
+
+import { IFlag } from "../../shared/FlagSelector";
+import { useFixUnknownError, useHandleSourceAccountChange } from "@/features/hooks";
+
 import { IOperation } from "@/shared/types";
 
 type Field =
@@ -32,6 +37,7 @@ export interface Props {
 
 const SetOptions: FC<Props> = ({ id }) => {
   const handleSourceAccountChange = useHandleSourceAccountChange();
+  const fixUnknownError = useFixUnknownError();
 
   const {
     fullTransaction,
@@ -98,6 +104,14 @@ const SetOptions: FC<Props> = ({ id }) => {
   const [highThresholdValue, setHighThresholdValue] = useState(
     highThreshold != null ? highThreshold.toString() : ""
   );
+
+  /* useEffects */
+
+  // Fix unknown error about source account in every tx
+  useEffect(() => {
+    fixUnknownError(id);
+  }, [id]);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
@@ -436,6 +450,7 @@ useEffect(() => {
 
 
   useEffect(() => {
+
     const operation = fullTransaction.tx.tx.operations[id] || defaultOperation;
 
     setLowThresholdValue(
@@ -455,6 +470,19 @@ useEffect(() => {
 // };
 
 
+
+
+    const params = new URLSearchParams(window.location.search);
+
+    // Проверяем, что значение является числом, прежде чем добавлять его в параметры
+    if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
+      params.set("masterWeight", masterWeight?.toString() ?? "");
+    } else {
+      params.delete("masterWeight"); // Удаляем параметр, если он невалиден
+    }
+
+    window.history.replaceState({}, "", `?${params.toString()}`);
+  }, [masterWeight]);
 
 
   return (
@@ -490,6 +518,7 @@ useEffect(() => {
               ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
               : ""
           }
+
         />
 
         <InputField
@@ -522,14 +551,23 @@ useEffect(() => {
           onChange={handleInputChange("high_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
+
           warningMessage={
             highThresholdValue !== "" && +highThresholdValue >= 0
               ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
               : ""
           }
+
         />
 
         <div className={s.section}>
+
+
+        />
+
+        <div className={s.section}>
+
+
           <h4 className={s.sectionTitle}>
             Signer Type <span className={s.optional}>(optional)</span>
           </h4>

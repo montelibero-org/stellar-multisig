@@ -19,6 +19,7 @@ const BaseFeeInput: FC = () => {
       return 100;
     }
   })();
+
   const [sourceError, setSourceError] = useState<string>("");
   const [feeState, setfeeState] = useState<number>(initialBaseFee);
   const validateFee = (value: number) => {
@@ -28,15 +29,20 @@ const BaseFeeInput: FC = () => {
       setSourceError(""); 
     }
   }
-  useEffect(() => {
-    if (!isNaN(feeState) && isFinite(feeState)) {
-      setFee(feeState);
-    }
-  }, [feeState]);
+
+
+  const [feeState, setFeeState] = useState<number>(initialBaseFee);
+
 
   useEffect(() => {
-    if (feeState !== tx.tx.fee) {
-      setfeeState(tx.tx.fee!);
+    if (feeState !== tx.tx.fee && !isNaN(feeState) && isFinite(feeState)) {
+      setFee(feeState);
+    }
+  }, [feeState, tx.tx.fee]);
+
+  useEffect(() => {
+    if (feeState !== tx.tx.fee && tx.tx.fee != null) {
+      setFeeState(tx.tx.fee!);
     }
   }, [tx.tx.fee]);
 
@@ -60,10 +66,10 @@ const BaseFeeInput: FC = () => {
             const inputValue = e.target.value;
             const parsedValue = parseFloat(inputValue);
             if (!isNaN(parsedValue) && isFinite(parsedValue)) {
-              setfeeState(parsedValue);
+              setFeeState(parsedValue);
             } else {
               // Optionally handle invalid input
-              setfeeState(0);
+              setFeeState(0);
             }
           }
           

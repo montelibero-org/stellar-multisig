@@ -19,11 +19,15 @@ const signTransaction = async (
   try {
     // Validate input
     if (!secretKeys || !network || !xdr) {
-      throw new Error("Invalid input: secretKeys, network, and xdr are required.");
+      throw new Error(
+        "Invalid input: secretKeys, network, and xdr are required."
+      );
     }
 
     // Ensure secretKeys is always an array for consistency
-    const keypairs = (Array.isArray(secretKeys) ? secretKeys : [secretKeys]).map((key) => {
+    const keypairs = (
+      Array.isArray(secretKeys) ? secretKeys : [secretKeys]
+    ).map((key) => {
       if (typeof key !== "string") {
         throw new Error("Invalid secret key format. Expected a string.");
       }

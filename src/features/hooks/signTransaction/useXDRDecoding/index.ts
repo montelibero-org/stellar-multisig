@@ -18,6 +18,7 @@ import JSONbig from "json-bigint";
  * @returns An object containing decoded transaction details and metadata
  */
 
+
 // Function to save decoding time to the server
 const saveDecodingTimeToServer = async (transactionHash: string, timestamp: string) => {
   try {
@@ -42,6 +43,13 @@ const saveDecodingTimeToServer = async (transactionHash: string, timestamp: stri
 
 const useXDRDecoding = (trigger: string | null | undefined, envelope: string) => {
   const [decodedTransactionJSON, setDecodedTransactionJSON] = useState<string>("");
+
+const useXDRDecoding = (
+  trigger: string | null | undefined,
+  envelope: string
+) => {
+  const [decodedTransactionJSON, setDecodedTransactionJSON] =
+    useState<string>("");
   const [transactionHash, setTransactionHash] = useState<string>("");
   const [sourceAccount, setSourceAccount] = useState<string>("");
   const [sequenceNumber, setSequenceNumber] = useState<string>("");
@@ -72,7 +80,13 @@ const useXDRDecoding = (trigger: string | null | undefined, envelope: string) =>
         await __wbg_init();
         const decodedXDR = decodeURIComponent(envelope);
         const decodedTransaction = decode("TransactionEnvelope", decodedXDR);
+
         setDecodedTransactionJSON(JSONbig.stringify(decodedTransaction, null, 2));
+
+        setDecodedTransactionJSON(
+          JSONbig.stringify(decodedTransaction, null, 2)
+        );
+
 
         const tx = TransactionBuilder.fromXDR(
           envelope,
@@ -97,6 +111,7 @@ const useXDRDecoding = (trigger: string | null | undefined, envelope: string) =>
           setSignatureCount(tx.signatures.length.toString());
         }
 
+
         // Save decoding time to the server if possible
         try {
           await saveDecodingTimeToServer(tx.hash().toString("hex"), timestamp);
@@ -107,6 +122,11 @@ const useXDRDecoding = (trigger: string | null | undefined, envelope: string) =>
       } catch (error) {
         console.error("Error decoding XDR:", error);
         // Reset state on error
+
+      } catch (error) {
+        console.error("Error decoding XDR:", error);
+        // Handle errors gracefully, resetting state
+
         setDecodedTransactionJSON("");
         setTransactionHash("");
         setSourceAccount("");
@@ -130,7 +150,9 @@ const useXDRDecoding = (trigger: string | null | undefined, envelope: string) =>
     operationCount,
     signatureCount,
     transaction,
+
     decodingTime,
+
     txHashBuffer: Buffer.from(transactionHash, "hex"),
   };
 };

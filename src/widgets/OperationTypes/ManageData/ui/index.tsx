@@ -9,29 +9,35 @@ import StellarSdk from "stellar-sdk";
 import { IOperation } from "@/shared/types/store/slices";
 import { hexToString, stringToHex } from "@/shared/helpers";
 import { useSearchParams } from "next/navigation";
+import { useFixUnknownError } from "@/features/hooks";
 
 interface Props {
   id: number;
 }
 
+/* Constants */
+
+const defaultOperation: IOperation = {
+  source_account: "",
+  body: {
+    manage_data: {
+      data_name: "",
+      data_value: null,
+    },
+  },
+};
+
 const ManageData: FC<Props> = ({ id }) => {
+  /* Hooks */
   const searchParams = useSearchParams();
+  const fixUnknownError = useFixUnknownError();
+
   const { tx, setOperations } = useStore(
     useShallow((state) => ({
       tx: state.tx,
       setOperations: state.setOperations,
     }))
   );
-
-  const defaultOperation: IOperation = {
-    source_account: "",
-    body: {
-      manage_data: {
-        data_name: "",
-        data_value: null,
-      },
-    },
-  };
 
   const operation = tx.tx.operations[id] || defaultOperation;
 
@@ -54,6 +60,13 @@ const ManageData: FC<Props> = ({ id }) => {
   const [entryValue, setEntryValue] = useState(initialEntryValue);
   const [sourceAccount, setSourceAccount] = useState(initialSourceAccount);
 
+  /* useEffects */
+
+  // Fix unknown error about source account in every tx
+  useEffect(() => {
+    fixUnknownError(id);
+  }, [id]);
+
   useEffect(() => {
     const newOperations = [...tx.tx.operations];
 
@@ -61,7 +74,8 @@ const ManageData: FC<Props> = ({ id }) => {
 
     const updatedOperation: IOperation = {
       ...currentOperation,
-      source_account: sourceAccount.toString(),
+      source_account:
+        sourceAccount === "" ? null : sourceAccount.toString().trim(),
     };
 
     newOperations[id] = updatedOperation;
@@ -130,12 +144,6 @@ const ManageData: FC<Props> = ({ id }) => {
 
     setEntryValue(stringToHex(event.target.value));
   };
-
-  useEffect(() => {
-    if (!tx.tx.operations[id]) {
-      setOperations([...tx.tx.operations, defaultOperation]);
-    }
-  }, [defaultOperation, id, setOperations, tx.tx.operations]);
 
   return (
     <>
