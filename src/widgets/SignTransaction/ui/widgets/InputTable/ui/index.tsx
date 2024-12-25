@@ -5,7 +5,7 @@ import { useShallow } from "zustand/react/shallow";
 import { TransactionIcon } from "@/entities";
 import Link from "next/link";
 import { collapseAccount } from "@/shared/helpers";
-import { useSearchParams } from "next/navigation";
+
 
 interface InputGroupProps {
   sequenceNumber: string;

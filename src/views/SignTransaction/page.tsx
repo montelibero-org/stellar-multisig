@@ -6,11 +6,13 @@ import { useSearchParams } from "next/navigation";
 import {
   TransactionForm,
   TransactionOverview,
+  TransactionSignatures,
 } from "@/widgets/SignTransaction";
 import useTransactionValidation from "@/features/hooks/signTransaction/useTransactionValidation";
 import useXDRDecoding from "@/features/hooks/signTransaction/useXDRDecoding";
 import { TransactionBuilder, Networks } from "stellar-sdk";
 import { useStore } from "@/shared/store";
+import ShowXDRButtons from "@/widgets/SignTransaction/ShowXDRButtons";
 import { getAllTransactions } from "@/shared/api/firebase/firestore/Transactions";
 import { hrefToXDR } from "@/shared/helpers";
 import { useShallow } from "zustand/react/shallow";
@@ -27,7 +29,7 @@ const SignTransaction: FC = () => {
 
   const importXDRParam = params?.get("importXDR") ?? "";
 
-  const [signaturesAdded] = useState<number>(0);
+  const [signaturesAdded, setSignaturesAdded] = useState<number>(0);
   const [currentFirebaseId, setCurrentFirebaseId] = useState<string>("");
 
   const net = useStore((state) => state.net);
@@ -36,7 +38,7 @@ const SignTransaction: FC = () => {
   const [isValidId, setIsValidId] = useState<boolean | null>(null);
   const [transactionEnvelope, setTransactionEnvelope] = useState<string>("");
   const [resultXdr, setResultXdr] = useState<string>("");
-  const [, setLocalSignatures] = useState<localSignature>([""]);
+  const [localSignatures, setLocalSignatures] = useState<localSignature>([""]);
   const [errorMessageFirebase, setErrorMessageFirebase] = useState<string>("");
   const [successMessageFirebase, setSuccessMessageFirebase] =
     useState<string>("");
@@ -99,10 +101,6 @@ const SignTransaction: FC = () => {
     }
   }, [window, importXDRParam, href]);
 
-  useEffect(() => {
-    console.log(resultXdr)
-  }, [resultXdr]);
-
   return (
     <MainLayout>
       {importXDRParam ? (
@@ -119,11 +117,7 @@ const SignTransaction: FC = () => {
             decodingTime={decodingTime}
           />
 
-
           <TransactionSignatures
-
-          {/* <TransactionSignatures
-
             localSignatures={localSignatures}
             setLocalSignatures={setLocalSignatures}
             transactionEnvelope={transactionEnvelope}
@@ -132,10 +126,10 @@ const SignTransaction: FC = () => {
             currentTransaction={transaction}
             setSignaturesAdded={setSignaturesAdded}
             signaturesAdded={signaturesAdded}
-
+            txHash={transactionHash} 
           />
           <TransactionTable
-
+   
             transactionEnvelope={transactionEnvelope}
             transactionHash={transactionHash}
             sourceAccount={sourceAccount}
@@ -146,9 +140,6 @@ const SignTransaction: FC = () => {
             transaction={transaction}
             decodingTime={decodingTime}
           />
-
-          /> */}
-
           {resultXdr && (
             <ShowXdr
               title="Transaction signed!"
@@ -157,12 +148,17 @@ const SignTransaction: FC = () => {
               } signature(s) total`}
               xdr={resultXdr}
               lowerDescription="Now that this transaction is signed, you can submit it to the network. Horizon provides an endpoint called Post Transaction that will relay your transaction to the network and inform you of the result."
+              buttons={
+                <ShowXDRButtons
+                  XDR={resultXdr}
+                  currentFirebaseId={currentFirebaseId}
+                  successMessageFirebase={successMessageFirebase}
+                  setSuccessMessageFirebase={setSuccessMessageFirebase}
+                  setErrorMessageFirebase={setErrorMessageFirebase}
+                />
+              }
               successMessage={successMessageFirebase}
               errorMessage={errorMessageFirebase}
-              currentFirebaseId={currentFirebaseId}
-              successMessageFirebase={successMessageFirebase}
-              setSuccessMessageFirebase={setSuccessMessageFirebase}
-              setErrorMessageFirebase={setErrorMessageFirebase}
             />
           )}
         </>
