@@ -13,7 +13,7 @@ interface Props {
   currentTransaction: Transaction | null;
   signaturesAdded: number;
   setSignaturesAdded: (signaturesAdded: number) => void;
-  txHash: string;
+  txHash?: string;
   Buttons?: JSX.Element;
   errorMessage?: string;
   successMessage?: string;

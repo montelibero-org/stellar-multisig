@@ -3,6 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import {
   MainLayout,
+
   XDRInput,
   ShowXdrButtons,
   SourceAccountInput,
@@ -23,6 +24,7 @@ import {
   FullTransaction,
   IOperation,
   TX,
+  
 } from "@/shared/types/store/slices/BuildTransaction/buildTxJSONSlice";
 import StellarSdk from "stellar-sdk";
 import { stringToHex } from "@/shared/helpers";
@@ -84,9 +86,7 @@ const BuildTransaction: FC = () => {
 
   const sourceAccountForSetOptionsParam = searchParams.get("signerkey");
 
-  const sourceAccountForSetOptionsParam = searchParams.get(
-    "sourceAccountForSetOptions"
-  );
+
 
   const homeDomainParam = searchParams.get("homeDomain");
   const auth_clawback_enabledParam = searchParams.get("auth_clawback_enabled");
@@ -527,7 +527,7 @@ const BuildTransaction: FC = () => {
     operationCount,
     signatureCount,
     transaction,
-    txHashBuffer
+    decodingTime
   } = useXDRDecoding(currentXDR, currentXDR);
 
   if (!jsonWithBigInt) {
@@ -536,23 +536,13 @@ const BuildTransaction: FC = () => {
 
   return (
     <MainLayout>
-
-      
       <div className="container">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "right",
-            marginTop: "-12px",
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "right", marginTop: "-12px" }}>
           <div className="tabs">
             <div className="tabs-header">
               <a
                 href="#"
-                className={`tabs-item condensed false ${
-                  currentTab === "Create Transaction" && "selected"
-                }`}
+                className={`tabs-item condensed false ${currentTab === "Create Transaction" ? "selected" : ""}`}
                 onClick={(e) => {
                   e.preventDefault();
                   setCurrentTab("Create Transaction");
@@ -562,9 +552,7 @@ const BuildTransaction: FC = () => {
               </a>
               <a
                 href="#"
-                className={`tabs-item condensed false ${
-                  currentTab === "Import Transaction" && "selected"
-                }`}
+                className={`tabs-item condensed false ${currentTab === "Import Transaction" ? "selected" : ""}`}
                 onClick={(e) => {
                   e.preventDefault();
                   setCurrentTab("Import Transaction");
@@ -576,87 +564,33 @@ const BuildTransaction: FC = () => {
           </div>
         </div>
         <hr style={{ marginTop: "0" }} className="flare" />
+  
         {currentTab === "Create Transaction" ? (
           <>
             <h3>{firebaseIDParam && !tx.tx.source_account && "Loading..."}</h3>
             <h4 className="warning">{firebaseIDParamError}</h4>
             <div className="segment blank">
-            <SourceAccountInput  />
+              <SourceAccountInput />
               <hr className="flare" />
-              <SequenceNumberInput  firebaseID={firebaseIDParam} />
+              <SequenceNumberInput firebaseID={firebaseIDParam} />
               <hr className="flare" />
               <BaseFeeInput />
-
-      {isLoadingSequence ? (
-        <div></div>
-      ) : (
-        <div className="container">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "right",
-              marginTop: "-12px",
-            }}
-          >
-            <div className="tabs">
-              <div className="tabs-header">
-                <a
-                  href="#"
-                  className={`tabs-item condensed false ${
-                    currentTab === "Create Transaction" && "selected"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentTab("Create Transaction");
-                  }}
-                >
-                  <span className="tabs-item-text">Create Transaction</span>
-                </a>
-                <a
-                  href="#"
-                  className={`tabs-item condensed false ${
-                    currentTab === "Import Transaction" && "selected"
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentTab("Import Transaction");
-                  }}
-                >
-                  <span className="tabs-item-text">Import Transaction</span>
-                </a>
-              </div>
-            </div>
-          </div>
-          <hr style={{ marginTop: "0" }} className="flare" />
-          {currentTab === "Create Transaction" ? (
-            <>
-              <h3>
-                {firebaseIDParam && !tx.tx.source_account && "Loading..."}
-              </h3>
-              <h4 className="warning">{firebaseIDParamError}</h4>
-              <div className="segment blank">
-                <SourceAccountInput />
-                <hr className="flare" />
-                <SequenceNumberInput firebaseID={firebaseIDParam} />
-                <hr className="flare" />
-                <BaseFeeInput />
-                <hr className="flare" />
-                <MemoInput />
-                <hr className="flare" />
-                <TimeBoundsInput />
-                <button onClick={clearParams}>
-                  <i className="fa fa-refresh" aria-hidden="true"></i> Clear
-                  params
-                </button>
-              </div>
-
               <hr className="flare" />
-              <OperationsList />
-              {buildErrors.length > 0 || currentXDR === "" ? (
-                <TransactionErrors errors={buildErrors} />
-              ) : (
-                <>
-                  <TransactionOverview
+              <MemoInput />
+              <hr className="flare" />
+              <TimeBoundsInput />
+              <button onClick={clearParams}>
+                <i className="fa fa-refresh" aria-hidden="true"></i> Clear params
+              </button>
+            </div>
+  
+            <hr className="flare" />
+            <OperationsList />
+            {buildErrors.length > 0 || currentXDR === "" ? (
+              <TransactionErrors errors={buildErrors} />
+            ) : (
+              <>
+                <TransactionOverview
                     transactionEnvelope={currentXDR}
                     transactionHash={transactionHash}
                     sourceAccount={sourceAccount}
@@ -664,35 +598,33 @@ const BuildTransaction: FC = () => {
                     transactionFee={transactionFee}
                     operationCount={operationCount}
                     signatureCount={signatureCount}
-                    transaction={transaction}
-                  />
-                  <TransactionSignatures
-                    localSignatures={localSignatures}
-                    setLocalSignatures={setLocalSignatures}
-                    transactionEnvelope={currentXDR}
-                    resultXdr={currentXDR}
-                    setResultXdr={setCurrentXDR}
-                    currentTransaction={transaction}
-                    setSignaturesAdded={setSignaturesAdded}
-                    signaturesAdded={signaturesAdded}
-                    txHash={txHashBuffer}
-                    Buttons={
-                      <ShowXdrButtons
-                        firebaseID={firebaseIDParam}
-                        transaction={decodedXDR.transaction}
-                        setSuccessMessage={setSuccessMessageXDR}
-                        setErrorMessage={setErrorMessageXDR}
-                        XDR={currentXDR}
-                      />
-                    }
-                    successMessage={successMessageXDR}
-                    errorMessage={errorMessageXDR}
-                  />
-
-                }
-                successMessage={successMessageXDR}
-                errorMessage={errorMessageXDR}
-              />
+                    transaction={transaction} 
+                    decodingTime={decodingTime}                  
+                 // Ensure this prop is provided
+                />
+                <TransactionSignatures
+                  localSignatures={localSignatures}
+                  setLocalSignatures={setLocalSignatures}
+                  transactionEnvelope={currentXDR}
+                  resultXdr={currentXDR}
+                  setResultXdr={setCurrentXDR}
+                  currentTransaction={transaction}
+                  setSignaturesAdded={setSignaturesAdded}
+                  signaturesAdded={signaturesAdded}
+                 
+                  Buttons={
+                    <ShowXdrButtons
+                      firebaseID={firebaseIDParam}
+                      transaction={decodedXDR.transaction}
+                      setSuccessMessage={setSuccessMessageXDR}
+                      setErrorMessage={setErrorMessageXDR}
+                      XDR={currentXDR}
+                    />
+                  }
+                  successMessage={successMessageXDR}
+                  errorMessage={errorMessageXDR}
+                />
+              </>
             )}
           </>
         ) : (
@@ -707,29 +639,7 @@ const BuildTransaction: FC = () => {
           />
         )}
       </div>
-        
-      
-      
-
-                </>
-              )}
-            </>
-          ) : (
-            <XDRInput
-              XDR={XDRInputImport}
-              setXDR={setXDRInputImport}
-              isImport={isImportXDRInput}
-              setIsImport={setIsImportXDRInput}
-              baseResult={XDRInputImportBaseResult}
-              setBaseResult={setXDRInputImportBaseResult}
-              setCurrentTab={setCurrentTab}
-            />
-          )}
-        </div>
-      )}
-
     </MainLayout>
   );
-};
-
+}
 export default BuildTransaction;
