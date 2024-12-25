@@ -8,13 +8,8 @@ import StellarSdk from "stellar-sdk";
 import InputField from "../../shared/InputField";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
-
-
-import { useHandleSourceAccountChange } from "@/features/hooks";
-
 import { IFlag } from "../../shared/FlagSelector";
 import { useFixUnknownError, useHandleSourceAccountChange } from "@/features/hooks";
-
 import { IOperation } from "@/shared/types";
 
 type Field =
@@ -78,10 +73,10 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   const sourceAccount = operation.source_account;
 
-  const [masterWeightValue, setMasterWeightValue] = useState(
-    masterWeight?.toString() || ""
+  const [masterWeightValue, setMasterWeightValue] = useState<number | string>(
+    masterWeight ?? ""
   );
-  const [selectedSetFlagsBitmask, setSelectedSetFlagsBitmask] = useState(0);
+
   const [selectedClearFlagsBitmask, setSelectedClearFlagsBitmask] = useState(0);
   const [selectedClearFlags] = useState<number[][]>([]);
   // const [selectedSetFlagsLocal, setSelectedSetFlagsLocal] = useState<number[]>(
@@ -96,7 +91,7 @@ const SetOptions: FC<Props> = ({ id }) => {
   const [lowThresholdValue, setLowThresholdValue] = useState(
     lowThreshold != null ? lowThreshold.toString() : ""
   );
-
+  const [selectedSetFlagsBitmask, setSelectedSetFlagsBitmask] = useState(0);
   const [mediumThresholdValue, setMediumThresholdValue] = useState(
     mediumThreshold != null ? mediumThreshold.toString() : ""
   );
@@ -359,66 +354,42 @@ useEffect(() => {
       }
     };
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (masterWeight !== null && masterWeight !== undefined) {
-      params.set("masterWeight" + id.toString(), masterWeight?.toString() || "");
-    }else{
-      params.delete("masterWeight" + id.toString());
-    }
-    
-    if (lowThreshold !== null && lowThreshold !== undefined) {
-      params.set(
-        "lowThreshold" + id.toString(),
-        lowThresholdValue?.toString() || ""
-      );
-    }else{
-      params.delete("lowThreshold" + id.toString());
-    }
-   
-    if (mediumThreshold !== null && mediumThreshold !== undefined) {
-      params.set(
-        "mediumThreshold" + id.toString(),
-        mediumThresholdValue?.toString() || ""
-      );
-    }else{
-      params.delete("mediumThreshold" + id.toString());
-    }
-    
-    if (highThreshold !== null && highThreshold !== undefined) {
-      params.set(
-        "highThreshold" + id.toString(),
-        highThresholdValue?.toString() || ""
-      );
-    }else{
-      params.delete("highThreshold" + id.toString());
-    }
-   
-    if (homeDomain !== null && homeDomain !== undefined) {
-    params.set("homeDomain" + id.toString(), homeDomain?.toString() || "");
-    }else{
-      params.delete("homeDomain" + id.toString());
-    }
-   
+    useEffect(() => {
+      const params = new URLSearchParams(window.location.search);
   
-    if (sourceAccount !== null && sourceAccount !== undefined && sourceAccount !== "") {
-      params.set("sourceAccount" + id.toString(), sourceAccount?.toString() || "");
-    } else {
-      params.delete("sourceAccount" + id.toString());
-    }
-
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [
-    masterWeight,
-    lowThresholdValue,
-    mediumThresholdValue,
-    highThresholdValue,
-    homeDomain,
-    sourceAccount,
-    id,
-   
-  ]);
+      if (masterWeight !== null && masterWeight !== undefined) {
+        params.set("masterWeight" + id.toString(), masterWeight?.toString() || "");
+      } else {
+        params.delete("masterWeight" + id.toString());
+      }
+  
+      if (lowThreshold !== null && lowThreshold !== undefined) {
+        params.set("lowThreshold" + id.toString(), lowThresholdValue?.toString() || "");
+      } else {
+        params.delete("lowThreshold" + id.toString());
+      }
+  
+      if (mediumThreshold !== null && mediumThreshold !== undefined) {
+        params.set("mediumThreshold" + id.toString(), mediumThresholdValue?.toString() || "");
+      } else {
+        params.delete("mediumThreshold" + id.toString());
+      }
+  
+      if (highThreshold !== null && highThreshold !== undefined) {
+        params.set("highThreshold" + id.toString(), highThresholdValue?.toString() || "");
+      } else {
+        params.delete("highThreshold" + id.toString());
+      }
+  
+      if (homeDomain) {
+        params.set("homeDomain" + id.toString(), homeDomain || "");
+      } else {
+        params.delete("homeDomain" + id.toString());
+      }
+  
+      window.history.replaceState({}, "", `?${params.toString()}`);
+    }, [masterWeightValue, lowThresholdValue, mediumThresholdValue, highThresholdValue, id]);
+  
 
   const handleSignerTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedType = e.target.value;
@@ -471,18 +442,18 @@ useEffect(() => {
 
 
 
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
 
-    const params = new URLSearchParams(window.location.search);
+  // Check that the value is a number before adding it to the parameters
+  if (typeof masterWeight === 'number') {
+      params.set("masterWeight", masterWeight.toString());
+  } else {
+      params.delete("masterWeight"); // Remove the parameter if it is invalid
+  }
 
-    // Проверяем, что значение является числом, прежде чем добавлять его в параметры
-    if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
-      params.set("masterWeight", masterWeight?.toString() ?? "");
-    } else {
-      params.delete("masterWeight"); // Удаляем параметр, если он невалиден
-    }
-
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [masterWeight]);
+  window.history.replaceState({}, "", `?${params.toString()}`);
+}, [masterWeight]);
 
 
   return (
@@ -497,7 +468,7 @@ useEffect(() => {
           selectedFlagsBitmask={selectedSetFlagsBitmask}
           onToggle={(flagId) => handleToggleFlag(flagId, "set")}
         />
-
+  
         <FlagSelector
           operationIndex={id}
           title="Clear Flags"
@@ -505,11 +476,11 @@ useEffect(() => {
           selectedFlagsBitmask={selectedClearFlagsBitmask}
           onToggle={(flagId) => handleToggleFlag(flagId, "clear")}
         />
-
+  
         <InputField
           title="Master Weight"
           placeholder="0-255"
-          value={masterWeightValue}
+          value={String(masterWeightValue)}
           onChange={handleInputChange("master_weight")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
@@ -518,9 +489,8 @@ useEffect(() => {
               ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
               : ""
           }
-
         />
-
+  
         <InputField
           title="Low Threshold"
           placeholder="0-255"
@@ -529,7 +499,7 @@ useEffect(() => {
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
         />
-
+  
         <InputField
           title="Medium Threshold"
           placeholder="0-255"
@@ -543,7 +513,7 @@ useEffect(() => {
               : ""
           }
         />
-
+  
         <InputField
           title="High Threshold"
           placeholder="0-255"
@@ -551,23 +521,16 @@ useEffect(() => {
           onChange={handleInputChange("high_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-
           warningMessage={
             highThresholdValue !== "" && +highThresholdValue >= 0
               ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
               : ""
           }
-
         />
-
+  
+       
+  
         <div className={s.section}>
-
-
-        />
-
-        <div className={s.section}>
-
-
           <h4 className={s.sectionTitle}>
             Signer Type <span className={s.optional}>(optional)</span>
           </h4>
@@ -615,8 +578,8 @@ useEffect(() => {
                     <>
                       Signer will be removed from account if this weight is 0.
                       <br />
-                      Used to add/remove or adjust weight of an additional
-                      signer on the account.
+                      Used to add/remove or adjust weight of an additional signer
+                      on the account.
                     </>
                   }
                 />
@@ -624,19 +587,19 @@ useEffect(() => {
             )}
           </div>
         </div>
-
+  
         <InputField
           title="Home Domain"
           placeholder="Ex: example.com"
           value={homeDomain || ""}
           onChange={handleHomeDomainChange}
         />
-
+  
         <InputField
           title="Source Account"
           placeholder="Ex: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6Q4UG"
           value={sourceAccount || ""}
-          onChange={(e) => handleSourceAccountChange(e, id)}
+          onChange={useHandleSourceAccountChange}
           validate={(value) =>
             StellarSdk.StrKey.isValidEd25519PublicKey(value) || value === ""
           }
@@ -646,6 +609,5 @@ useEffect(() => {
       </div>
     </>
   );
-};
-
-export default SetOptions;
+}
+export default SetOptions

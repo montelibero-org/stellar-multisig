@@ -21,7 +21,7 @@ const BaseFeeInput: FC = () => {
   })();
 
   const [sourceError, setSourceError] = useState<string>("");
-  const [feeState, setfeeState] = useState<number>(initialBaseFee);
+
   const validateFee = (value: number) => {
     if (value <= 0) {
       setSourceError("Base Fee is required");
