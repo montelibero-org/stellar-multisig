@@ -97,7 +97,7 @@ const ShowXDRButtons: FC<Props> = ({
   };
 
   return (
-    <button onClick={!successMessageFirebase ? onClick : undefined}>
+    <button style={{marginTop: "10px"}} onClick={!successMessageFirebase ? onClick : undefined}>
       {currentFirebaseId
         ? "Update transaction with new signature(s)"
         : "Send Sign to Transaction"}

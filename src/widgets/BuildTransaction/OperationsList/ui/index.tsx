@@ -8,6 +8,16 @@ import { useShallow } from "zustand/react/shallow";
 import {setOperationType} from "@/shared/helpers";
 import { IsShowedBlock } from "@/shared/widgets";
 
+export const getOperationType = (operation: IOperation): string => {
+  if (operation.body?.set_options) {
+    return "set_options";
+  } else if (operation.body?.manage_data) {
+    return "manage_data";
+  } else {
+    return "select_operation_type";
+  }
+};
+
 const OperationsList: FC = () => {
   const { tx, setOperations } = useStore(useShallow((state) => state));
   const [showTooltip, setShowTooltip] = useState(false);
@@ -137,6 +147,7 @@ const OperationsList: FC = () => {
     });
     window.history.replaceState(null, "", `${window.location.pathname}?${urlParams.toString()}`);
   };
+
   const getOperationType = (operation: IOperation): string => {
     if (operation.body?.set_options) {
       return "set_options";
@@ -146,6 +157,8 @@ const OperationsList: FC = () => {
       return "select_operation_type";
     }
   };
+
+
 
   const moveDownOperation = (index: number) => {
     if (index >= tx.tx.operations.length - 1) return; 

@@ -7,13 +7,16 @@ export function useHandleSourceAccountChange() {
   const { setOperations, fullTransaction } = useStore(
     useShallow((state) => ({
       setOperations: state.setOperations,
-      fullTransaction: state.fullTransaction
+      fullTransaction: state.fullTransaction,
     }))
   );
 
-  const updateOperations = ({ updatedOperation, id }: {
-    updatedOperation: Partial<IOperation>,
-    id: number,
+  const updateOperations = ({
+    updatedOperation,
+    id,
+  }: {
+    updatedOperation: Partial<IOperation>;
+    id: number;
   }) => {
     const newOperations = [...fullTransaction.tx.tx.operations];
     newOperations[id] = {
@@ -23,21 +26,23 @@ export function useHandleSourceAccountChange() {
     setOperations(newOperations);
   };
 
-  const handleSourceAccountChange = (event: ChangeEvent<HTMLInputElement>, id: number) => {
+  const handleSourceAccountChange = (
+    event: ChangeEvent<HTMLInputElement> | string,
+    id: number
+  ) => {
     updateOperations({
       updatedOperation: {
-        source_account: event.target.value === "" ? null : event.target.value,
+        source_account:
+          typeof event === "string"
+            ? event === ""
+              ? null
+              : event
+            : event.target.value === ""
+            ? null
+            : event.target.value,
       },
-      id
+      id,
     });
-    if (fullTransaction.tx.tx.operations[id].source_account === "") {
-      updateOperations({
-        updatedOperation: {
-          source_account: null,
-        },
-        id
-      });
-    }
   };
 
   return handleSourceAccountChange;

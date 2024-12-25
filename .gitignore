@@ -57,3 +57,7 @@ yarn-error.log*
 next-env.d.ts
 
 CNAME
+
+# PNPM
+
+pnpm-lock.yaml
