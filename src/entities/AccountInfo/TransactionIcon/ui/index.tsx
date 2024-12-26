@@ -14,8 +14,8 @@ interface Props {
   TransactionSequenceNumber?: number | null;
   typeOp?: string;
   style?: React.CSSProperties;
-  processedKey?: string;
-  processedValue?: string;
+  entryName?: string;
+  entryValue?: string;
   sourceAccount?: string | null;
   weight?: number | null;
   operationThresholds?: {
@@ -40,17 +40,17 @@ const TransactionIcon: FC<Props> = ({
   baseFee,
   lowerTime,
   upperTime,
-  // TransactionSequenceNumber,
+  TransactionSequenceNumber,
   typeOp,
   style,
-  processedKey,
-  processedValue,
+  entryName,
+  entryValue,
   sourceAccount,
   weight,
   operationThresholds,
   homeDomain,
   masterWeight,
-  flags,
+  // flags,
 
 }) => {
   const { net } = useStore(useShallow((state) => state));
@@ -70,12 +70,12 @@ const TransactionIcon: FC<Props> = ({
     const params: Record<string, string> = {
       sourceAccount: ID,
       ...(typeOp && { typeOperation: typeOp }),
-      ...(processedKey && processedValue && {
-        processedKey,
-        processedValue,
+      ...(entryName && entryValue && {
+        entryName,
+        entryValue,
       }),
-      ...(sourceAccount && { sourceAccountForSetOptions: sourceAccount }),
-      ...(weight != null && { weight: weight.toString() }),
+      ...(sourceAccount && { signerkey: sourceAccount }),
+      ...(weight != null && { signerWeight: weight.toString() }),
 
       ...(operationThresholds && {
         operationThresholds: [
@@ -85,10 +85,10 @@ const TransactionIcon: FC<Props> = ({
         ].join(","),
       }),
       ...(homeDomain && { homeDomain }),
-      ...(flags?.auth_clawback_enabled && { auth_clawback_enabled: "true" }),
-      ...(flags?.auth_immutable && { auth_immutable: "true" }),
-      ...(flags?.auth_required && { auth_required: "true" }),
-      ...(flags?.auth_revocable && { auth_revocable: "true" }),
+      // ...(flags?.auth_clawback_enabled && { auth_clawback_enabled: "true" }),
+      // ...(flags?.auth_immutable && { auth_immutable: "true" }),
+      // ...(flags?.auth_required && { auth_required: "true" }),
+      // ...(flags?.auth_revocable && { auth_revocable: "true" }),
     };
    
     if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
@@ -99,18 +99,18 @@ const TransactionIcon: FC<Props> = ({
     }
     
  
-    // if (lowerTime !== undefined && lowerTime !== previousLowerTime.current) {
-    //   params.lowerTime = lowerTime.toString();
-    // }
+     if (lowerTime !== undefined && lowerTime !== previousLowerTime.current) {
+       params.lowerTime = lowerTime.toString();
+     }
   
-    // if (upperTime !== undefined && upperTime !== previousUpperTime.current) {
-    //   params.upperTime = upperTime.toString();
-    // }
+     if (upperTime !== undefined && upperTime !== previousUpperTime.current) {
+       params.upperTime = upperTime.toString();
+     }
 
   
-    // if (TransactionSequenceNumber !== null && TransactionSequenceNumber !== undefined && TransactionSequenceNumber !== 0) {
-    //   params.TransactionSequenceNumber = TransactionSequenceNumber.toString();
-    // }    
+     if (TransactionSequenceNumber !== null && TransactionSequenceNumber !== undefined && TransactionSequenceNumber !== 0) {
+       params.TransactionSequenceNumber = TransactionSequenceNumber.toString();
+    }    
     
     return `/${net}/build-transaction?${new URLSearchParams(params).toString()}`;
   };

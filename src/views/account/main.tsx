@@ -5,6 +5,7 @@ import StellarSdk from "stellar-sdk";
 import { MainLayout } from "@/widgets";
 import React, { FC, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import InputTable from "@/widgets/SignTransaction/ui/widgets/InputTable";
 
 const Account: FC = () => {
   const [isValidId, setIsValidId] = useState<boolean | null>(null);
@@ -37,10 +38,11 @@ const Account: FC = () => {
             <div>User ID not found or invalid.</div>
           </div>
         </div>
+        <InputTable ID={id} decodingTime="2024-12-22T10:00:00Z" sequenceNumber={""} transactionFee={""} numberOfOperations={""} numberOfSignatures={""} transactionTime={""} />
       </MainLayout>
     );
   }
-
+  
   return typeof id === "string" && <AccountInfo ID={id}  />;
 };
 

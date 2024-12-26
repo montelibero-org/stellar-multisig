@@ -73,28 +73,31 @@ const SetOptions: FC<Props> = ({ id }) => {
 
   const sourceAccount = operation.source_account;
 
-  const [masterWeightValue, setMasterWeightValue] = useState(
-    masterWeight?.toString() || ""
+  const [masterWeightValue, setMasterWeightValue] = useState<number | string>(
+    masterWeight ?? ""
   );
 
-  const [selectedClearFlags, setSelectedClearFlags] = useState<number[][]>([]);
-  const [selectedSetFlagsLocal, setSelectedSetFlagsLocal] = useState<number[]>(
-    selectedSetFlags[id] || []
-  );
-  const [selectedClearFlagsLocal, setSelectedClearFlagsLocal] = useState<
-    number[]
-  >(selectedClearFlags[id] || []);
+  const [selectedClearFlagsBitmask, setSelectedClearFlagsBitmask] = useState(0);
+  const [selectedClearFlags] = useState<number[][]>([]);
+  // const [selectedSetFlagsLocal, setSelectedSetFlagsLocal] = useState<number[]>(
+  //   selectedSetFlags[id] || []
+  // );
+  // const [selectedClearFlagsLocal, setSelectedClearFlagsLocal] = useState<
+  //   number[]
+  // >(selectedClearFlags[id] || []);
   const [currentSignerType, setCurrentSignerType] = useState<string>(
     signerOptions[0]
   );
   const [lowThresholdValue, setLowThresholdValue] = useState(
-    lowThreshold?.toString() || ""
+    lowThreshold != null ? lowThreshold.toString() : ""
   );
+  const [selectedSetFlagsBitmask, setSelectedSetFlagsBitmask] = useState(0);
   const [mediumThresholdValue, setMediumThresholdValue] = useState(
-    mediumThreshold?.toString() || ""
+    mediumThreshold != null ? mediumThreshold.toString() : ""
   );
+
   const [highThresholdValue, setHighThresholdValue] = useState(
-    highThreshold?.toString() || ""
+    highThreshold != null ? highThreshold.toString() : ""
   );
 
   /* useEffects */
@@ -104,6 +107,46 @@ const SetOptions: FC<Props> = ({ id }) => {
     fixUnknownError(id);
   }, [id]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    
+    console.log("URL Params:", window.location.search);
+
+    
+    const setFlags = params.get(`SetFlags${id}`);
+    const clearFlags = params.get(`ClearFlags${id}`);
+
+    
+    if (setFlags !== null) {
+      console.log(`SetFlags0 из URL: ${setFlags}`);
+      setSelectedSetFlagsBitmask(Number(setFlags)); 
+    } else {
+      console.log('SetFlags0 не найден');
+    }
+
+    if (clearFlags !== null) {
+      console.log(`ClearFlags0 из URL: ${clearFlags}`);
+      setSelectedClearFlagsBitmask(Number(clearFlags));  
+    } else {
+      console.log('ClearFlags0 не найден');
+    }
+  }, []);
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  // Обновляем URL параметры при изменении битмасок
+  params.set(`SetFlags${id}`, selectedSetFlagsBitmask.toString());
+  params.set(`ClearFlags${id}`, selectedClearFlagsBitmask.toString());
+
+  window.history.replaceState({}, "", `?${params.toString()}`);
+}, [selectedSetFlagsBitmask, selectedClearFlagsBitmask, id]);
+useEffect(() => {
+  console.log("Current selectedSetFlagsBitmask:", selectedSetFlagsBitmask);
+  console.log("Current selectedClearFlagsBitmask:", selectedClearFlagsBitmask);
+  console.log("URL Params:", window.location.search);
+}, [selectedSetFlagsBitmask, selectedClearFlagsBitmask, id]);
   useEffect(() => {
     if (id === 0) {
       if (
@@ -158,13 +201,20 @@ const SetOptions: FC<Props> = ({ id }) => {
     operation.body.set_options?.signer?.weight,
   ]);
 
-  useEffect(() => {
-    setSelectedSetFlagsLocal(selectedSetFlags[id] || []);
-  }, [selectedSetFlags, id]);
+  // useEffect(() => {
+  //   setSelectedSetFlagsLocal(selectedSetFlags[id] || []);
+  // }, [selectedSetFlags, id]);
 
-  useEffect(() => {
-    setSelectedClearFlagsLocal(selectedClearFlags[id] || []);
-  }, [selectedClearFlags, id]);
+  // useEffect(() => {
+  //   setSelectedClearFlagsLocal(selectedClearFlags[id] || []);
+  // }, [selectedClearFlags, id]);
+
+  // const calculateFlagPoints = (flags: number[], flagData: IFlag[]) => {
+  //   return flags.reduce((total, flagId) => {
+  //     const flag = flagData.find((f) => f.id === flagId);
+  //     return total + (flag ? flag.points : 0);
+  //   }, 0);
+  // };
 
   useEffect(() => {
     if (signer?.key || signer?.weight !== null) {
@@ -173,30 +223,29 @@ const SetOptions: FC<Props> = ({ id }) => {
       setCurrentSignerType(signerOptions[0]);
     }
   }, [signer]);
+  useEffect(() => {
+    const currentSetFlags = selectedSetFlags[id] || [];
+    setSelectedSetFlagsBitmask(
+      currentSetFlags.reduce((bitmask, flagId) => bitmask | (1 << flagId), 0)
+    );
 
-  const calculateFlagPoints = (flags: number[], flagData: IFlag[]) => {
-    return flags.reduce((total, flagId) => {
-      const flag = flagData.find((f) => f.id === flagId);
-      return total + (flag ? flag.points : 0);
-    }, 0);
-  };
-
+    const currentClearFlags = selectedClearFlags[id] || [];
+    setSelectedClearFlagsBitmask(
+      currentClearFlags.reduce((bitmask, flagId) => bitmask | (1 << flagId), 0)
+    );
+  }, [selectedSetFlags, selectedClearFlags, id]);
   const handleToggleFlag = (flagId: number, flagType: "set" | "clear") => {
-    const selectedFlagsLocal =
-      flagType === "set" ? selectedSetFlagsLocal : selectedClearFlagsLocal;
-    const setSelectedFlagsLocal =
-      flagType === "set"
-        ? setSelectedSetFlagsLocal
-        : setSelectedClearFlagsLocal;
-    const flagData = flagType === "set" ? setFlagsData : clearFlagsData;
-
-    const newSelectedFlags = selectedFlagsLocal.includes(flagId)
-      ? selectedFlagsLocal.filter((id) => id !== flagId)
-      : [...selectedFlagsLocal, flagId];
-
-    const newFlagsValue = calculateFlagPoints(newSelectedFlags, flagData);
-
-    const newOperations = [...operations];
+    const bitmask =
+      flagType === "set" ? selectedSetFlagsBitmask : selectedClearFlagsBitmask;
+    const newBitmask = bitmask ^ (1 << flagId);
+  
+    if (flagType === "set") {
+      setSelectedSetFlagsBitmask(newBitmask);
+    } else {
+      setSelectedClearFlagsBitmask(newBitmask);
+    }
+  
+    const newOperations = [...fullTransaction.tx.tx.operations];
     if (newOperations[id]) {
       newOperations[id] = {
         ...newOperations[id],
@@ -204,28 +253,16 @@ const SetOptions: FC<Props> = ({ id }) => {
           ...newOperations[id].body,
           set_options: {
             ...newOperations[id].body.set_options,
-            [flagType === "set" ? "set_flags" : "clear_flags"]: newFlagsValue,
+            [flagType === "set" ? "set_flags" : "clear_flags"]: newBitmask,
           },
         },
       };
       setOperations(newOperations);
     }
-
-    setSelectedFlagsLocal(newSelectedFlags);
-
-    // Update global selected flags in the store
-    if (flagType === "set") {
-      const newSelectedSetFlags = [...selectedSetFlags];
-      newSelectedSetFlags[id] = newSelectedFlags;
-      useStore.setState({ selectedSetFlags: newSelectedSetFlags });
-    } else {
-      const newSelectedClearFlags = [...selectedClearFlags];
-      newSelectedClearFlags[id] = newSelectedFlags;
-      setSelectedClearFlags(newSelectedClearFlags);
-    }
-  };
+};
 
   const validateRange = (value: string): boolean => {
+    if (value === "") return true; 
     const num = Number(value);
     return num >= 0 && num <= 255;
   };
@@ -259,7 +296,10 @@ const SetOptions: FC<Props> = ({ id }) => {
         return;
       }
 
-      if (value === "" || (!isNaN(numValue) && validateRange(numValue.toString()))) {
+      if (
+        value === "" ||
+        (!isNaN(numValue) && validateRange(numValue.toString()))
+      ) {
         const fieldSetters = {
           master_weight: setMasterWeightValue,
           low_threshold: setLowThresholdValue,
@@ -277,7 +317,7 @@ const SetOptions: FC<Props> = ({ id }) => {
               ...newOperations[id].body,
               set_options: {
                 ...newOperations[id].body.set_options,
-                [field]: value === "" ? undefined : numValue,
+                [field]: value === "" ? undefined : numValue, 
               },
             },
           };
@@ -314,11 +354,42 @@ const SetOptions: FC<Props> = ({ id }) => {
       }
     };
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    params.set("masterWeight", masterWeight ? masterWeight.toString() : "");
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [masterWeight]);
+    useEffect(() => {
+      const params = new URLSearchParams(window.location.search);
+  
+      if (masterWeight !== null && masterWeight !== undefined) {
+        params.set("masterWeight" + id.toString(), masterWeight?.toString() || "");
+      } else {
+        params.delete("masterWeight" + id.toString());
+      }
+  
+      if (lowThreshold !== null && lowThreshold !== undefined) {
+        params.set("lowThreshold" + id.toString(), lowThresholdValue?.toString() || "");
+      } else {
+        params.delete("lowThreshold" + id.toString());
+      }
+  
+      if (mediumThreshold !== null && mediumThreshold !== undefined) {
+        params.set("mediumThreshold" + id.toString(), mediumThresholdValue?.toString() || "");
+      } else {
+        params.delete("mediumThreshold" + id.toString());
+      }
+  
+      if (highThreshold !== null && highThreshold !== undefined) {
+        params.set("highThreshold" + id.toString(), highThresholdValue?.toString() || "");
+      } else {
+        params.delete("highThreshold" + id.toString());
+      }
+  
+      if (homeDomain) {
+        params.set("homeDomain" + id.toString(), homeDomain || "");
+      } else {
+        params.delete("homeDomain" + id.toString());
+      }
+  
+      window.history.replaceState({}, "", `?${params.toString()}`);
+    }, [masterWeightValue, lowThresholdValue, mediumThresholdValue, highThresholdValue, id]);
+  
 
   const handleSignerTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedType = e.target.value;
@@ -346,18 +417,44 @@ const SetOptions: FC<Props> = ({ id }) => {
     setSignerTypes(newSignerTypes);
   };
 
+
+
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
 
-    // Проверяем, что значение является числом, прежде чем добавлять его в параметры
-    if (typeof masterWeight === 'number' && !isNaN(masterWeight)) {
-      params.set("masterWeight", masterWeight?.toString() ?? "");
-    } else {
-      params.delete("masterWeight"); // Удаляем параметр, если он невалиден
-    }
+    const operation = fullTransaction.tx.tx.operations[id] || defaultOperation;
 
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [masterWeight]);
+    setLowThresholdValue(
+      operation.body.set_options?.low_threshold?.toString() || ""
+    );
+    setMediumThresholdValue(
+      operation.body.set_options?.med_threshold?.toString() || ""
+    );
+    setHighThresholdValue(
+      operation.body.set_options?.high_threshold?.toString() || ""
+    );
+  }, [fullTransaction, id]);
+//   const parseFlagsFromURL = (paramName: string): number | null => {
+//     const params = new URLSearchParams(window.location.search);
+//     const bitmask = params.get(paramName);
+//     return bitmask ? parseInt(bitmask, 10) : null;
+// };
+
+
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  // Check that the value is a number before adding it to the parameters
+  if (typeof masterWeight === 'number') {
+      params.set("masterWeight", masterWeight.toString());
+  } else {
+      params.delete("masterWeight"); // Remove the parameter if it is invalid
+  }
+
+  window.history.replaceState({}, "", `?${params.toString()}`);
+}, [masterWeight]);
+
 
   return (
     <>
@@ -367,21 +464,23 @@ const SetOptions: FC<Props> = ({ id }) => {
         <FlagSelector
           title="Set Flags"
           flags={setFlagsData}
-          selectedFlags={selectedSetFlagsLocal}
+          operationIndex={id}
+          selectedFlagsBitmask={selectedSetFlagsBitmask}
           onToggle={(flagId) => handleToggleFlag(flagId, "set")}
         />
-
+  
         <FlagSelector
+          operationIndex={id}
           title="Clear Flags"
           flags={clearFlagsData}
-          selectedFlags={selectedClearFlagsLocal}
+          selectedFlagsBitmask={selectedClearFlagsBitmask}
           onToggle={(flagId) => handleToggleFlag(flagId, "clear")}
         />
-
+  
         <InputField
           title="Master Weight"
           placeholder="0-255"
-          value={masterWeightValue}
+          value={String(masterWeightValue)}
           onChange={handleInputChange("master_weight")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
@@ -390,9 +489,8 @@ const SetOptions: FC<Props> = ({ id }) => {
               ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
               : ""
           }
-
         />
-
+  
         <InputField
           title="Low Threshold"
           placeholder="0-255"
@@ -401,7 +499,7 @@ const SetOptions: FC<Props> = ({ id }) => {
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
         />
-
+  
         <InputField
           title="Medium Threshold"
           placeholder="0-255"
@@ -415,7 +513,7 @@ const SetOptions: FC<Props> = ({ id }) => {
               : ""
           }
         />
-
+  
         <InputField
           title="High Threshold"
           placeholder="0-255"
@@ -423,17 +521,16 @@ const SetOptions: FC<Props> = ({ id }) => {
           onChange={handleInputChange("high_threshold")}
           validate={validateRange}
           errorMessage="Expected an integer between 0 and 255 (inclusive)."
-
           warningMessage={
             highThresholdValue !== "" && +highThresholdValue >= 0
               ? "This can result in a permanently locked account. Are you sure you know what you're doing?"
               : ""
           }
-
         />
-
+  
+       
+  
         <div className={s.section}>
-
           <h4 className={s.sectionTitle}>
             Signer Type <span className={s.optional}>(optional)</span>
           </h4>
@@ -481,8 +578,8 @@ const SetOptions: FC<Props> = ({ id }) => {
                     <>
                       Signer will be removed from account if this weight is 0.
                       <br />
-                      Used to add/remove or adjust weight of an additional
-                      signer on the account.
+                      Used to add/remove or adjust weight of an additional signer
+                      on the account.
                     </>
                   }
                 />
@@ -490,19 +587,19 @@ const SetOptions: FC<Props> = ({ id }) => {
             )}
           </div>
         </div>
-
+  
         <InputField
           title="Home Domain"
           placeholder="Ex: example.com"
           value={homeDomain || ""}
           onChange={handleHomeDomainChange}
         />
-
+  
         <InputField
           title="Source Account"
           placeholder="Ex: GCEXAMPLE5HWNK4AYSTEQ4UWDKHTCKADVS2AHF3UI2ZMO3DPUSM6Q4UG"
           value={sourceAccount || ""}
-          onChange={(e) => handleSourceAccountChange(e, id)}
+          onChange={useHandleSourceAccountChange}
           validate={(value) =>
             StellarSdk.StrKey.isValidEd25519PublicKey(value) || value === ""
           }
@@ -512,6 +609,5 @@ const SetOptions: FC<Props> = ({ id }) => {
       </div>
     </>
   );
-};
-
-export default SetOptions;
+}
+export default SetOptions

@@ -6,41 +6,47 @@ import { useSearchParams } from "next/navigation";
 import {
   TransactionForm,
   TransactionOverview,
+  TransactionSignatures,
 } from "@/widgets/SignTransaction";
 import useTransactionValidation from "@/features/hooks/signTransaction/useTransactionValidation";
 import useXDRDecoding from "@/features/hooks/signTransaction/useXDRDecoding";
 import { TransactionBuilder, Networks } from "stellar-sdk";
 import { useStore } from "@/shared/store";
+import ShowXDRButtons from "@/widgets/SignTransaction/ShowXDRButtons";
 import { getAllTransactions } from "@/shared/api/firebase/firestore/Transactions";
 import { hrefToXDR } from "@/shared/helpers";
 import { useShallow } from "zustand/react/shallow";
-
+import TransactionTable from "@/widgets/SignTransaction/TransactionTable/ui";
+import StellarSdk from "stellar-sdk";
 export type localSignature = string[];
 
 const SignTransaction: FC = () => {
   const { firestore } = useStore(useShallow((state) => state));
 
   const href = window.location.href;
-
   const params = useSearchParams();
+  const id: string | undefined | null = params?.get("id");
+
   const importXDRParam = params?.get("importXDR") ?? "";
 
-  const [signaturesAdded] = useState<number>(0);
+  const [signaturesAdded, setSignaturesAdded] = useState<number>(0);
   const [currentFirebaseId, setCurrentFirebaseId] = useState<string>("");
 
   const net = useStore((state) => state.net);
   const networkPassphrase =
     net === "testnet" ? Networks.TESTNET : Networks.PUBLIC;
-
+  const [isValidId, setIsValidId] = useState<boolean | null>(null);
   const [transactionEnvelope, setTransactionEnvelope] = useState<string>("");
   const [resultXdr, setResultXdr] = useState<string>("");
-  const [, setLocalSignatures] = useState<localSignature>([""]);
+  const [localSignatures, setLocalSignatures] = useState<localSignature>([""]);
   const [errorMessageFirebase, setErrorMessageFirebase] = useState<string>("");
   const [successMessageFirebase, setSuccessMessageFirebase] =
     useState<string>("");
 
   const { validateTransactionEnvelope } = useTransactionValidation();
-
+  useEffect(() => {
+    setIsValidId(id ? StellarSdk.StrKey.isValidEd25519PublicKey(id) : null);
+  }, [id]);
   useEffect(() => {
     if (transactionEnvelope) {
       validateTransactionEnvelope(transactionEnvelope);
@@ -55,6 +61,7 @@ const SignTransaction: FC = () => {
     operationCount,
     signatureCount,
     transaction,
+    decodingTime,
   } = useXDRDecoding(importXDRParam, transactionEnvelope);
 
   const currentTransaction = React.useMemo(() => {
@@ -94,10 +101,6 @@ const SignTransaction: FC = () => {
     }
   }, [window, importXDRParam, href]);
 
-  useEffect(() => {
-    console.log(resultXdr)
-  }, [resultXdr]);
-
   return (
     <MainLayout>
       {importXDRParam ? (
@@ -111,8 +114,10 @@ const SignTransaction: FC = () => {
             operationCount={operationCount}
             signatureCount={signatureCount}
             transaction={transaction}
+            decodingTime={decodingTime}
           />
-          {/* <TransactionSignatures
+
+          <TransactionSignatures
             localSignatures={localSignatures}
             setLocalSignatures={setLocalSignatures}
             transactionEnvelope={transactionEnvelope}
@@ -121,7 +126,20 @@ const SignTransaction: FC = () => {
             currentTransaction={transaction}
             setSignaturesAdded={setSignaturesAdded}
             signaturesAdded={signaturesAdded}
-          /> */}
+            txHash={transactionHash} 
+          />
+          <TransactionTable
+   
+            transactionEnvelope={transactionEnvelope}
+            transactionHash={transactionHash}
+            sourceAccount={sourceAccount}
+            sequenceNumber={sequenceNumber}
+            transactionFee={transactionFee}
+            operationCount={operationCount}
+            signatureCount={signatureCount}
+            transaction={transaction}
+            decodingTime={decodingTime}
+          />
           {resultXdr && (
             <ShowXdr
               title="Transaction signed!"
@@ -130,12 +148,17 @@ const SignTransaction: FC = () => {
               } signature(s) total`}
               xdr={resultXdr}
               lowerDescription="Now that this transaction is signed, you can submit it to the network. Horizon provides an endpoint called Post Transaction that will relay your transaction to the network and inform you of the result."
+              buttons={
+                <ShowXDRButtons
+                  XDR={resultXdr}
+                  currentFirebaseId={currentFirebaseId}
+                  successMessageFirebase={successMessageFirebase}
+                  setSuccessMessageFirebase={setSuccessMessageFirebase}
+                  setErrorMessageFirebase={setErrorMessageFirebase}
+                />
+              }
               successMessage={successMessageFirebase}
               errorMessage={errorMessageFirebase}
-              currentFirebaseId={currentFirebaseId}
-              successMessageFirebase={successMessageFirebase}
-              setSuccessMessageFirebase={setSuccessMessageFirebase}
-              setErrorMessageFirebase={setErrorMessageFirebase}
             />
           )}
         </>

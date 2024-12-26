@@ -53,6 +53,7 @@ export interface IBuildTxJSONActions {
   ) => void;
   selectedMemoType: string; // Добавляем свойство
   setSelectedMemoType: (type: string) => void;
+
   addOperation: () => void;
   removeOperation: (index: number) => void;
   addSignature: (signature: ISignature) => void;
@@ -73,6 +74,7 @@ export interface IOperation {
   source_account: string | null;
   body: {
     set_options?: {
+
       inflation_dest?: string | null;
       clear_flags?: AuthFlag | null | number;
       set_flags?: AuthFlag | null | number;
@@ -85,6 +87,7 @@ export interface IOperation {
         | {
             key?: string | null;
             weight?: number | string | null;
+            type?: string;
           }
         | undefined
         | null;

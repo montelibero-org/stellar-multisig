@@ -42,14 +42,14 @@ const ManageData: FC<Props> = ({ id }) => {
   const operation = tx.tx.operations[id] || defaultOperation;
 
   const initialEntryName =
-    searchParams.get("entryName" + id.toString()) ||
-    operation.body.manage_data?.data_name ||
-    undefined;
+  searchParams.get("entryName" + id.toString()) ||
+  operation.body.manage_data?.data_name ||
+  undefined;
 
   const initialEntryValue =
-    stringToHex(searchParams.get("entryValue" + id.toString()) ?? "") ||
-    operation.body.manage_data?.data_value ||
-    null;
+  stringToHex(searchParams.get("entryValue" + id.toString()) ?? "") ||
+  operation.body.manage_data?.data_value ||
+  null;
 
   const initialSourceAccount =
     searchParams.get("sourceAccount" + id.toString()) ||
@@ -85,15 +85,24 @@ const ManageData: FC<Props> = ({ id }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("entryName" + id.toString(), entryName?.toString() || "");
-    params.set(
-      "entryValue" + id.toString(),
-      hexToString(entryValue?.toString() ?? "") || ""
-    );
-    params.set(
-      "sourceAccount" + id.toString(),
-      sourceAccount?.toString() || ""
-    );
+    if (entryName !== null && entryName !== undefined) {
+      params.set("entryName" + id.toString(), entryName?.toString() || "");
+    }else{
+      params.delete("entryName" + id.toString());
+    }
+    if (entryValue !== null && entryValue !== undefined) {
+      params.set(
+        "entryValue" + id.toString(),
+        hexToString(entryValue?.toString() ?? "") || ""
+      );
+    }else{
+      params.delete("entryValue" + id.toString());
+    }
+    if (sourceAccount !== null && sourceAccount !== undefined && sourceAccount !== "") {
+      params.set("sourceAccount" + id.toString(), sourceAccount?.toString() || "");
+    } else {
+      params.delete("sourceAccount" + id.toString());
+    }
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [entryName, entryValue, sourceAccount]);
 

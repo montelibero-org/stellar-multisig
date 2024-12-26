@@ -8,6 +8,7 @@ const setOperationType = (
 ) => {
   if (index >= 0 && index < tx.tx.operations.length) {
     const updatedOperations = [...tx.tx.operations];
+
     updatedOperations[index] = {
       ...updatedOperations[index],
       body:
@@ -17,6 +18,7 @@ const setOperationType = (
           ? { manage_data: { data_name: "", data_value: null } }
           : {},
     };
+
     setOperations(updatedOperations);
   }
 };

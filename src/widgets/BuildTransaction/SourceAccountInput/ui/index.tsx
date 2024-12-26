@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useStore } from "@/shared/store";
 import { useShallow } from "zustand/react/shallow";
 import StellarSdk from "stellar-sdk";
@@ -12,6 +12,15 @@ const SourceAccountInput: FC = () => {
   const { tx, setSourceAccount, accounts, server } = useStore(
     useShallow((state) => state)
   );
+  const [sourceError, setSourceError] = useState<string>("");
+
+  const validateFee = (value: number | string) => {
+    if (!StellarSdk.StrKey.isValidEd25519PublicKey(value)) {
+      setSourceError("Invalid source account key");
+    } else {
+      setSourceError("");
+    }
+  };
 
   useEffect(() => {
     const validateSourceAccount = async () => {
@@ -46,11 +55,17 @@ const SourceAccountInput: FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    params.set("sourceAccount", tx.tx.source_account);
+    if (tx.tx.source_account == undefined && tx.tx.source_account !== null) {
+      params.set("sourceAccount", tx.tx.source_account);
+    } else {
+      params.delete("sourceAccount");
+    }
 
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [tx.tx.source_account]);
-
+  useEffect(() => {
+    validateFee(tx.tx.source_account);
+  }, [tx.tx.source_account]);
   return (
     <div>
       <div className="flex items-center ">
@@ -61,6 +76,7 @@ const SourceAccountInput: FC = () => {
         value={tx.tx.source_account}
         onChange={(e) => setSourceAccount(e.target.value)}
       />
+      {sourceError && <p className="error">{"Source Account is required"}</p>}
     </div>
   );
 };

@@ -20,7 +20,19 @@ const BaseFeeInput: FC = () => {
     }
   })();
 
+  const [sourceError, setSourceError] = useState<string>("");
+
+  const validateFee = (value: number) => {
+    if (value <= 0) {
+      setSourceError("Base Fee is required");
+    }else {
+      setSourceError(""); 
+    }
+  }
+
+
   const [feeState, setFeeState] = useState<number>(initialBaseFee);
+
 
   useEffect(() => {
     if (feeState !== tx.tx.fee && !isNaN(feeState) && isFinite(feeState)) {
@@ -39,7 +51,9 @@ const BaseFeeInput: FC = () => {
     params.set("baseFee", feeState.toString());
     window.history.replaceState({}, "", `?${params.toString()}`);
   }, [feeState]);
-
+  useEffect(() => {
+    validateFee(feeState); 
+  }, [feeState]);
   return (
     <div>
       <h4>Base Fee</h4>
@@ -47,6 +61,7 @@ const BaseFeeInput: FC = () => {
         placeholder="Amount in stroops"
         value={feeState || ""}
         onChange={(e) => {
+          
           if (e && e.target) {
             const inputValue = e.target.value;
             const parsedValue = parseFloat(inputValue);
@@ -57,6 +72,7 @@ const BaseFeeInput: FC = () => {
               setFeeState(0);
             }
           }
+          
         }}
       />
       <p>
@@ -71,6 +87,7 @@ const BaseFeeInput: FC = () => {
         </a>
         .
       </p>
+      {sourceError && <p className="error">{'Base Fee is required'}</p>}
     </div>
   );
 };

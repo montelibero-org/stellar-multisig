@@ -678,6 +678,7 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                             ID={ID}
                             isVisibleTx={isVisibleTx}
                             signerWeights={signerWeights}
+                            
                           />
                         </dl>
                         <ul className="text-small condensed">
@@ -836,8 +837,8 @@ const AccountInfo: FC<Props> = ({ ID }) => {
                                           isVisible={isVisibleTx}
                                           typeIcon="Change"
                                           typeOp="manage_data"
-                                          processedKey={processedKey}
-                                          processedValue={processedValue}
+                                          entryName={processedKey}
+                                          entryValue={processedValue}
                                         />
                                         {processedKey}: {renderedValue}{" "}
                                       </li>

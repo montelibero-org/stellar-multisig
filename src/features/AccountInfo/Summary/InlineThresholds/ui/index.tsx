@@ -1,38 +1,42 @@
 import { TransactionIcon } from "@/entities";
 import { useStore } from "@/shared/store";
+
 import React, { FC } from "react";
 
 interface InlineThresholdsProps {
   ID: string;
   isVisibleTx: boolean;
   signerWeights: number;
+
 }
 
 const InlineThresholds: FC<InlineThresholdsProps> = ({
   ID,
   isVisibleTx,
   signerWeights,
+
 }) => {
   const { information } = useStore((state) => state);
 
   const thresholds = [
     {
       label: "Low",
-      value: Number(information?.thresholds?.low_threshold) || 0, 
+      value: Number(information?.thresholds?.low_threshold) || '', 
       title: "Low threshold",
     },
     {
       label: "Med",
-      value: Number(information?.thresholds?.med_threshold) || 0,  
+      value: Number(information?.thresholds?.med_threshold) || '',  
       title: "Medium threshold",
     },
     {
       label: "High",
-      value: Number(information?.thresholds?.high_threshold) || 0,
+      value: Number(information?.thresholds?.high_threshold) || '',
       title: "High threshold",
     },
   ];
 
+ 
   return (
     <>
       <TransactionIcon
@@ -41,14 +45,16 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
         typeIcon="Change"
         typeOp="set_options"
         operationThresholds={information?.thresholds}
+        
       />
+       
       <dt>Thresholds:</dt>
       <dd>
         {thresholds.map((threshold, index) => (
           <React.Fragment key={threshold.label}>
             {index > 0 && " / "}
             <span title={threshold.title}>
-              {signerWeights > threshold.value && signerWeights !== 0 ? (
+              {signerWeights > Number(threshold.value) && signerWeights !== 0 ? (
                 <span
                   title={`${threshold.label} threshold is unlocked, operations are permitted`}
                 >
@@ -63,7 +69,7 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
               )}
               <span
                 title={
-                  signerWeights > threshold.value && signerWeights !== 0
+                  signerWeights > Number(threshold.value) && signerWeights !== 0
                     ? `${threshold.label} threshold is unlocked, operations are permitted`
                     : `${threshold.label} threshold is locked, operations are prohibited`
                 }
@@ -98,8 +104,11 @@ const InlineThresholds: FC<InlineThresholdsProps> = ({
           </div>{" "}
         </i>
       </dd>
+      
     </>
+    
   );
+  
 };
 
 export default InlineThresholds;

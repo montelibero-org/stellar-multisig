@@ -1,6 +1,7 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Header, InputField, InputGroup } from "../../ui/widgets"
 import { Transaction } from "stellar-sdk";
+import InputTable from "../../ui/widgets/InputTable";
 
 interface TransactionOverviewProps {
   transactionEnvelope: string;
@@ -11,6 +12,7 @@ interface TransactionOverviewProps {
   operationCount: string;
   signatureCount: string;
   transaction: Transaction | null
+  decodingTime: string
 }
 
 const TransactionOverview: FC<TransactionOverviewProps> = ({
@@ -21,9 +23,15 @@ const TransactionOverview: FC<TransactionOverviewProps> = ({
   transactionFee,
   operationCount,
   signatureCount,
-  transaction
+  transaction,
+  decodingTime
 }) => {
-
+  const [currentTime, setCurrentTime] = useState<string>(new Date().toISOString());
+  useEffect(() => {
+    // Обновление текущего времени каждую секунду
+    const interval = setInterval(() => setCurrentTime(new Date().toISOString()), 1000);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="container" style={{ color: "#fff" }}>
       {/* Header */}
@@ -51,7 +59,10 @@ const TransactionOverview: FC<TransactionOverviewProps> = ({
           transactionFee={transactionFee}
           numberOfOperations={operationCount}
           numberOfSignatures={signatureCount}
+          transactionTime={currentTime}
+          decodingTime={decodingTime} 
         />
+
       </div>
     </div>
   );

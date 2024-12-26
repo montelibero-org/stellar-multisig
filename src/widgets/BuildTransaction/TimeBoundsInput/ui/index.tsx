@@ -24,12 +24,12 @@ const TimeBoundsInput: FC = () => {
     setTimeCondition(minTime, maxTime);
   }, [minTime, maxTime, setTimeCondition]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("lowerTime", minTime.toString());
-    params.set("upperTime", maxTime.toString());
-    window.history.replaceState({}, "", `?${params.toString()}`);
-  }, [minTime, maxTime]);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(searchParams.toString());
+  //   params.set("lowerTime", minTime.toString());
+  //   params.set("upperTime", maxTime.toString());
+  //   window.history.replaceState({}, "", `?${params.toString()}`);
+  // }, [minTime, maxTime]);
 
   return (
     <div>

@@ -1,5 +1,6 @@
 "use client";
 
+
 import { FC } from "react";
 
 interface Props {
@@ -7,15 +8,17 @@ interface Props {
 }
 
 const TransactionErrors: FC<Props> = ({ errors }) => (
-  <div style={{marginTop: "20px"}} className="segment blank">
-    <h2>Transaction Building Errors:</h2>
-    <ul>
-      {errors.map((error, index) => (
-        <li key={index}>{`- ${error}`}</li>
-      ))}
-      {!errors.length && <li>- Unknown error</li>}
-    </ul>
-  </div>
+  errors.length === 0 ? (
+    <div></div>
+  ) : (
+    <div style={{marginTop: "20px"}} className="segment blank">
+      <h2>Transaction Building Errors:</h2>
+      <ul>
+        {errors.map((error, index) => (
+          <li key={index}>{`- ${error}`}</li>
+        ))}
+      </ul>
+    </div>
+  )
 );
-
 export default TransactionErrors;
